@@ -1,0 +1,1 @@
+"""Swim pacing optimization package."""

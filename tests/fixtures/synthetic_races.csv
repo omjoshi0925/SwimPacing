@@ -1,0 +1,40 @@
+swimmer_id,meet_id,meet_name,meet_date,age,sex_category,event,course,round,seed_time,pre_race_pb,final_time,split_50,split_100,split_150,split_200,data_source,split_15m,reaction_time,meet_level,team,notes
+S001,M0,Synthetic Meet 0,2025-11-08,18,M,200 FR,SCY,final,,,1:46.57,25.55,51.99,1:19.19,1:46.57,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S001,M1,Synthetic Meet 1,2026-01-17,15,M,200 FR,SCY,final,,,1:46.80,25.31,51.70,1:19.09,1:46.80,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S001,M2,Synthetic Meet 2,2026-02-21,18,M,200 FR,SCY,final,,,1:45.59,24.98,51.41,1:18.69,1:45.59,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S002,M0,Synthetic Meet 0,2025-11-08,18,M,200 FR,SCY,final,,,1:45.51,24.75,51.22,1:17.89,1:45.51,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S002,M1,Synthetic Meet 1,2026-01-17,16,M,200 FR,SCY,final,,,1:46.01,25.51,51.27,1:18.36,1:46.01,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S002,M2,Synthetic Meet 2,2026-02-21,17,M,200 FR,SCY,final,,,1:44.51,24.86,50.63,1:17.05,1:44.51,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S003,M0,Synthetic Meet 0,2025-11-08,15,M,200 FR,SCY,final,,,1:42.52,24.74,50.04,1:16.06,1:42.52,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S003,M1,Synthetic Meet 1,2026-01-17,17,M,200 FR,SCY,final,,,1:41.38,24.14,49.80,1:14.99,1:41.38,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S003,M2,Synthetic Meet 2,2026-02-21,17,M,200 FR,SCY,final,,,1:41.80,23.97,49.95,1:16.04,1:41.80,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S004,M0,Synthetic Meet 0,2025-11-08,16,M,200 FR,SCY,final,,,1:41.73,24.27,49.34,1:15.22,1:41.73,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S004,M1,Synthetic Meet 1,2026-01-17,16,M,200 FR,SCY,final,,,1:41.03,24.28,49.39,1:15.26,1:41.03,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S004,M2,Synthetic Meet 2,2026-02-21,15,M,200 FR,SCY,final,,,1:40.91,24.39,49.93,1:15.15,1:40.91,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S005,M0,Synthetic Meet 0,2025-11-08,17,M,200 FR,SCY,final,,,1:40.29,23.64,48.46,1:14.30,1:40.29,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S005,M1,Synthetic Meet 1,2026-01-17,18,M,200 FR,SCY,final,,,1:40.88,23.93,49.53,1:15.01,1:40.88,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S005,M2,Synthetic Meet 2,2026-02-21,18,M,200 FR,SCY,final,,,1:40.91,24.15,49.33,1:14.75,1:40.91,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S006,M0,Synthetic Meet 0,2025-11-08,16,M,200 FR,SCY,final,,,1:40.99,23.96,49.22,1:14.68,1:40.99,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S006,M1,Synthetic Meet 1,2026-01-17,16,M,200 FR,SCY,final,,,1:40.19,24.27,48.94,1:14.75,1:40.19,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S006,M2,Synthetic Meet 2,2026-02-21,18,M,200 FR,SCY,final,,,1:39.61,23.39,48.19,1:14.26,1:39.61,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S007,M0,Synthetic Meet 0,2025-11-08,18,M,200 FR,SCY,final,,,1:45.98,25.39,51.64,1:18.46,1:45.98,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S007,M1,Synthetic Meet 1,2026-01-17,15,M,200 FR,SCY,final,,,1:44.78,25.03,51.21,1:17.57,1:44.78,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S007,M2,Synthetic Meet 2,2026-02-21,18,M,200 FR,SCY,final,,,1:44.47,25.21,51.23,1:17.79,1:44.47,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S008,M0,Synthetic Meet 0,2025-11-08,17,M,200 FR,SCY,final,,,1:47.16,25.93,52.06,1:19.91,1:47.16,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S008,M1,Synthetic Meet 1,2026-01-17,15,M,200 FR,SCY,final,,,1:47.94,25.56,52.87,1:20.53,1:47.94,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S008,M2,Synthetic Meet 2,2026-02-21,16,M,200 FR,SCY,final,,,1:47.95,25.85,52.77,1:20.33,1:47.95,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S009,M0,Synthetic Meet 0,2025-11-08,15,M,200 FR,SCY,final,,,1:45.37,25.35,51.55,1:18.39,1:45.37,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S009,M1,Synthetic Meet 1,2026-01-17,16,M,200 FR,SCY,final,,,1:45.19,25.45,51.65,1:18.17,1:45.19,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S009,M2,Synthetic Meet 2,2026-02-21,15,M,200 FR,SCY,final,,,1:44.51,25.11,51.18,1:17.86,1:44.51,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S010,M0,Synthetic Meet 0,2025-11-08,15,M,200 FR,SCY,final,,,1:39.79,23.49,48.53,1:14.48,1:39.79,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S010,M1,Synthetic Meet 1,2026-01-17,16,M,200 FR,SCY,final,,,1:39.67,23.69,48.04,1:13.81,1:39.67,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S010,M2,Synthetic Meet 2,2026-02-21,17,M,200 FR,SCY,final,,,1:38.94,23.87,48.43,1:13.68,1:38.94,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S011,M0,Synthetic Meet 0,2025-11-08,18,M,200 FR,SCY,final,,,1:48.81,25.82,53.09,1:20.84,1:48.81,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S011,M1,Synthetic Meet 1,2026-01-17,18,M,200 FR,SCY,final,,,1:47.92,25.56,52.31,1:19.71,1:47.92,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S011,M2,Synthetic Meet 2,2026-02-21,15,M,200 FR,SCY,final,,,1:47.52,25.84,52.46,1:19.36,1:47.52,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S012,M0,Synthetic Meet 0,2025-11-08,17,M,200 FR,SCY,final,,,1:37.63,23.38,47.80,1:12.78,1:37.63,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S012,M1,Synthetic Meet 1,2026-01-17,16,M,200 FR,SCY,final,,,1:37.81,22.82,47.39,1:12.36,1:37.81,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S012,M2,Synthetic Meet 2,2026-02-21,18,M,200 FR,SCY,final,,,1:37.40,23.08,47.01,1:12.35,1:37.40,"SYNTHETIC - generated for pipeline tests, not a real race",,,invitational,SYN,SYNTHETIC
+S099,M9,Synthetic Meet 9,2026-03-01,16,M,200 FR,SCY,final,,,1:45.00,24.00,23.00,1:15.00,1:45.00,SYNTHETIC,,,,,non-monotonic
+S098,M9,Synthetic Meet 9,2026-03-01,16,M,200 FR,LCM,final,,,1:45.00,24.00,50.00,1:17.00,1:45.00,SYNTHETIC,,,,,wrong course
+S097,M9,Synthetic Meet 9,2026-03-01,22,M,200 FR,SCY,final,,,1:45.00,24.00,50.00,1:17.00,1:44.00,SYNTHETIC,,,,,age + mismatch

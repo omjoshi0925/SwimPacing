@@ -1,0 +1,276 @@
+% References for the swim pacing optimization project.
+%
+% VERIFICATION STATUS. Every entry here was confirmed to exist through a search
+% or a fetched page. None was reconstructed from memory. The `note` field on
+% each entry records how far verification got:
+%
+%   [full text read]  the full text was fetched and read
+%   [abstract only]   the abstract was read; full text not accessed
+%   [metadata only]   existence and bibliographic details confirmed via Crossref
+%                     or equivalent, but the publisher page was blocked
+%
+% Numbers quoted from [abstract only] and [metadata only] sources must be
+% checked against the PDF before they appear in the paper.
+%
+% COVERAGE IS PARTIAL. This search covered swimming hydrodynamics and
+% energetics. Exercise physiology (VO2 kinetics, anaerobic capacity, critical
+% speed), observed pacing, start and turn contributions, and mathematical
+% performance models are NOT yet covered. Parameters depending on those areas
+% are marked PROVENANCE GAP in docs/parameters.md.
+
+@article{kolmogorov1992active,
+  author  = {Kolmogorov, S. V. and Duplishcheva, O. A.},
+  title   = {Active drag, useful mechanical power output and hydrodynamic force
+             coefficient in different swimming strokes at maximal velocity},
+  journal = {Journal of Biomechanics},
+  volume  = {25}, number = {3}, pages = {311--318}, year = {1992},
+  doi     = {10.1016/0021-9290(92)90028-Y},
+  note    = {[metadata only] Founding paper of the velocity-perturbation method
+             for active drag. Publisher page blocked; no numbers extracted.}
+}
+
+@article{toussaint1988propelling,
+  author  = {Toussaint, H. M. and Beelen, A. and Rodenburg, A. and
+             Sargeant, A. J. and de Groot, G. and Hollander, A. P. and
+             van Ingen Schenau, G. J.},
+  title   = {Propelling efficiency of front-crawl swimming},
+  journal = {Journal of Applied Physiology},
+  volume  = {65}, number = {6}, pages = {2506--2512}, year = {1988},
+  doi     = {10.1152/jappl.1988.65.6.2506},
+  note    = {[metadata only] Introduced the MAD system. Publisher page blocked.
+             Values often attributed to this paper are quoted here via
+             toussaint2002biomechanics instead.}
+}
+
+@article{havriluk2007variability,
+  author  = {Havriluk, R.},
+  title   = {Variability in Measurement of Swimming Forces: A Meta-Analysis of
+             Passive and Active Drag},
+  journal = {Research Quarterly for Exercise and Sport},
+  volume  = {78}, number = {2}, pages = {32--39}, year = {2007},
+  doi     = {10.1080/02701367.2007.10599401},
+  note    = {[metadata only] Meta-analysis of measurement variability across
+             active-drag methods. Directly relevant to how much confidence any
+             single literature C_D value can carry.}
+}
+
+@article{toussaint1992biomechanics,
+  author  = {Toussaint, H. M. and Beek, P. J.},
+  title   = {Biomechanics of competitive front crawl swimming},
+  journal = {Sports Medicine},
+  volume  = {13}, number = {1}, pages = {8--24}, year = {1992},
+  doi     = {10.2165/00007256-199213010-00002},
+  note    = {[abstract only] Propelling efficiency 61 percent in elite swimmers
+             versus 44 percent in triathletes. Source for eta_p = 0.60.}
+}
+
+@inproceedings{toussaint2002biomechanics,
+  author    = {Toussaint, H. M.},
+  title     = {Biomechanics of Propulsion and Drag in Front Crawl Swimming},
+  booktitle = {Proceedings of the 20th International Symposium on Biomechanics
+               in Sports (ISBS)},
+  address   = {C\'aceres, Spain}, year = {2002},
+  url       = {https://ojs.ub.uni-konstanz.de/cpa/article/view/613},
+  note      = {[full text read] Conference proceedings, not a journal article.
+               Lumped drag coefficient K about 30 (male) and 24 (female) top
+               swimmers; more recent 27 and 22. Reports Berger et al. (1999)
+               measuring F_d = 16.4 v^2.22, a non-integer drag exponent.}
+}
+
+@article{zamparo2009active,
+  author  = {Zamparo, P. and Gatta, G. and Pendergast, D. and Capelli, C.},
+  title   = {Active and passive drag: the role of trunk incline},
+  journal = {European Journal of Applied Physiology},
+  volume  = {106}, number = {2}, pages = {195--205}, year = {2009},
+  doi     = {10.1007/s00421-009-1007-8},
+  note    = {[abstract only] PRIMARY SOURCE for C_D and A in this project.
+             C_D = 0.30 +/- 0.09 for elite males (active); effective frontal
+             area 0.23-0.24 m2 during active swimming, 0.13-0.21 m2 passive.
+             Reports C_D and A separately rather than only their product.}
+}
+
+@article{zamparo2005energy,
+  author  = {Zamparo, P. and Pendergast, D. R. and Mollendorf, J. and
+             Termin, A. and Minetti, A. E.},
+  title   = {An energy balance of front crawl},
+  journal = {European Journal of Applied Physiology},
+  volume  = {94}, pages = {134--144}, year = {2005},
+  doi     = {10.1007/s00421-004-1281-4},
+  note    = {[abstract only] Overall efficiency 0.20 +/- 0.03; energy cost
+             600-800 J/m at 1.0-1.4 m/s; Froude efficiency about 0.5. Source
+             for eta_g = 0.20. CONTRADICTED by kolmogorov2021metabolic.}
+}
+
+@article{cortesi2024estimating,
+  author  = {Cortesi, M. and Gatta, G. and Carmigniani, R. and Zamparo, P.},
+  title   = {Estimating Active Drag Based on Full and Semi-Tethered Swimming
+             Tests},
+  journal = {Journal of Sports Science and Medicine},
+  volume  = {23}, number = {1}, pages = {17--24}, year = {2024},
+  doi     = {10.52082/jssm.2024.17},
+  note    = {[full text read] Open access. n = 14 elite male sprinters. Active
+             drag coefficient k_a = 38 kg/m, passive k_p = 25 kg/m, ratio 1.5.
+             Propelling efficiency about 0.40. Independent check on K_d.}
+}
+
+@article{kolmogorov2021metabolic,
+  author  = {Kolmogorov, S. and Vorontsov, A. and Vilas-Boas, J. P.},
+  title   = {Metabolic Power, Active Drag, Mechanical and Propelling Efficiency
+             of Elite Swimmers at 100 Meter Events in Different Competitive
+             Swimming Techniques},
+  journal = {Applied Sciences},
+  volume  = {11}, number = {18}, pages = {8511}, year = {2021},
+  doi     = {10.3390/app11188511},
+  note    = {[full text read] Open access. n = 8 world top-10 swimmers.
+             Mechanical efficiency 0.049-0.068, THREE TO FOUR TIMES LOWER than
+             zamparo2005energy. Propelling efficiency 0.65-0.71. Drag
+             coefficient 0.33-0.61. The efficiency disagreement is definitional
+             and is why k is not identifiable from the literature.}
+}
+
+@article{capelli1998energetics,
+  author  = {Capelli, C. and Pendergast, D. R. and Termin, B.},
+  title   = {Energetics of swimming at maximal speeds in humans},
+  journal = {European Journal of Applied Physiology and Occupational Physiology},
+  volume  = {78}, number = {5}, pages = {385--393}, year = {1998},
+  doi     = {10.1007/s004210050435},
+  note    = {[abstract only] Front-crawl energy cost 0.70 kJ/m at 1 m/s rising
+             to 1.23 kJ/m at 1.5 m/s, increasing exponentially with velocity.
+             The clearest velocity-scaling statement found. NOT yet fully
+             checked; verify against the PDF before citing a number from it.}
+}
+
+% ---- Added 2026-08-31: dive start, energy contribution, VO2 kinetics, pacing.
+% Same verification policy. The energetics entries marked (project doc) were
+% verified in a companion session on 2026-08-29 and recorded in the project's
+% energetics_literature_sources.md with the same access-level discipline.
+
+@article{tor2014characteristics,
+  author = {Tor, E. and Pease, D. L. and Ball, K. A.},
+  title = {Characteristics of an elite swimming start},
+  booktitle = {Proceedings of the XIIth International Symposium on Biomechanics
+               and Medicine in Swimming}, pages = {257--263}, year = {2014},
+  note = {[full text read] n=52 elite (29 M). Male time to 15 m 6.12 +/- 0.16 s;
+          phase breakdown block 0.74 s, flight 0.30 s, underwater 3.69 s,
+          free-swim 1.81 s. Anchor for START_OFFSET_S. Conference paper.}
+}
+
+@article{rudnik2023kinematic,
+  author = {Rudnik, D. M. and Rejman, M. and Vilas-Boas, J. P.},
+  title = {The kinematic profile of ventral swimming start: sex diversity},
+  journal = {Frontiers in Physiology}, volume = {14}, pages = {1157359},
+  year = {2023}, doi = {10.3389/fphys.2023.1157359},
+  note = {[full text read] n=52 international. Male 15 m time 6.410 +/- 0.45 s;
+          5-15 m velocity 2.048 m/s. Second anchor for START_OFFSET_S.}
+}
+
+@article{vandijk2020predicting,
+  author = {van Dijk, M. P. and Beek, P. J. and van Soest, A. J. K.},
+  title = {Predicting dive start performance from kinematic variables at water
+           entry in (sub-)elite swimmers},
+  journal = {PLOS ONE}, volume = {15}, number = {10}, pages = {e0241345},
+  year = {2020}, doi = {10.1371/journal.pone.0241345},
+  note = {[full text read] n=13 national level; 15 m start times 6.42-8.22 s,
+          bounding the sub-elite end of the start band.}
+}
+
+@article{vantorre2014biomechanical,
+  author = {Vantorre, J. and Chollet, D. and Seifert, L.},
+  title = {Biomechanical Analysis of the Swim-Start: A Review},
+  journal = {Journal of Sports Science and Medicine}, volume = {13},
+  number = {2}, pages = {223--231}, year = {2014},
+  note = {[full text read] Review; start-to-15m share of race time 0.8-26.1
+          percent by event (secondary citation therein, original unverified).}
+}
+
+@article{sousa2011vo2,
+  author = {Sousa, A. C. and Figueiredo, P. and Oliveira, N. L. and others and
+            Fernandes, R. J.},
+  title = {VO2 Kinetics in 200-m Race-Pace Front Crawl Swimming},
+  journal = {International Journal of Sports Medicine}, volume = {32},
+  number = {10}, pages = {765--770}, year = {2011},
+  doi = {10.1055/s-0031-1279772},
+  note = {[full text read] n=10 elite males at real 200 m race pace: aerobic
+          78.6 +/- 2.9 percent, tau 10.53 +/- 2.51 s. Only source giving both
+          at once for this event.}
+}
+
+@article{pessoafilho2012vo2,
+  author = {Pessoa Filho, D. M. and Alves, F. B. and Reis, J. F. and
+            Greco, C. C. and Denadai, B. S.},
+  title = {VO2 kinetics during heavy and severe exercise in swimming},
+  journal = {International Journal of Sports Medicine}, volume = {33},
+  number = {9}, pages = {744--748}, year = {2012},
+  doi = {10.1055/s-0031-1299753},
+  note = {[full text read] (project doc 2026-08-29) tau 16.5 +/- 5.1 s severe,
+          17.8 +/- 5.9 s heavy; VO2max 57.9 +/- 5.1 mL/kg/min, trained males.
+          SOURCE OF THE MODEL'S tau = 16.5 s.}
+}
+
+@article{figueiredo2011energy,
+  author = {Figueiredo, P. and Zamparo, P. and Sousa, A. and
+            Vilas-Boas, J. P. and Fernandes, R. J.},
+  title = {An energy balance of the 200 m front crawl race},
+  journal = {European Journal of Applied Physiology}, volume = {111},
+  pages = {767--777}, year = {2011}, doi = {10.1007/s00421-010-1696-z},
+  note = {[full text read] (project doc 2026-08-29) 200 m LCM: aerobic 65.9,
+          anaerobic 34.1 percent; lap energy cost 1.71/1.56/1.44/1.70 kJ/m;
+          propelling efficiency 0.40-0.43 falling lap 1 to 4 (p=0.002) - the
+          measured basis for position-coupled economy decay.}
+}
+
+@article{campos2022anaerobic,
+  author = {Campos, E. Z. and Kalva-Filho, C. A. and others and Papoti, M.},
+  title = {Anaerobic Contribution Determined in Free-Swimming: Sensitivity to
+           Maturation Stages and Validity},
+  journal = {Frontiers in Sports and Active Living}, volume = {4},
+  pages = {760296}, year = {2022}, doi = {10.3389/fspor.2022.760296},
+  note = {[full text read] (project doc 2026-08-29) age 14.9 +/- 2.6 y; AOD
+          3.2 +/- 1.3 L O2 (about 67 +/- 27 kJ metabolic). Age-matched anchor
+          for E0.}
+}
+
+@article{pelarigo2017oxygen,
+  author = {Pelarigo, J. G. and Machado, L. and Fernandes, R. J. and
+            Greco, C. C. and Vilas-Boas, J. P.},
+  title = {Oxygen uptake kinetics and energy system's contribution around
+           maximal lactate steady state swimming intensity},
+  journal = {PLOS ONE}, volume = {12}, number = {2}, pages = {e0167263},
+  year = {2017}, doi = {10.1371/journal.pone.0167263},
+  note = {[full text read] (project doc 2026-08-29) tau 9.6-16.3 s, female,
+          submaximal MLSS; near-100 percent aerobic at that intensity.}
+}
+
+@article{robertson2009analysis,
+  author = {Robertson, E. Y. and Pyne, D. B. and Hopkins, W. G. and
+            Anson, J. M.},
+  title = {Analysis of lap times in international swimming competitions},
+  journal = {Journal of Sports Sciences}, volume = {27}, number = {4},
+  pages = {387--395}, year = {2009}, doi = {10.1080/02640410802641400},
+  note = {[full text read] 3057 swimmers, 9 international meets. Men's 200 free
+          finalist laps 25.33/27.24/27.74/27.61 s (23.5/25.2/25.7/25.6 percent):
+          fast first lap then flat. Basis of the observed_elite shape. CAVEAT:
+          women's lap 4 value in the extraction looked duplicated from lap 3;
+          treat women's lap 4 as unverified.}
+}
+
+@article{oliveira2023pacing,
+  author = {Oliveira, L. L. and Soares, E. R. and Oliveira, G. T. and
+            Ferreira, R. M.},
+  title = {What pacing is used by the best swimmers in the 200m freestyle?},
+  journal = {Motricidade}, volume = {19}, number = {1}, year = {2023},
+  doi = {10.6063/motricidade.27905},
+  note = {[abstract only] First lap is the strongest differentiator of final
+          placing; top-3 gain 2.5-3.2 percent more in the second half.}
+}
+
+@misc{mcgibbon2020pacing,
+  author = {McGibbon, K. E.},
+  title = {PhD thesis on pacing strategies of Australian swimmers (exact formal
+           title unconfirmed)},
+  howpublished = {University of Canberra}, year = {2020},
+  note = {[partial] Fast-start positive pacing in 71 percent of 200 m swimmers,
+          associated with 0.4-0.7 percent slower finishes. The peer-reviewed
+          version (IJSPP 15(8), doi 10.1123/ijspp.2019-0381) was confirmed to
+          exist but was not accessible; cite with care.}
+}
