@@ -239,6 +239,27 @@ ceiling enforced on the full integration grid.
 
 (phi and the M2/M4 shapes recalibrated 2026-08-31 at the cited `tau` = 16.5 s.)
 
+### Raced space vs recorded space
+
+The tables above are **raced space**: free swimming, no dive. A recorded split
+sheet lives in **recorded space**, where the dive makes lap 1 faster by the
+course start credit `S` (`SCY_200.start_credit_s` = 1.80 s). One transform per
+comparison, never both: model → recorded subtracts `S` from model lap 1
+(`model.raced_to_recorded`); data → raced adds `S` to observed lap 1
+(`model.recorded_to_raced`, the "free-swimming equivalent"). At `T` = 100 s
+and `S` = 1.80 the recorded-space predictions are:
+
+| Model | Recorded split fractions (S = 1.8 s) |
+|---|---|
+| M0 / M1 | .2363 .2546 .2546 .2546 |
+| M2 | .2635 .2637 .2445 .2282 |
+| M3 | .2283 .2520 .2573 .2623 |
+| M4 | .2257 .2538 .2588 .2618 |
+
+Recorded-space fractions depend (weakly) on `T` because `S` is a time, not a
+share; the raced-space tables are the scale-free ones. The pipeline compares
+free-swimming-equivalent observed shares against raced-space predictions.
+
 Three distinct qualitative predictions across five models: even, negative, and
 two different kinds of positive. That is a real model comparison rather than a
 contest between near-identical curves, and it means the first fifty races will

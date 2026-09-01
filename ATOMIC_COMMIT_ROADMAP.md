@@ -78,10 +78,19 @@ result and the code that made it belong together.
 
 ## Band B — Start term as a first-class model parameter (009-016)
 
-The pilot's Phase 7 verdict: a dedicated start term is warranted (lap-1
-advantage of roughly 1 s beyond the dive credit). This band promotes the start
-credit from a constant buried in analysis code to a model parameter with
-provenance, without yet fitting it.
+This band promotes the start credit from a constant buried in analysis code to
+a model parameter with provenance, without yet fitting it.
+
+**Re-scoped during execution (2026-09-01).** The 009-010 audit found a sign
+error: the pipeline subtracted the start credit from observed lap 1 (the
+model-side transform applied to the data), double-counting it. Rows 011-016
+became the fix arc: 011 pipeline sign fix + regenerated dataset, 012 corrected
+observed strategy shapes + downstream theoretical outputs, 013 corrected
+empirical analysis + regenerated pilot report and figures, 014 RESULTS/README
+amendments, 015 validation-plan amendment + registered band extension to
+3.4 s, 016 parameter/model docs. The originally planned rows 011-016
+(invariant tests, observed-space helper adoption, prediction pins) fold into
+band C where the calibration loss makes them load-bearing.
 
 | # | Type | Title | Files/system | Purpose | Depends |
 |---|---|---|---|---|---|

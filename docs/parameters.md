@@ -58,7 +58,7 @@ competing models. No claim that any value is the true one.
 | Fatigue-coupled ceiling | `gamma` | 0.18 | defines M4 |
 | Velocity ceiling | `v_max` | 2.10 m/s | box constraint; slack in M0-M3 |
 | Velocity floor | `v_min` | 1.20 m/s | keeps the solver in physical territory |
-| Start credit | `START_OFFSET_S` | 1.80 s | comparison only; literature-anchored band 1.7-3.0 s (see entry) |
+| Start credit | `Course.start_credit_s` | 1.80 s | comparison only; literature-anchored band 1.7-3.0 s, pace-dependent (see entry) |
 
 ### Language rules that follow from this
 
@@ -327,31 +327,44 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
   with fatigue and binds. For a 100 free it would bind and the structure of the
   answer would change.
 
-### START_OFFSET_S — dive start credit
+### start_credit_s — dive start credit (was START_OFFSET_S)
 
-- **Default:** 1.80 s
+- **Default:** 1.80 s, now a `Course` field (`SCY_200.start_credit_s`);
+  `START_OFFSET_S` remains as a legacy alias.
 - **Units:** s
-- **Description:** time credited back to split 1 when comparing model
-  free-swimming splits with recorded splits.
+- **Description:** what the dive start is worth on recorded lap 1 relative to
+  swimming that lap at race pace. Direction, stated once and used everywhere:
+  the dive makes recorded lap 1 FASTER, so mapping model output into recorded
+  space subtracts the credit from model lap 1 (`model.raced_to_recorded`), and
+  mapping observed data into the free-swimming-equivalent space ADDS it back
+  to observed lap 1 (`model.recorded_to_raced`). Exactly one transform is
+  applied per comparison. (Until 2026-09-01 the pipeline subtracted on both
+  sides, double-counting the credit; found in audit, fixed, all pilot outputs
+  regenerated, amendment logged in `docs/validation_plan.md`.)
 - **Source (anchor, 2026-08-31):** measured elite male 15 m start times are
   6.12 ± 0.16 s (Tor, Pease & Ball 2014, n=29, full text) and 6.41 ± 0.45 s
   (Rudnik, Rejman & Vilas-Boas 2023, n=22 international, full text). Covering
   15 m at a 200-pace velocity of 1.6-1.85 m/s takes 8.1-9.4 s, so the dive is
   worth roughly 1.7-3.0 s depending on level and pace. 1.80 s is the
-  conservative end of that measured band.
-- **Empirical cross-check (pilot, n=80):** lap 1 is 2.8 ± 0.5 s faster than
-  the mid-race laps — about 1 s MORE than the dive band explains. That excess
-  is pacing and fresh-swimmer effects, which is precisely why this credit must
-  come from start-time measurements and never from lap differences.
+  conservative end of that measured band, i.e. an ELITE-pace value.
+- **Empirical cross-check (pilot, n=80, corrected 2026-09-01):** lap 1 is
+  3.23 ± 1.08 s faster than the mid-race laps, and the dive value implied by
+  the same start-time measurements at THIS field's slower race pace is
+  3.1-3.4 s — the advantage is consistent with the dive alone. The earlier
+  "~1 s beyond the dive" claim was an artifact of the sign error. Note the
+  structural point this exposes: S is pace-dependent (S ≈ 15/v − t15), so a
+  single constant cannot be right for both elite and age-group fields.
 - **Status:** **Literature-anchored estimate (Category B).** Upgraded from
   Category C on 2026-08-31; still not a per-swimmer measurement.
 - **Identifiable from race data:** yes, from 15 m split times, which is the
   single highest-value optional column in the data schema.
-- **Notes:** **this is the weakest number in the project and it sits directly on
-  the main theory-versus-data comparison.** It pushes observed splits in the same
-  direction as `beta_x`, so fitting `beta_x` without a good start correction will
-  absorb the dive into the fatigue parameter and overstate it. Because it is a
-  constant subtracted from split 1, it shifts T by a constant and cannot change
+- **Notes:** **this is the decisive number in the theory-versus-data
+  comparison.** The pilot model ranking changes across the registered
+  1.2-3.4 s band (M4 best at 1.2-1.8 s, M3 at 2.0-2.6 s, M0 at 2.8-3.4 s), so
+  per validation-plan §7.3 the models are not distinguishable given start
+  uncertainty. It also pushes observed splits in the same direction as
+  `beta_x`, so any fit without a good start correction absorbs the dive into
+  the fatigue parameter. Because it is a constant time credit it cannot change
   which velocity profile is optimal, which is why it is applied only at
   comparison time and never inside the optimizer.
 
@@ -398,6 +411,8 @@ fixed by calibration to race time and held there, and the paper should say so.
 | `phi` | did not exist | 0.75-1.00 by variant | names the SCY turn and underwater discount instead of hiding it |
 | Efficiency wording | "divide by efficiency" | "multiply by efficiency" | the old wording was wrong by an order of magnitude |
 | `tau`, `R`, start credit | implied literature backing | marked PROVENANCE GAP | no verified citation yet |
+| start credit (2026-09-01) | module constant `START_OFFSET_S` | `Course.start_credit_s`, Category B | promoted to a model parameter with provenance; legacy alias kept |
+| start-correction direction (2026-09-01) | credit SUBTRACTED from observed lap 1 | credit ADDED to observed lap 1 | the model-side transform had been applied to the data as well, double-counting the credit; every pilot output regenerated |
 
 The old C_D and A were individually indefensible even though their product was
 about right. That is worth stating plainly: a lumped parameter landing in the
