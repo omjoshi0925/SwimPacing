@@ -127,6 +127,29 @@ def test_fit_gamma_recovers_the_generating_value():
     assert fit.loss_pp < 0.05
 
 
+def test_training_frame_withholds_test_rows():
+    train, meta = calibration.training_frame(PROCESSED)
+    assert meta["n_train_races"] == len(train)
+    assert meta["n_test_races_unopened"] > 0
+    # the guard passes on the frame it produced
+    calibration.assert_no_test_rows(train, PROCESSED)
+
+
+def test_leakage_guard_raises_on_test_rows():
+    """Feeding held-out rows to the guard is a hard error, not a warning."""
+    from src import data_split
+    df = pd.read_csv(PROCESSED, low_memory=False)
+    ok = df[df["usable"] == True]  # noqa: E712
+    _, test = data_split.split_by_swimmer(ok)
+    with pytest.raises(calibration.CalibrationLeakageError, match="held-out"):
+        calibration.assert_no_test_rows(test, PROCESSED)
+    # and a single smuggled test row also trips it
+    train, _ = calibration.training_frame(PROCESSED)
+    smuggled = pd.concat([train, test.iloc[:1]])
+    with pytest.raises(calibration.CalibrationLeakageError):
+        calibration.assert_no_test_rows(smuggled, PROCESSED)
+
+
 @pytest.mark.slow
 def test_fit_beta_E_recovers_the_generating_value():
     """Same recovery contract for M2's reserve coupling (registry 0.28)."""
