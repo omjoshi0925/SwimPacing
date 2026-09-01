@@ -206,6 +206,21 @@ def fit_gamma(shares: np.ndarray, bounds: tuple = (0.02, 0.45),
                           course, coarse, refine_iters)
 
 
+def fit_beta_E(shares: np.ndarray, bounds: tuple = (0.02, 1.0),
+               course: Course = SCY_200, coarse: int = 7,
+               refine_iters: int = 10) -> FitResult:
+    """
+    Fit M2's reserve-coupling `beta_E`. Included although the pilot
+    sign-contradicts M2: hiding poor models is forbidden, and a fitted-and-
+    still-losing M2 is stronger evidence than an unfitted one. Expect the fit
+    to press toward the lower bound on positively split data, since smaller
+    `beta_E` means a weaker negative split; at `beta_E` = 0 the mechanism is
+    absent and the parameter unidentified, hence the off-zero lower bound.
+    """
+    return _fit_ode_param("M2_reserve_fatigue", "beta_E", shares, bounds,
+                          course, coarse, refine_iters)
+
+
 def fit_beta_x(shares: np.ndarray, bounds: tuple = (0.0, 1.5),
                course: Course = SCY_200) -> FitResult:
     """
