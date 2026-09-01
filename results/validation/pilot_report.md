@@ -98,6 +98,31 @@ Reading, with small-n caution:
    (24.22%); where exactly it lands moves with the start
    credit (see below), which is now the decisive unknown.
 
+## Exploratory fits (train rows only, pilot-v0.1)
+
+Task 14 machinery exercised on the 60 training races under the registered
+loss. **EXPLORATORY**: single meet, values conditional on the assumed start
+credit, informing priors only; the registered fits happen once on the expanded
+frozen dataset (see docs/calibration.md). Test rows untouched.
+
+| model | param | fitted | registry | train loss (pp) | registry loss (pp) | evals |
+|---|---|---|---|---|---|---|
+| M3 | beta_x | 0.2337 | 0.28 | 0.525 | 0.532 | 11 |
+| M4 | gamma | 0.2847 | 0.18 | 0.494 | 0.507 | 18 |
+| M2 | beta_E | 0.0200 | 0.28 | 0.812 | 2.539 | 18 |
+
+The fitted values barely improve on the registry guesses (third decimal in
+pp), which is itself informative: at this credit the registry shapes were
+already near the loss floor set by race-to-race dispersion.
+
+**The confound, quantified** (`fits_beta_x_credit_sweep.csv`, figure emp05):
+refitting beta_x across the registered credit band moves it from
+0.335 at 1.2 s to
+0.011 at 3.4 s. The fatigue
+parameter and the start credit are close to exchangeable on lap 1, so **no
+fitted fatigue value is interpretable until the start credit is measured** —
+the fit machinery is ready, and this is what it is waiting on.
+
 ## Start effect (Phase 7)
 
 Mean lap-1 velocity 1.733 m/s vs mid-race 1.548 m/s.
