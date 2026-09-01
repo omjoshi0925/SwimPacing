@@ -125,3 +125,15 @@ def test_fit_gamma_recovers_the_generating_value():
                                 refine_iters=4)
     assert fit.value == pytest.approx(0.18, abs=0.03)
     assert fit.loss_pp < 0.05
+
+
+@pytest.mark.slow
+def test_fit_beta_E_recovers_the_generating_value():
+    """Same recovery contract for M2's reserve coupling (registry 0.28)."""
+    from src.parameters import PREDICTED_SHAPES_SCY200
+    target = np.tile(np.array(PREDICTED_SHAPES_SCY200["M2_reserve_fatigue"]),
+                     (10, 1))
+    fit = calibration.fit_beta_E(target, bounds=(0.15, 0.45), coarse=4,
+                                 refine_iters=4)
+    assert fit.value == pytest.approx(0.28, abs=0.04)
+    assert fit.loss_pp < 0.05
