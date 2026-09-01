@@ -166,6 +166,87 @@ def fig_deviations(ok: pd.DataFrame) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Figure 5: exploratory fitted shapes and the start-credit confound
+# ---------------------------------------------------------------------------
+
+
+FITS_CSV = "fits_train_pilot.csv"
+SWEEP_CSV = "fits_beta_x_credit_sweep.csv"
+
+
+def fig_fitted_shapes(shapes: dict):
+    """
+    Exploratory-fit picture (train rows only, labeled everywhere): the mean
+    training shape against registry and fitted model shapes, plus the fitted
+    beta_x across the registered start-credit band -- the confound made
+    visible. Returns (path, fits_frame, sweep_frame), or None if no fit
+    report exists yet, so the analysis stays runnable before any fitting.
+    """
+    from src import calibration
+
+    fits_path = os.path.join(OUT_RES, FITS_CSV)
+    if not os.path.exists(fits_path):
+        return None
+    fits = pd.read_csv(fits_path)
+
+    train, meta = calibration.training_frame(PROCESSED)
+    calibration.assert_no_test_rows(train, PROCESSED)
+    tr = calibration.observed_shares(train)
+    mean_tr, sd_tr = tr.mean(axis=0) * 100, tr.std(axis=0, ddof=1) * 100
+
+    # the confound sweep: refit beta_x at every credit in the registered band
+    offs = np.round(np.arange(1.2, 3.41, 0.2), 2)
+    bx = [calibration.fit_beta_x(calibration.shares_at_credit(train, S)).value
+          for S in offs]
+    sweep = pd.DataFrame({"start_credit_s": offs,
+                          "fitted_beta_x": np.round(bx, 4)})
+    sweep.to_csv(os.path.join(OUT_RES, SWEEP_CSV), index=False)
+
+    use_style()
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.8, 4.6))
+    laps = np.arange(1, 5)
+
+    ax1.errorbar(laps, mean_tr, yerr=sd_tr, color=INK, lw=2.2, capsize=3,
+                 marker="o", markersize=6, zorder=6,
+                 label=f"train mean ± sd (n = {len(train)})")
+    for _, row in fits.iterrows():
+        short = str(row["model"]).split("_")[0]
+        if short == "M0" or not isinstance(row.get("shape"), str) or not row["shape"]:
+            continue
+        fitted = np.array([float(x) for x in row["shape"].split("/")]) * 100
+        ax1.plot(laps, fitted, color=MODEL_COLOR[short], lw=1.9, marker="s",
+                 markersize=4.5,
+                 label=f"{short} fitted ({row['param']} = {row['fitted_value']:.3f})")
+        if short in shapes:
+            ax1.plot(laps, np.asarray(shapes[short]) * 100, ls="--", lw=1.1,
+                     color=MODEL_COLOR[short], alpha=0.7, zorder=2)
+    ax1.set_xticks(laps)
+    ax1.set_xlabel("lap")
+    ax1.set_ylabel("share of race time  (%)")
+    ax1.set_title("Exploratory fits vs the training mean shape", loc="left", pad=8)
+    ax1.legend(fontsize=8, loc="lower right")
+
+    ax2.plot(offs, bx, color=SERIES[2], lw=2.0, marker="o", markersize=5,
+             markeredgecolor="#fcfcfb", markeredgewidth=1.0)
+    ax2.axvline(1.8, color=INK_3, ls="--", lw=1.0)
+    ax2.annotate("elite-anchored credit", xy=(1.8, max(bx) * 0.95),
+                 xytext=(6, 0), textcoords="offset points", fontsize=8.5,
+                 color=INK_2)
+    ax2.set_xlabel("start credit applied to lap 1  (s)")
+    ax2.set_ylabel("fitted beta_x")
+    ax2.set_title("The start-credit confound in one panel", loc="left", pad=8)
+
+    note = ("Left: fitted shapes (solid) against registry shapes (dashed) and the "
+            "training-set mean; fits are EXPLORATORY, train rows only, "
+            "pilot-v0.1. Right: the fitted beta_x is a strong function of the "
+            "assumed start credit, which is exactly the confound the validation "
+            "plan flags: no fitted fatigue value is interpretable until the "
+            "start credit is measured.")
+    path = _finish(fig, (ax1, ax2), "emp05_fitted_shapes", note, OUT_FIG)
+    return path, fits, sweep
+
+
+# ---------------------------------------------------------------------------
 # Figure 4 and analysis: the start effect (Phase 7)
 # ---------------------------------------------------------------------------
 
@@ -268,7 +349,46 @@ def start_effect(ok: pd.DataFrame, shapes: dict):
 # ---------------------------------------------------------------------------
 
 
-def write_report(ok, df_all, shapes, sens, stats) -> str:
+def _fits_section(fitted) -> str:
+    """Exploratory-fit report section; empty string when no fits exist yet."""
+    if fitted is None:
+        return ""
+    fits, sweep = fitted
+    fits = fits[fits["param"].astype(str).str.len() > 0]
+    rows = "\n".join(
+        f"| {str(r.model).split('_')[0]} | {r.param} | {r.fitted_value:.4f} | "
+        f"{r.registry_value:.2f} | {r.train_loss_pp:.3f} | {r.registry_loss_pp:.3f} | "
+        f"{int(r.n_evals)} |"
+        for r in fits.itertuples())
+    lo, hi = sweep.iloc[0], sweep.iloc[-1]
+    n_tr = int(fits.iloc[0]["n_train_races"]) if "n_train_races" in fits else 0
+    return f"""## Exploratory fits (train rows only, pilot-v0.1)
+
+Task 14 machinery exercised on the {n_tr} training races under the registered
+loss. **EXPLORATORY**: single meet, values conditional on the assumed start
+credit, informing priors only; the registered fits happen once on the expanded
+frozen dataset (see docs/calibration.md). Test rows untouched.
+
+| model | param | fitted | registry | train loss (pp) | registry loss (pp) | evals |
+|---|---|---|---|---|---|---|
+{rows}
+
+The fitted values barely improve on the registry guesses (third decimal in
+pp), which is itself informative: at this credit the registry shapes were
+already near the loss floor set by race-to-race dispersion.
+
+**The confound, quantified** (`fits_beta_x_credit_sweep.csv`, figure emp05):
+refitting beta_x across the registered credit band moves it from
+{lo['fitted_beta_x']:.3f} at {lo['start_credit_s']:.1f} s to
+{hi['fitted_beta_x']:.3f} at {hi['start_credit_s']:.1f} s. The fatigue
+parameter and the start credit are close to exchangeable on lap 1, so **no
+fitted fatigue value is interpretable until the start credit is measured** —
+the fit machinery is ready, and this is what it is waiting on.
+
+"""
+
+
+def write_report(ok, df_all, shapes, sens, stats, fitted=None) -> str:
     os.makedirs(OUT_RES, exist_ok=True)
 
     comp = []
@@ -411,7 +531,7 @@ Reading, with small-n caution:
    ({shapes['M3'][0]*100:.2f}%); where exactly it lands moves with the start
    credit (see below), which is now the decisive unknown.
 
-## Start effect (Phase 7)
+{_fits_section(fitted)}## Start effect (Phase 7)
 
 Mean lap-1 velocity {stats['v1_mean']:.3f} m/s vs mid-race {stats['vmid_mean']:.3f} m/s.
 Lap 1 is faster than the mid-race laps by {stats['implied_credit_mean']:.2f} ±
@@ -483,7 +603,11 @@ def main() -> None:
             fig_deviations(ok)]
     p4, sens, stats = start_effect(ok, shapes)
     made.append(p4)
-    report = write_report(ok, df_all, shapes, sens, stats)
+    fitted = fig_fitted_shapes(shapes)
+    if fitted is not None:
+        made.append(fitted[0])
+    report = write_report(ok, df_all, shapes, sens, stats,
+                          fitted=None if fitted is None else fitted[1:])
 
     for m in made:
         print("wrote", m)
