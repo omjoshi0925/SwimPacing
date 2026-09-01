@@ -150,6 +150,27 @@ def test_leakage_guard_raises_on_test_rows():
         calibration.assert_no_test_rows(smuggled, PROCESSED)
 
 
+def test_fit_beta_x_on_train_rows_matches_the_committed_report():
+    """
+    Determinism against the committed artifact: refitting beta_x on the
+    registered training rows must reproduce the value recorded in
+    results/validation/fits_train_pilot.csv, and that row must carry the
+    exploratory label and the registered seed.
+    """
+    rep = pd.read_csv("results/validation/fits_train_pilot.csv")
+    row = rep[rep["param"] == "beta_x"].iloc[0]
+    train, meta = calibration.training_frame(PROCESSED)
+    fit = calibration.fit_beta_x(calibration.observed_shares(train))
+    assert fit.value == pytest.approx(row["fitted_value"], abs=1e-3)
+    assert bool(row["exploratory"]) is True
+    assert int(row["seed"]) == 20260829
+    assert int(row["n_train_races"]) == meta["n_train_races"]
+    # every fitted row in the pilot report is exploratory and train-sized
+    fitted_rows = rep[rep["param"].astype(str).str.len() > 0]
+    assert fitted_rows["exploratory"].astype(bool).all()
+    assert (fitted_rows["n_train_races"] == meta["n_train_races"]).all()
+
+
 @pytest.mark.slow
 def test_fit_beta_E_recovers_the_generating_value():
     """Same recovery contract for M2's reserve coupling (registry 0.28)."""
