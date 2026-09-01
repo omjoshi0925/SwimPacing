@@ -1,5 +1,7 @@
 # Mathematical optimization of pacing in the 200 freestyle
 
+![tests](https://github.com/omjoshi0925/SwimPacing/actions/workflows/tests.yml/badge.svg)
+
 A differential-equation and constrained-optimization model of optimal pacing in
 the 200 yard freestyle (SCY), built to be validated against real race data.
 
@@ -78,13 +80,17 @@ Full numbers, tables and caveats in [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ```bash
 pip install -r requirements.txt
-python scripts/run_all.py          # every result and figure
-python scripts/run_all.py --quick  # coarser grids and fewer restarts
-python -m pytest tests -q          # verification suite
+python scripts/run_all.py                # every result and figure
+python scripts/run_all.py --quick        # coarser grids and fewer restarts
+python -m pytest tests -q                # full verification suite (~2 min)
+python -m pytest tests -q -m "not slow"  # quick subset (~6 s), what CI runs
 ```
 
-Runtime depends on hardware and on the selected analysis settings; `--quick`
-trades grid resolution and solver restarts for speed. Results land in
+Measured on this project's reference environment: the full suite is 108 tests
+in about 124 s, nearly all of it in two ODE-heavy tests carrying the `slow`
+marker; the remaining 106 run in about 6 s. For `run_all.py`, runtime depends
+on hardware and settings; `--quick` trades grid resolution and solver restarts
+for speed. Results land in
 `results/` as CSV, figures in `figures/` as PNG and PDF.
 
 ```bash
