@@ -175,11 +175,21 @@ def test_split_proportions_sum_to_one():
         assert np.allclose(P.sum(axis=1), 1.0, atol=1e-9)
 
 
-def test_start_correction_lowers_the_first_split_share():
-    """Crediting the dive to split 1 must make split 1 a smaller share, not larger."""
+def test_start_correction_raises_the_first_split_share():
+    """
+    The dive makes a recorded lap 1 FASTER than swimming it at pace, so
+    removing the dive (the corrected, free-swimming-equivalent race) must make
+    split 1 a LARGER share of a longer race. The original version of this test
+    pinned the opposite direction, which is how the sign error survived: the
+    error was consistent, not accidental.
+    """
     df, _ = preprocessing.process(FIXTURE)
     ok = df[df["usable"]]
-    assert (ok["P1_corrected"] < ok["P1"]).all()
+    assert (ok["P1_corrected"] > ok["P1"]).all()
+    # and the corrected race is longer by exactly the credit
+    T_corr = sum(ok[f"split{i}_time"] for i in range(1, 5)) + ok["start_offset_used"]
+    back = ok["P1_corrected"] * T_corr - ok["start_offset_used"]
+    assert np.allclose(back, ok["split1_time"], atol=1e-9)
 
 
 def test_half_difference_sign_matches_split_direction():

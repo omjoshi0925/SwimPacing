@@ -96,7 +96,9 @@ plus:
 | Column | Definition |
 |---|---|
 | `P1`…`P4` | `split_i / final_time`; sums to 1 |
-| `P1_corrected`…`P4_corrected` | as above after crediting `START_OFFSET_S` to split 1 |
+| `P1_corrected`…`P4_corrected` | free-swimming-equivalent shares: the dive credit is ADDED back to split 1 (`split1 + S`) and shares taken over the lengthened race, making them comparable with model raced fractions |
+| `drop_1_2_corrected` | `drop_1_2 - S`: the lap-1-to-2 drop attributable to pacing rather than the dive; the fair M3-vs-M4 discriminator |
+| `drop_ratio_corrected` | `drop_1_2_corrected / drop_3_4` |
 | `first_half` | `split1_time + split2_time` |
 | `second_half` | `split3_time + split4_time` |
 | `half_difference` | `second_half - first_half`; positive means positive split |

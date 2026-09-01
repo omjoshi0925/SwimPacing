@@ -251,7 +251,15 @@ def add_pacing_metrics(df: pd.DataFrame,
     for i in range(1, 5):
         df[f"P{i}"] = s[i - 1] / T
 
-    corrected = [s[0] - start_offset, s[1], s[2], s[3]]
+    # Recorded lap 1 contains the dive, which makes it FASTER than swimming
+    # that lap at race pace, so the free-swimming-equivalent ("corrected")
+    # race ADDS the credit back to lap 1 (the model.recorded_to_raced
+    # direction), and the corrected shares are then comparable with model
+    # raced split fractions. A previous version SUBTRACTED the credit here,
+    # applying the model-side transform to the data as well and thereby
+    # double-counting the credit by 2*offset on lap 1. Fixed 2026-09-01; see
+    # the amendment log in docs/validation_plan.md.
+    corrected = [s[0] + start_offset, s[1], s[2], s[3]]
     T_corr = sum(corrected)
     for i in range(1, 5):
         df[f"P{i}_corrected"] = corrected[i - 1] / T_corr
@@ -275,6 +283,13 @@ def add_pacing_metrics(df: pd.DataFrame,
     df["drop_3_4"] = s[3] - s[2]
     with np.errstate(divide="ignore", invalid="ignore"):
         df["drop_ratio"] = df["drop_1_2"] / df["drop_3_4"]
+
+    # The raw lap-1-to-2 drop embeds the dive (lap 1 is dive-fast), so the
+    # fair discriminator credits it back: this is the drop the swimmer's
+    # PACING produced, and the one to compare against M3/M4 predictions.
+    df["drop_1_2_corrected"] = df["drop_1_2"] - start_offset
+    with np.errstate(divide="ignore", invalid="ignore"):
+        df["drop_ratio_corrected"] = df["drop_1_2_corrected"] / df["drop_3_4"]
 
     df["performance_improvement"] = (
         (df["pre_race_pb_s"] - df["final_time_s"]) / df["pre_race_pb_s"]
