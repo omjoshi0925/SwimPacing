@@ -104,7 +104,7 @@ def fig_profile_vs_models(ok: pd.DataFrame, shapes: dict) -> str:
 
     for ax, suffix, title in [
         (axL, "", "recorded shares (dive included in lap 1)"),
-        (axR, "_corrected", f"start-corrected (lap 1 credited {START_OFFSET_S:.1f} s)"),
+        (axR, "_corrected", f"free-swimming equivalent (+{START_OFFSET_S:.1f} s to lap 1)"),
     ]:
         P = np.vstack([ok[f"P{i}{suffix}"].to_numpy() for i in range(1, 5)]).T * 100
         mean, sd = P.mean(axis=0), P.std(axis=0, ddof=1)
@@ -197,7 +197,10 @@ def start_effect(ok: pd.DataFrame, shapes: dict):
     laps = np.vstack([ok[f"split{i}_time"].to_numpy() for i in range(1, 5)]).T
     for off in offsets:
         lapsc = laps.copy()
-        lapsc[:, 0] -= off
+        # free-swimming equivalent: the dive credit is ADDED back to lap 1
+        # (model.recorded_to_raced); the pre-2026-09-01 version subtracted it,
+        # double-counting the credit against raced-space model shapes.
+        lapsc[:, 0] += off
         P = lapsc / lapsc.sum(axis=1, keepdims=True)
         row = {"offset_s": off}
         for name in MODEL_ORDER:
@@ -239,10 +242,12 @@ def start_effect(ok: pd.DataFrame, shapes: dict):
     ax2.set_title("Model ranking across the start-credit band", loc="left", pad=8)
     ax2.legend(loc="upper right", fontsize=8.5)
 
-    note = ("Left: lap 1 is faster than the mid-race laps by far more than the dive "
-            "alone explains; the excess is pacing and fresh-swimmer effects, which is "
-            "why the credit must not be estimated from lap differences. Right: the "
-            "M4 < M3 < M0/M1 < M2 ordering holds across the whole 1.2-2.8 s band.")
+    note = ("Left: the raw lap-1 advantage over mid-race laps, against the elite-"
+            "anchored model credit (line) and the dive value implied by elite 15 m "
+            "start times at THIS field's race pace (band). Right: mean RMSE of "
+            "free-swimming-equivalent shares against each model across the "
+            "start-credit band; where the curves cross, the ranking depends on the "
+            "credit, which is why measuring it beats assuming it.")
     path = _finish(fig, (ax1, ax2), "emp04_start_effect", note, OUT_FIG)
 
     stats = {
@@ -281,6 +286,26 @@ def write_report(ok, df_all, shapes, sens, stats) -> str:
     P_raw = [ok[f"P{i}"].mean() * 100 for i in range(1, 5)]
     P_cor = [ok[f"P{i}_corrected"].mean() * 100 for i in range(1, 5)]
 
+    # sign check and mean-shape residuals in the free-swimming-equivalent space
+    n_pos_corr = int((ok["P4_corrected"] > ok["P1_corrected"]).sum())
+    mean_shape = np.array([ok[f"P{i}_corrected"].mean() for i in range(1, 5)])
+    resid = {m: float(np.sqrt(np.mean((mean_shape - shapes[m]) ** 2)) * 100)
+             for m in MODEL_ORDER}
+
+    if stats["ranking_stable"]:
+        band_txt = (f"the best-fitting model is **{stats['best_everywhere']} at "
+                    f"every value** (see pilot_start_sensitivity.csv). The "
+                    f"descriptive ranking does not depend on the weakest number "
+                    f"in the model.")
+    else:
+        firsts = ", ".join(f"{r.best} at {r.offset_s:.1f} s"
+                           for r in sens.itertuples()
+                           if r.Index in (0, len(sens) - 1))
+        band_txt = (f"**the winner changes across the band** ({firsts}; full "
+                    f"grid in pilot_start_sensitivity.csv). The model ranking "
+                    f"therefore DEPENDS on the start credit, which promotes "
+                    f"measuring it from housekeeping to decisive.")
+
     lines = f"""# Pilot empirical report — first real races through the pipeline
 
 Date: 2026-08-31. Dataset version: **pilot-v0.1** (see data provenance below).
@@ -294,6 +319,19 @@ was fitted to any of this data, the swimmer-level train/test split has been
 generated and recorded but **the test set has not been evaluated against any
 fitted model**, and with n = {len(ok)} races from a single meet nothing here is
 a strong conclusion.
+
+## Correction (2026-09-01)
+
+An earlier version of this report compared model raced-space shapes against
+observed shares that had the start credit SUBTRACTED from lap 1 — the
+model-side transform applied to the data as well, double-counting the credit
+by twice its value on lap 1. All corrected quantities now ADD the credit back
+to lap 1 (the free-swimming-equivalent race; `model.recorded_to_raced`).
+Every number below reflects the fix. Superseded findings: "every model is
+beaten by the data's own front-loadedness" and "the observed lap-1 advantage
+is ~1 s beyond the dive value" were artifacts of the double-count; the model
+RMSEs reported earlier (M4 1.40 pp etc.) were inflated by it. The amendment
+is logged in `docs/validation_plan.md`.
 
 ## Dataset
 
@@ -320,13 +358,15 @@ plausibility, or duplication — the official file is internally consistent.
 | | lap 1 | lap 2 | lap 3 | lap 4 |
 |---|---|---|---|---|
 | recorded share | {P_raw[0]:.2f}% | {P_raw[1]:.2f}% | {P_raw[2]:.2f}% | {P_raw[3]:.2f}% |
-| start-corrected ({START_OFFSET_S:.1f} s) | {P_cor[0]:.2f}% | {P_cor[1]:.2f}% | {P_cor[2]:.2f}% | {P_cor[3]:.2f}% |
+| free-swimming equivalent (+{START_OFFSET_S:.1f} s to lap 1) | {P_cor[0]:.2f}% | {P_cor[1]:.2f}% | {P_cor[2]:.2f}% | {P_cor[3]:.2f}% |
 
 Mean half difference +{ok['half_difference'].mean():.2f} s (positive split).
-Mean lap-1 to lap-2 drop +{ok['drop_1_2'].mean():.2f} s; mean lap-3 to lap-4
-drop {ok['drop_3_4'].mean():+.2f} s. The fade is overwhelmingly front-loaded,
+Mean lap-1 to lap-2 drop +{ok['drop_1_2'].mean():.2f} s recorded, of which the
+dive accounts for {START_OFFSET_S:.1f} s, leaving
++{ok['drop_1_2_corrected'].mean():.2f} s of genuine pacing fade; mean lap-3 to
+lap-4 drop {ok['drop_3_4'].mean():+.2f} s. The pacing fade is front-loaded,
 and the final lap is on average slightly FASTER than the third — a finishing
-kick that none of the cost-based models produces.
+kick that no cost-based model produces.
 
 External check: Robertson et al. (2009), 200 m free international finalists
 (men, LCM), show the same family of shape — laps 23.5 / 25.2 / 25.7 / 25.6% —
@@ -348,17 +388,23 @@ Start-corrected RMSE against each model's predicted split distribution:
 
 Reading, with small-n caution:
 
-1. **M2 is contradicted.** Its predicted negative split has the wrong sign
-   against every single race. This was the pre-registered expectation, and it
-   is the one claim n = {len(ok)} can support, because it is a sign, not a
-   magnitude.
-2. **The front-loaded family (M4) tracks the data best**, and the observed
-   drop pattern (large lap-1 to 2, none lap-3 to 4) is qualitatively M4's
-   signature rather than M3's even fade. Ranking, not proof.
-3. **Every model is beaten by the data's own front-loadedness.** Observed
-   corrected lap-1 share ({P_cor[0]:.2f}%) is below even M4's prediction
-   ({shapes['M4'][0]*100:.2f}%). Either the start credit is too small, or a
-   mechanism is missing (see below), or both.
+1. **M2 is contradicted.** It predicts a negative split; {n_pos_corr} of
+   {len(ok)} races are positively split in the free-swimming-equivalent space.
+   This was the pre-registered expectation, and it is the one claim
+   n = {len(ok)} can support, because it is a sign, not a magnitude.
+2. **The positive-split family fits closely, and M4 vs M3 is not settled by
+   RMSE.** Against the mean observed shape the residuals are
+   M4 {resid['M4']:.2f} pp and M3 {resid['M3']:.2f} pp — a gap far inside
+   race-to-race noise. The sharper discriminator is the drop pattern: the
+   pacing fade is concentrated between laps 1 and 2
+   (+{ok['drop_1_2_corrected'].mean():.2f} s) with none at the end
+   ({ok['drop_3_4'].mean():+.2f} s), which is M4's signature (predicted
+   0.99 s / 0.24 s) rather than M3's even fade (0.53 s / 0.49 s).
+3. **The observed mean shape sits ON the front-loaded model family.** At the
+   elite-anchored credit the corrected lap-1 share ({P_cor[0]:.2f}%) lands
+   between M4 ({shapes['M4'][0]*100:.2f}%) and M0 (25.00%), close to M3
+   ({shapes['M3'][0]*100:.2f}%); where exactly it lands moves with the start
+   credit (see below), which is now the decisive unknown.
 
 ## Start effect (Phase 7)
 
@@ -366,25 +412,29 @@ Mean lap-1 velocity {stats['v1_mean']:.3f} m/s vs mid-race {stats['vmid_mean']:.
 Lap 1 is faster than the mid-race laps by {stats['implied_credit_mean']:.2f} ±
 {stats['implied_credit_sd']:.2f} s.
 
-The literature-implied dive value for elite males is only about
-{stats['lit_band'][0]:.1f}-{stats['lit_band'][1]:.1f} s at this field's race
-pace (measured 15 m start times of 6.1-6.4 s against covering 15 m at race
-speed). **The observed lap-1 advantage is therefore roughly 1 s larger than
-the dive alone explains.** The excess is pacing behaviour and fresh-swimmer
-physiology, which is exactly why the start credit must come from start-time
-measurements and never be estimated from lap differences — doing so would
-absorb genuine pacing into the correction.
+The dive value implied by elite 15 m start times at THIS field's race pace is
+{stats['lit_band'][0]:.1f}-{stats['lit_band'][1]:.1f} s (measured 15 m start
+times of 6.1-6.4 s against covering 15 m at the field's mean race speed).
+**The observed lap-1 advantage ({stats['implied_credit_mean']:.2f} s) is
+consistent with the dive alone.** Note the tension inside the constant-credit
+assumption: the model's elite-anchored {START_OFFSET_S:.1f} s is what the dive
+is worth at elite pace, while at this slower field's pace the same start is
+worth about {0.5*(stats['lit_band'][0]+stats['lit_band'][1]):.1f} s, because
+the dive's fixed 15 m advantage is measured against slower swimming. A single
+constant cannot be right for both. The credit must still come from start-time
+measurements rather than lap differences — estimating it from lap differences
+would absorb genuine pacing into the correction.
 
-Ranking stability: across the whole pre-registered start-credit band
-(1.2-2.8 s), the best-fitting model is **{stats['best_everywhere']} at every
-value** (see pilot_start_sensitivity.csv). The descriptive ranking does not
-depend on the weakest number in the model.
+Ranking across the pre-registered start-credit band (1.2-2.8 s):
+{band_txt}
 
-Verdict on the Phase 7 question: **yes, a dedicated start term appears
-necessary.** A constant credit is serviceable for shape comparison, but lap 1
-mixes three separable effects (dive, underwater share, fresh-swimmer cost) that
-an eight-segment model with an explicit start phase should separate. beta_x
-fitted without that separation would absorb the residual.
+Verdict on the Phase 7 question: **a dedicated, pace-aware start term is the
+single highest-leverage improvement.** The lap-1 advantage no longer exceeds
+the dive value, so no extra mechanism is required there; but the model ranking
+moves with the assumed credit, and a constant credit is provably wrong across
+paces. An explicit start phase (Task 19), or at minimum a per-race
+S(v) = 15/v - t15 credit, is what removes this degree of freedom. beta_x or
+gamma fitted without it will absorb the residual.
 
 ## Train/test split (generated, not consumed)
 
@@ -432,8 +482,9 @@ def main() -> None:
     for m in made:
         print("wrote", m)
     print("wrote", report)
-    print("\nbest model at every start credit 1.2-2.8 s:",
-          stats["best_everywhere"], "| ranking stable:", stats["ranking_stable"])
+    print("\nranking stable across start-credit band:", stats["ranking_stable"],
+          "| best per credit:",
+          {float(r.offset_s): r.best for r in sens.itertuples()})
 
 
 if __name__ == "__main__":
