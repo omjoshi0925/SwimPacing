@@ -232,19 +232,21 @@ STRATEGY_SHAPES = {
     "very_aggressive":      (1.150, 1.000, 0.950, 0.900),
     "conservative_opening": (0.940, 0.990, 1.020, 1.050),
 
-    # OBSERVED shapes. These replaced the original hand-built placeholders on
-    # 2026-08-31; both are now traceable to real races. Velocity shapes are
-    # normalized to mean 1, computed as 1/t from mean lap times after
-    # crediting START_OFFSET_S = 1.80 s back to lap 1.
+    # OBSERVED shapes, traceable to real races. Velocity shapes are normalized
+    # to mean 1, computed as 1/t from mean lap times in the free-swimming-
+    # equivalent space: the dive credit (start_credit_s = 1.80 s) is ADDED
+    # back to recorded lap 1 before converting, per model.recorded_to_raced.
+    # (Recomputed 2026-09-01: the previous tuples subtracted the credit,
+    # the same sign error fixed in preprocessing; see validation_plan log.)
     #
     # elite: Robertson, Pyne, Hopkins & Anson (2009), J Sports Sci 27(4),
-    # men's 200 m free international finalists, mean laps
+    # men's 200 m free international finalists, mean recorded laps
     # 25.33/27.24/27.74/27.61 s (LCM; course differs from SCY, noted).
-    "observed_elite_corrected": (1.1223, 0.9694, 0.9519, 0.9564),
+    "observed_elite_corrected": (1.0110, 1.0069, 0.9887, 0.9934),
     # pilot: this project's own 80 usable races (male 15-18, SCY, Orinda SC
-    # Senior Open Jan 2025 official splits), mean laps
-    # 26.49/29.19/30.21/29.98 s. See results/validation/.
-    "observed_pilot_corrected": (1.1479, 0.9703, 0.9373, 0.9445),
+    # Senior Open Jan 2025 official splits), mean recorded laps
+    # 26.47/29.18/30.21/29.98 s. See results/validation/.
+    "observed_pilot_corrected": (1.0397, 1.0071, 0.9728, 0.9804),
 }
 
 
