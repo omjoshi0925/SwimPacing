@@ -31,12 +31,17 @@ YARD_M = 0.9144
 
 @dataclass(frozen=True)
 class Course:
-    """Geometry of the raced event."""
+    """Geometry of the raced event, plus its start credit."""
 
     name: str
     split_distance_m: float  # distance covered by one recorded split
     n_splits: int
     pool_length_m: float
+    #: Seconds the dive start is worth on recorded lap 1 relative to swimming
+    #: that lap at race pace (Category B, literature-anchored; see
+    #: docs/parameters.md). Elite-anchored default; the dive is worth MORE at
+    #: slower field paces, since S(v) ~ 15/v - t15 grows as v falls.
+    start_credit_s: float = 1.80
 
     @property
     def total_distance_m(self) -> float:
@@ -365,9 +370,11 @@ WORKING = MODELS["M3_position_fatigue"].with_(label="working_M1518")
 # ---------------------------------------------------------------------------
 
 # The model describes free swimming. A recorded split 1 also contains the dive
-# start and the first underwater, which are worth roughly 1.5-2.5 s in SCY
-# relative to a flying push at race pace. START_OFFSET_S is subtracted from
-# model split 1 when model output is compared with recorded splits. It is NOT
-# applied inside the optimizer, because it is a fixed time credit that does not
-# depend on the chosen velocities and therefore cannot shift the optimum.
-START_OFFSET_S = 1.80
+# start and the first underwater, which make recorded lap 1 FASTER than
+# swimming it at race pace — measured elite 15 m start times of 6.1-6.4 s
+# against covering 15 m at elite race speed imply a value of roughly 1.7-3.0 s,
+# and more at slower field paces. The credit now lives on the Course
+# (`SCY_200.start_credit_s`); it is NOT applied inside the optimizer, because a
+# fixed time credit does not depend on the chosen velocities and therefore
+# cannot shift the optimum. START_OFFSET_S remains as a legacy alias.
+START_OFFSET_S = SCY_200.start_credit_s
