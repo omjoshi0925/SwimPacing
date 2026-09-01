@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this model, code, or dataset tooling, please cite it as below."
+type: software
+title: "Mathematical Optimization of Pacing Strategies in Competitive 200 Freestyle Swimming"
+authors:
+  - family-names: Joshi
+    given-names: Om
+repository-code: "https://github.com/omjoshi0925/SwimPacing"
+license: MIT
+version: 0.1.0
+date-released: "2026-09-01"
+abstract: >-
+  A differential-equation and constrained-optimization model of optimal pacing
+  in the 200 yard freestyle, with five competing fatigue models (M0-M4)
+  validated against real, anonymized competitive race data under a
+  pre-registered analysis plan.
