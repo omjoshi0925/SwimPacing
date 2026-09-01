@@ -10,6 +10,15 @@ start-transform sign error corrected and band extended to 3.4 s (see §7); at
 both amendment times no data had been used for calibration and the test set
 remained unopened.
 
+Declared exploratory analysis, 2026-09-01: fatigue parameters (beta_x, gamma,
+beta_E) were fitted on the TRAINING side of pilot-v0.1 only, under the §3
+loss, to exercise the Task 14 machinery and quantify the start-credit
+confound. These fits are labeled exploratory in
+`results/validation/fits_train_pilot.csv` and are NOT the registered
+calibration, which runs once on the training side of the expanded frozen
+dataset. The held-out test rows remain unopened; `src/calibration.py`
+enforces this structurally (CalibrationLeakageError).
+
 ---
 
 ## 1. Research question
