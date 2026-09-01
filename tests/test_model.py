@@ -251,6 +251,7 @@ def test_position_fatigue_gives_a_positive_split():
     assert P[3] - P[0] > 0.005
 
 
+@pytest.mark.slow
 def test_reserve_fatigue_gives_a_negative_split():
     """
     The refutable prediction. Holding back early keeps the reserve high and

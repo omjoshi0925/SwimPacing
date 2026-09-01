@@ -211,6 +211,7 @@ def test_performance_improvement_sign():
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.slow
 def test_cached_predictions_match_a_live_solve():
     """
     M2 and M4 are cached because each takes about a minute to solve. If MODELS
