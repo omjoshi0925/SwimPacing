@@ -112,6 +112,103 @@ class FitResult:
         return self.loss_pp <= self.baseline_pp + 1e-12
 
 
+class CalibrationLeakageError(RuntimeError):
+    """Raised when a fitting path would see held-out test rows."""
+
+
+def training_frame(processed_csv: str, seed: int | None = None):
+    """
+    The ONLY sanctioned data source for fitting: loads the processed dataset,
+    keeps usable rows, applies the registered swimmer-grouped split, and
+    returns (train_rows, meta). Test rows never leave this function.
+    """
+    from . import data_split
+
+    seed = data_split.DEFAULT_SEED if seed is None else seed
+    df = pd.read_csv(processed_csv, low_memory=False)
+    ok = df[df["usable"] == True]  # noqa: E712
+    train, test = data_split.split_by_swimmer(ok, seed=seed)
+    meta = {
+        "seed": seed,
+        "n_train_races": int(len(train)),
+        "n_train_swimmers": int(train["swimmer_id"].nunique()),
+        "n_test_races_unopened": int(len(test)),
+        "start_credit_s": float(train["start_offset_used"].iloc[0]),
+    }
+    _TEST_SWIMMERS[(processed_csv, seed)] = frozenset(test["swimmer_id"])
+    return train, meta
+
+
+#: test-side swimmer ids per (dataset, seed), populated by training_frame so
+#: the guard can check frames without re-reading the file.
+_TEST_SWIMMERS: dict = {}
+
+
+def assert_no_test_rows(df: pd.DataFrame, processed_csv: str,
+                        seed: int | None = None) -> None:
+    """
+    Structural leakage guard: raises CalibrationLeakageError if any row in
+    `df` belongs to a held-out test swimmer under the registered split.
+    """
+    from . import data_split
+
+    seed = data_split.DEFAULT_SEED if seed is None else seed
+    key = (processed_csv, seed)
+    if key not in _TEST_SWIMMERS:
+        training_frame(processed_csv, seed)  # populates the registry
+    bad = set(df["swimmer_id"]) & set(_TEST_SWIMMERS[key])
+    if bad:
+        raise CalibrationLeakageError(
+            f"{len(bad)} held-out test swimmers present in a fitting frame "
+            f"(seed {seed}). The registered split forbids this; fit on "
+            f"training_frame(...) output only.")
+
+
+def fit_report_frame(fits: list, meta: dict,
+                     baselines: dict | None = None) -> pd.DataFrame:
+    """
+    One auditable table for a fitting run: every fitted parameter with its
+    loss, the registry value it started from, the eval budget it spent, and
+    the run metadata (dataset version, seed, start credit, train counts,
+    exploratory flag, UTC timestamp). `baselines` adds unfitted reference
+    rows (e.g. M0's loss) so the table stands alone.
+    """
+    from datetime import datetime, timezone
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    rows = []
+    for name, loss in (baselines or {}).items():
+        rows.append({"model": name, "param": "", "fitted_value": np.nan,
+                     "registry_value": np.nan, "train_loss_pp": round(loss, 4),
+                     "registry_loss_pp": round(loss, 4), "n_evals": 0,
+                     "shape": "", "bounds": "", "notes": "no free parameter"})
+    for f in fits:
+        rows.append({
+            "model": f.model, "param": f.param,
+            "fitted_value": round(f.value, 6),
+            "registry_value": float(getattr(MODELS[f.model], f.param)),
+            "train_loss_pp": round(f.loss_pp, 4),
+            "registry_loss_pp": round(f.baseline_pp, 4),
+            "n_evals": f.n_evals,
+            "shape": "/".join(f"{s:.4f}" for s in f.shape),
+            "bounds": f"[{f.bounds[0]:g}, {f.bounds[1]:g}]",
+            "notes": f.notes,
+        })
+    out = pd.DataFrame(rows)
+    for k, v in meta.items():
+        out[k] = v
+    out["generated_utc"] = stamp
+    return out
+
+
+def write_fit_report(path: str, fits: list, meta: dict,
+                     baselines: dict | None = None) -> pd.DataFrame:
+    """Write the fit-report table to CSV and return it."""
+    frame = fit_report_frame(fits, meta, baselines)
+    frame.to_csv(path, index=False)
+    return frame
+
+
 def m3_shape(beta_x: float, course: Course = SCY_200) -> np.ndarray:
     """
     Raced-space split fractions of the position-fatigue model at `beta_x`.
