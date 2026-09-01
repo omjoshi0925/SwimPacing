@@ -125,6 +125,87 @@ def m3_shape(beta_x: float, course: Course = SCY_200) -> np.ndarray:
     return np.asarray(_model.optimal_solution_closed_form(sw, course)["split_fractions"])
 
 
+def _ode_shape(registry_key: str, param: str, value: float,
+               course: Course, cache: dict, n_starts_ladder=(1, 2, 5)) -> np.ndarray:
+    """
+    Raced-space split fractions of an ODE model (M2/M4) with one fatigue
+    parameter overridden. Solves through `optimization.optimize_full`, walking
+    up a restart ladder on failure (the same remedy the recalibration work
+    needed for M4 at tight parameters), and caching by rounded value because
+    scalar minimizers revisit points.
+    """
+    from . import optimization  # local import; optimization pulls the solver stack
+
+    key = (registry_key, param, round(float(value), 6))
+    hit = cache.get(key)
+    if hit is not None:
+        return hit
+    sw = MODELS[registry_key].with_(**{param: float(value)})
+    last_err = None
+    for n_starts in n_starts_ladder:
+        try:
+            sol = optimization.optimize_full(sw, course, n_starts=n_starts)
+            shape = np.asarray(sol["split_fractions"], dtype=float)
+            cache[key] = shape
+            return shape
+        except Exception as e:  # noqa: BLE001 - deliberate ladder, re-raised below
+            last_err = e
+    raise RuntimeError(
+        f"ODE solve failed for {registry_key} {param}={value:.4f} at every "
+        f"restart count {n_starts_ladder}") from last_err
+
+
+def _fit_ode_param(registry_key: str, param: str, shares: np.ndarray,
+                   bounds: tuple, course: Course, coarse: int,
+                   refine_iters: int) -> FitResult:
+    """
+    Shared 1-D fitter for the ODE models: coarse grid to bracket the minimum,
+    then bounded Brent refinement inside the bracketing interval. Every
+    objective evaluation is an ODE optimization (seconds), so the eval budget
+    is explicit: `coarse + refine_iters` solves, cached against revisits.
+    """
+    shares = np.asarray(shares, dtype=float)
+    cache: dict = {}
+    evals = {"n": 0}
+
+    def objective(v: float) -> float:
+        evals["n"] += 1
+        return mean_rmse_pp(_ode_shape(registry_key, param, v, course, cache),
+                            shares)
+
+    grid = np.linspace(bounds[0], bounds[1], coarse)
+    losses = np.array([objective(v) for v in grid])
+    i = int(np.argmin(losses))
+    lo = grid[max(i - 1, 0)]
+    hi = grid[min(i + 1, coarse - 1)]
+    res = minimize_scalar(objective, bounds=(lo, hi), method="bounded",
+                          options={"xatol": 2e-3, "maxiter": refine_iters})
+    # the refiner can stop above a grid point; keep whichever is truly best
+    cand = [(float(res.fun), float(res.x)), (float(losses[i]), float(grid[i]))]
+    best_loss, best_v = min(cand)
+    registry_value = float(getattr(MODELS[registry_key], param))
+    return FitResult(
+        model=registry_key, param=param, value=best_v, loss_pp=best_loss,
+        baseline_pp=objective(registry_value),
+        shape=tuple(np.round(_ode_shape(registry_key, param, best_v, course,
+                                        cache), 6)),
+        n_races=int(shares.shape[0]), n_evals=evals["n"], bounds=tuple(bounds),
+        notes=f"ODE inner solve; {coarse}-point grid + bounded Brent; cached",
+    )
+
+
+def fit_gamma(shares: np.ndarray, bounds: tuple = (0.02, 0.45),
+              course: Course = SCY_200, coarse: int = 7,
+              refine_iters: int = 10) -> FitResult:
+    """
+    Fit M4's velocity-ceiling coupling `gamma`. The lower bound stays off zero
+    because at gamma = 0 the ceiling never binds and the shape degenerates to
+    even pacing, where the parameter is unidentified.
+    """
+    return _fit_ode_param("M4_velocity_ceiling", "gamma", shares, bounds,
+                          course, coarse, refine_iters)
+
+
 def fit_beta_x(shares: np.ndarray, bounds: tuple = (0.0, 1.5),
                course: Course = SCY_200) -> FitResult:
     """
