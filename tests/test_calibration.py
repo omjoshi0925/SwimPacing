@@ -71,3 +71,41 @@ def test_observed_shares_refuses_missing_rows():
     df = pd.DataFrame({c: [0.25, np.nan] for c in calibration.OBS_COLS})
     with pytest.raises(ValueError, match="missing"):
         calibration.observed_shares(df)
+
+
+# ---------------------------------------------------------------------------
+# Synthetic recovery: fitters must find parameters they generated
+# ---------------------------------------------------------------------------
+
+
+def test_fit_beta_x_recovers_the_generating_value_exactly():
+    """Noise-free: shares generated from beta_x = 0.31 must refit to 0.31."""
+    truth = 0.31
+    shares = np.tile(calibration.m3_shape(truth), (25, 1))
+    fit = calibration.fit_beta_x(shares)
+    assert fit.value == pytest.approx(truth, abs=1e-4)
+    assert fit.loss_pp == pytest.approx(0.0, abs=1e-6)
+
+
+def test_fit_beta_x_recovers_under_realistic_noise():
+    """
+    Race-level noise at the pilot's observed dispersion (sd ~0.5 pp per share)
+    must not move the fitted value materially: the fit reads the mean shape,
+    and the noise averages out across races.
+    """
+    truth = 0.31
+    rng = np.random.default_rng(20260829)
+    base = calibration.m3_shape(truth)
+    noise = rng.normal(0.0, 0.005, size=(60, 4))
+    noise -= noise.mean(axis=1, keepdims=True)  # keep each row summing to 1
+    shares = base[None, :] + noise
+    fit = calibration.fit_beta_x(shares)
+    assert fit.value == pytest.approx(truth, abs=0.03)
+    assert fit.improved() or fit.baseline_pp == pytest.approx(fit.loss_pp, abs=1e-9)
+
+
+def test_fit_beta_x_is_deterministic():
+    shares = np.tile(calibration.m3_shape(0.22), (10, 1))
+    a = calibration.fit_beta_x(shares)
+    b = calibration.fit_beta_x(shares)
+    assert a.value == b.value and a.loss_pp == b.loss_pp and a.n_evals == b.n_evals
