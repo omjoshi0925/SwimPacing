@@ -513,14 +513,38 @@ def split_fractions(v, course: Course = SCY_200):
     return t / t.sum()
 
 
+def raced_to_recorded(t_splits, course: Course = SCY_200):
+    """
+    Model free-swimming splits -> recorded-split space.
+
+    The dive start makes a recorded lap 1 FASTER than swimming that lap at
+    race pace, so mapping model output into recorded space credits the dive:
+    lap 1 loses `course.start_credit_s`. A constant time credit cannot change
+    which velocity profile is optimal; these transforms exist only so model
+    output and real split sheets can be laid side by side in ONE space.
+    """
+    return apply_start_offset(t_splits, course.start_credit_s)
+
+
+def recorded_to_raced(s_splits, course: Course = SCY_200):
+    """
+    Recorded splits -> free-swimming-equivalent space.
+
+    Inverse of `raced_to_recorded`: removing the dive from a recorded race
+    means lap 1 would have taken LONGER swum at pace, so lap 1 gains
+    `course.start_credit_s`. Exact round-trip with `raced_to_recorded`.
+    """
+    out = np.array(s_splits, dtype=float).copy()
+    out[0] += course.start_credit_s
+    return out
+
+
 def apply_start_offset(t_splits, offset: float):
     """
-    Convert model free-swimming splits into comparable recorded splits by
-    crediting the dive start and first underwater to split 1.
+    Raced -> recorded with an explicit offset (legacy entry point).
 
-    This is a constant subtracted from split 1, so it shifts T by a constant
-    and cannot change which velocity profile is optimal. It exists only so
-    that model output can be laid next to real split sheets.
+    Prefer `raced_to_recorded` / `recorded_to_raced`, which take the credit
+    from the course and name their direction.
     """
     out = np.array(t_splits, dtype=float).copy()
     out[0] -= offset
