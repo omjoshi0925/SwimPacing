@@ -5,8 +5,10 @@ pre-registration. Every decision below is fixed now; departures from it later
 must be labelled as exploratory rather than confirmatory.
 
 Date written: 2026-08-29. Races in hand at time of writing: **0**.
-Amendment log: 2026-08-31, start-credit band widened (see §7); no data had been
-used for calibration and the test set remained unopened at amendment time.
+Amendment log: 2026-08-31, start-credit band widened (see §7). 2026-09-01,
+start-transform sign error corrected and band extended to 3.4 s (see §7); at
+both amendment times no data had been used for calibration and the test set
+remained unopened.
 
 ---
 
@@ -137,11 +139,23 @@ fatigue parameter and overstate it.
 Pre-registered handling:
 
 1. Correct split 1 by `START_OFFSET_S` before computing `P_i`.
-2. Report every headline result across a sensitivity band of 1.2 s to 2.8 s.
+2. Report every headline result across a sensitivity band of 1.2 s to 3.4 s.
    [AMENDED 2026-08-31, before any calibration or test-set use: the original
    band was 1.2-2.4 s. Measured elite 15 m start times (Tor 2014; Rudnik 2023)
    imply a dive value up to ~3.0 s at this population's race pace, so the band
    was widened upward. Recorded as an amendment rather than silently edited.]
+   [AMENDED 2026-09-01, before any calibration or test-set use, two entries.
+   (a) The implementation of item 1 was found to SUBTRACT the credit from
+   observed lap 1 — the model-side transform applied to the data as well,
+   double-counting the credit by twice its value. Corrected to ADD the credit
+   back to lap 1 (the free-swimming-equivalent space, `model.recorded_to_raced`).
+   The registered metric definition (§3) is unchanged; the implementation now
+   matches its stated intent, and all pilot outputs were regenerated.
+   (b) The band's upper end moves 2.8 → 3.4 s: the same measured 15 m start
+   times give S = 15/v - t15 ≈ 3.1-3.4 s at the pilot field's mean race pace,
+   and a band excluding the field-pace dive value cannot honor item 3. The
+   extension can only widen, never narrow, the set of rankings item 3 must
+   confront.]
 3. If the model ranking changes anywhere inside that band, **the conclusion is
    that the data cannot distinguish the models given start uncertainty.** Report
    that rather than picking the value that gives the cleanest answer.

@@ -190,8 +190,9 @@ def start_effect(ok: pd.DataFrame, shapes: dict):
     lit_lo = 15.0 / v_race.mean() - 6.41   # Rudnik et al. 2023, intl males
     lit_hi = 15.0 / v_race.mean() - 6.12   # Tor, Pease & Ball 2014, elite males
 
-    # Sensitivity of the model ranking to the start credit.
-    offsets = np.round(np.arange(1.2, 2.81, 0.2), 2)
+    # Sensitivity of the model ranking to the start credit, over the registered
+    # band (1.2-3.4 s after the 2026-09-01 amendment; see validation_plan §7).
+    offsets = np.round(np.arange(1.2, 3.41, 0.2), 2)
     rows = []
     T = ok["final_time_s"].to_numpy()
     laps = np.vstack([ok[f"split{i}_time"].to_numpy() for i in range(1, 5)]).T
@@ -257,6 +258,7 @@ def start_effect(ok: pd.DataFrame, shapes: dict):
         "lit_band": (float(lit_lo), float(lit_hi)),
         "ranking_stable": bool((sens["best"] == sens["best"].iloc[0]).all()),
         "best_everywhere": str(sens["best"].iloc[0]),
+        "band": (float(offsets[0]), float(offsets[-1])),
     }
     return path, sens, stats
 
@@ -302,9 +304,12 @@ def write_report(ok, df_all, shapes, sens, stats) -> str:
                            for r in sens.itertuples()
                            if r.Index in (0, len(sens) - 1))
         band_txt = (f"**the winner changes across the band** ({firsts}; full "
-                    f"grid in pilot_start_sensitivity.csv). The model ranking "
-                    f"therefore DEPENDS on the start credit, which promotes "
-                    f"measuring it from housekeeping to decisive.")
+                    f"grid in pilot_start_sensitivity.csv). Registered clause "
+                    f"§7.3 therefore applies and its wording is the conclusion "
+                    f"of record: **the data cannot distinguish the surviving "
+                    f"models given start uncertainty** — no credit value gets "
+                    f"picked for giving a cleaner answer. Measuring the start "
+                    f"is promoted from housekeeping to decisive.")
 
     lines = f"""# Pilot empirical report — first real races through the pipeline
 
@@ -425,7 +430,8 @@ constant cannot be right for both. The credit must still come from start-time
 measurements rather than lap differences — estimating it from lap differences
 would absorb genuine pacing into the correction.
 
-Ranking across the pre-registered start-credit band (1.2-2.8 s):
+Ranking across the registered start-credit band
+({stats['band'][0]:.1f}-{stats['band'][1]:.1f} s, as amended):
 {band_txt}
 
 Verdict on the Phase 7 question: **a dedicated, pace-aware start term is the

@@ -117,8 +117,9 @@ constant cannot be right for both. The credit must still come from start-time
 measurements rather than lap differences — estimating it from lap differences
 would absorb genuine pacing into the correction.
 
-Ranking across the pre-registered start-credit band (1.2-2.8 s):
-**the winner changes across the band** (M4 at 1.2 s, M0 at 2.8 s; full grid in pilot_start_sensitivity.csv). The model ranking therefore DEPENDS on the start credit, which promotes measuring it from housekeeping to decisive.
+Ranking across the registered start-credit band
+(1.2-3.4 s, as amended):
+**the winner changes across the band** (M4 at 1.2 s, M0 at 3.4 s; full grid in pilot_start_sensitivity.csv). Registered clause §7.3 therefore applies and its wording is the conclusion of record: **the data cannot distinguish the surviving models given start uncertainty** — no credit value gets picked for giving a cleaner answer. Measuring the start is promoted from housekeeping to decisive.
 
 Verdict on the Phase 7 question: **a dedicated, pace-aware start term is the
 single highest-leverage improvement.** The lap-1 advantage no longer exceeds
