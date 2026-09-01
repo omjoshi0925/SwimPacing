@@ -13,9 +13,15 @@ fatigue models (M0-M4), sensitivity analysis, and the full data pipeline.
 which **80 usable races** (male 15-18, SCY, official checksum-verified Hy-Tek
 splits from the Orinda SC Senior Open, Jan 2025). First empirical comparison:
 [`results/validation/pilot_report.md`](results/validation/pilot_report.md) and
-`figures/empirical/`. Observed pacing is front-loaded positive; M2's
-negative-split prediction is sign-contradicted by every race; M4's front-loaded
-shape fits best across the whole pre-registered start-credit band. Descriptive
+`figures/empirical/`. **Corrected 2026-09-01** after a sign error in the start
+transform was found and fixed (the dive credit had been double-counted; see
+the correction notes in the pilot report and `docs/RESULTS.md`). The corrected
+picture: observed pacing is positive-split in every race, so M2 stays
+sign-contradicted; the observed mean shape sits directly on the front-loaded
+M3/M4 family (within 0.2-0.3 pp); the corrected lap-drop pattern
+(+0.92 s / -0.23 s) matches M4's predicted signature (0.99 / 0.24); and the
+M4-vs-M3-vs-M0 ranking moves with the assumed start credit, which makes a
+pace-aware start term the highest-leverage next modelling step. Descriptive
 only — single meet, no parameters fitted, held-out test set untouched, per
 [`docs/validation_plan.md`](docs/validation_plan.md). Synthetic pipeline
 fixtures remain quarantined in `results/placeholder_data/` and

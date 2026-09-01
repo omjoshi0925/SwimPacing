@@ -7,13 +7,27 @@ the SCY 200 free, reference male 15-18 parameters.
 from four public sources; **80 usable races** (male 15-18, SCY, official
 Hy-Tek splits, one meet). The first empirical comparison lives in
 `results/validation/pilot_report.md` with figures in `figures/empirical/`.
-Headline descriptive findings: observed pacing is strongly positive-split and
-front-loaded; M2's negative-split prediction is contradicted in sign by every
-race; the front-loaded M4 shape tracks the data best at every start credit in
-the pre-registered band; and real races are MORE front-loaded than every model,
-with a small finishing kick no cost-based model reproduces. All descriptive:
-one meet, no fitting, test set untouched. Everything below this line is the
-THEORETICAL results document.
+**Corrected 2026-09-01: a sign error in the start transform.** The pilot
+comparison had applied the model-side start transform (subtract the dive
+credit from lap 1) to the *observed* data as well, double-counting the credit
+by ~3.6 s on lap 1. Recorded here in the house style rather than quietly
+fixed, because it materially changed the read of the data. After the fix:
+observed pacing remains positive-split in the free-swimming-equivalent space
+(80 of 80 races), so **M2 stays sign-contradicted**; but the observed mean
+shape now sits ON the front-loaded model family (mean-shape residual 0.19 pp
+for M4, 0.26 pp for M3 at the elite-anchored 1.8 s credit) instead of beyond
+it, the corrected pacing fade (+0.92 s laps 1-2, -0.23 s laps 3-4) matches
+M4's predicted pattern (0.99 / 0.24) almost exactly, and **the model ranking
+now moves with the start credit** across the pre-registered band (M4 best at
+1.2-1.8 s, M3 at 2.0-2.6 s, M0 at 2.8 s). Superseded claims: "real races are
+MORE front-loaded than every model" and "lap-1 advantage ~1 s beyond the dive"
+were artifacts of the double-count; the finishing kick stands. A striking
+by-product of the corrected transform: the Robertson (2009) elite mean shape
+costs only 0.009 s against the working model's optimum (was 0.53 s), i.e.
+international finalists pace the 200 within a hundredth of a second of this
+model's optimal split. Amendment logged in `docs/validation_plan.md`. All
+descriptive: one meet, no fitting, test set untouched. Everything below this
+line is the THEORETICAL results document.
 
 **Revised after a parameter correction.** `C_D` and `A` were both outside every
 measured value found in the literature and have been replaced with measured ones
