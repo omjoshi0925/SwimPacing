@@ -25,9 +25,22 @@ were artifacts of the double-count; the finishing kick stands. A striking
 by-product of the corrected transform: the Robertson (2009) elite mean shape
 costs only 0.009 s against the working model's optimum (was 0.53 s), i.e.
 international finalists pace the 200 within a hundredth of a second of this
-model's optimal split. Amendment logged in `docs/validation_plan.md`. All
-descriptive: one meet, no fitting, test set untouched. Everything below this
-line is the THEORETICAL results document.
+model's optimal split. Amendment logged in `docs/validation_plan.md`.
+
+**Exploratory fits, 2026-09-01 (Task 14 machinery live).** First parameter
+fits, training rows only (60 races), registered loss, labeled exploratory:
+beta_x = 0.234 (registry 0.28, train loss 0.525 vs 0.532 pp), gamma = 0.285
+(registry 0.18, 0.494 vs 0.507 pp), and beta_E driven to its lower bound 0.02
+(0.81 pp, still worst) exactly as a sign-contradicted mechanism should be.
+The M3/M4 improvements are third-decimal in pp, i.e. the registry shapes were
+already near the dispersion floor. The confound sweep quantifies why no
+fitted value is yet interpretable: fitted beta_x falls from 0.335 at a 1.2 s
+start credit to 0.011 at 3.4 s, about 0.15 of beta_x per second of assumed
+credit — at the field-pace dive value, position fatigue is nearly
+indistinguishable from the start effect
+(`results/validation/fits_train_pilot.csv`, `fits_beta_x_credit_sweep.csv`,
+figure emp05). Test set untouched. Everything below this line is the
+THEORETICAL results document.
 
 **Revised after a parameter correction.** `C_D` and `A` were both outside every
 measured value found in the literature and have been replaced with measured ones

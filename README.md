@@ -22,9 +22,13 @@ M3/M4 family (within 0.2-0.3 pp); the corrected lap-drop pattern
 (+0.92 s / -0.23 s) matches M4's predicted signature (0.99 / 0.24); and the
 M4-vs-M3-vs-M0 ranking moves with the assumed start credit, which makes a
 pace-aware start term the highest-leverage next modelling step. Descriptive
-only — single meet, no parameters fitted, held-out test set untouched, per
-[`docs/validation_plan.md`](docs/validation_plan.md). Synthetic pipeline
-fixtures remain quarantined in `results/placeholder_data/` and
+only — single meet, held-out test set untouched, per
+[`docs/validation_plan.md`](docs/validation_plan.md). **Exploratory fits**
+(declared, training rows only) now exist for beta_x, gamma, and beta_E:
+`results/validation/fits_train_pilot.csv`, protocol in
+[`docs/calibration.md`](docs/calibration.md); the headline is the quantified
+start-credit confound (figure emp05), not the fitted values. Synthetic
+pipeline fixtures remain quarantined in `results/placeholder_data/` and
 `tests/fixtures/`.
 
 ---
