@@ -109,3 +109,19 @@ def test_fit_beta_x_is_deterministic():
     a = calibration.fit_beta_x(shares)
     b = calibration.fit_beta_x(shares)
     assert a.value == b.value and a.loss_pp == b.loss_pp and a.n_evals == b.n_evals
+
+
+@pytest.mark.slow
+def test_fit_gamma_recovers_the_generating_value():
+    """
+    Shares generated from the registry M4 shape (gamma = 0.18, pinned by the
+    cache-freshness test) must refit to gamma near 0.18. Small eval budget:
+    every objective evaluation is a full ODE optimization.
+    """
+    from src.parameters import PREDICTED_SHAPES_SCY200
+    target = np.tile(np.array(PREDICTED_SHAPES_SCY200["M4_velocity_ceiling"]),
+                     (10, 1))
+    fit = calibration.fit_gamma(target, bounds=(0.10, 0.30), coarse=4,
+                                refine_iters=4)
+    assert fit.value == pytest.approx(0.18, abs=0.03)
+    assert fit.loss_pp < 0.05
