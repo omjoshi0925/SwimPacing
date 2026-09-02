@@ -1,3 +1,74 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
-\section{Introduction}
-[Pending.]
+\section{Introduction}\label{sec:introduction}
+
+The 200-yard freestyle occupies an awkward and interesting place in
+competitive swimming: long enough that energy management decides the outcome,
+short enough that the anaerobic reserve is a first-order quantity rather than
+a correction. Coaches prescribe pacing for it with strong conviction and
+little shared formalism. This paper asks the question underneath those
+prescriptions: \emph{what pacing strategy minimizes 200-yard freestyle race
+time under realistic energetic and fatigue constraints, and how closely do
+successful real-world performances match it?}
+
+The mathematical study of race pacing begins with
+\citet{keller1973theory,keller1974optimal}, who derived optimal running
+strategies from a bounded propulsive force, linear resistance, and a finite
+energy reserve with constant aerobic resupply. The line he opened was
+extended with richer, hydraulic energetics \citep{behncke1993mathematical},
+fitted to world records from 50~m to 275~km \citep{woodside1991optimal},
+augmented with explicit fatigue states \citep{mathis1989fatigue}, and, in the
+modern optimal-control treatment of \citet{aftalionbonnans2014}, shown to
+favor deliberate velocity variation once anaerobic energy can be partially
+re-created during deceleration. Swimming has been touched by this line
+exactly once at the level of formal optimal control: \citet{maronski1996minimum}
+derived a minimum-time swim profile --- glide, cruise, terminal kick --- from
+a two-equation model. What the swimming literature has in abundance instead
+is careful \emph{description}: elite 200-m freestyle finalists swim a fast
+first lap followed by a nearly flat back half \citep{robertson2009analysis},
+fast-start profiles dominate at every level, and pacing skill discriminates
+finalists from non-qualifiers. Description and optimization have largely not
+met, and where models exist they are typically fitted to records rather than
+tested against the split sheets of ordinary competitive races.
+
+This paper tries to make them meet, for one event, one course, and one
+population: the 200-yard short-course freestyle swum by male competitive
+swimmers aged 15--18. The contributions are four.
+
+\paragraph{A theorem where a simulation is expected.} Under a fixed energy
+budget and a velocity-only cost function, the four-split problem is a convex
+program whose unique optimum is exactly even pacing, for every cost exponent
+$p>1$ and every parameter choice (Section~\ref{sec:theorems}). Even pacing is
+therefore not a finding about our parameters but a structural property of
+budget-constrained racing, and every departure of real races from even pacing
+is evidence about mechanisms \emph{outside} that structure.
+
+\paragraph{Shape--engine separation.} With position-coupled economy decay the
+optimal split allocation has a closed form, $t_i \propto w_i^{1/p}$, whose
+striking consequence is that aerobic capacity, anaerobic capacity, drag and
+efficiency have \emph{no effect at all} on the optimal shape
+(Section~\ref{sec:theorems}). A swimmer with a bigger engine should swim the
+same shape, faster. The popular intuition that stronger athletes have earned
+a faster opening lap has no support in this model class.
+
+\paragraph{Competing mechanisms as competing predictions.} We formalize five
+fatigue mechanisms --- none of them exotic, all of them present somewhere in
+the running literature --- and show they collapse onto three qualitatively
+distinct split shapes: exactly even, strongly negative, and two
+distinguishable kinds of positive (Section~\ref{sec:competing}). This turns
+``which fatigue story is true'' into a sign-and-shape question that a few
+dozen official split sheets can already inform.
+
+\paragraph{Pre-registered confrontation with real races.} We built a
+verified data pipeline for official age-group race results (anonymized at
+ingest; swimmer-grouped train/test split; analysis plan and amendment log
+frozen before any fitting) and report the confrontation honestly, including
+the finding that currently dominates all others: the comparison is decided
+less by fatigue physics than by the dive-start credit, whose
+literature-anchored uncertainty band spans the distance between the
+competing models (Sections~\ref{sec:data}--\ref{sec:results-empirical}).
+
+Two boundaries are drawn deliberately. We optimize a clock, not a field:
+tactical racing, drafting and psychology are outside the model. And we treat
+within-lap velocity as constant, which excludes by assumption the
+oscillation mechanisms of \citet{aftalionbonnans2014}; split-level data
+cannot resolve within-lap dynamics in either direction, so this is a stated
+limitation rather than a hidden one (Section~\ref{sec:limitations}).
