@@ -188,7 +188,9 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
 ### phi — course economy factor
 
 - **Symbol:** φ
-- **Default:** 1.000 (M0), 0.858 (M1), 0.747 (M2), 0.754 (M3), 0.811 (M4)
+- **Default:** 1.000 (M0), 0.883 (M1), 0.772 (M2), 0.776 (M3), 0.838 (M4)
+  (recalibrated 2026-08-31 at the measured `tau` = 16.5 s; an earlier revision
+  of this entry still carried the pre-recalibration values)
 - **Units:** dimensionless
 - **Description:** multiplies the cost coefficient, `k = φ·K_d/(η_p·η_g)`.
   Represents the per-metre cost reduction of racing in a 25 yard pool relative
@@ -211,6 +213,35 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
   unexplained economy, which is evidence against it. And it gives Task 19 a
   falsifiable target: an explicit eight-segment start-and-turn model should
   drive φ toward 1, and if it does not, the discount was never about turns.
+
+- **What the turn literature implies φ should be (added 2026-09-01, DERIVED).**
+  The 2026-09-01 literature pass measured the physics φ names. Verified
+  inputs: turn sections (5 m in + 10 m out per wall) hold ~51% of 200 m SC
+  race time while covering 57% of the distance (Cuenca-Fernández 2022, Born
+  2021), so those sections run ~13% faster than the race average; wall
+  push-off leaves the swimmer at 2.96 m/s against 1.41 m/s free swimming
+  (Born 2022); and within the same swimmers, underwater kicking is 21-28%
+  faster than surface swimming (Veiga 2022). Two deliberately crude
+  triangulations, assumptions stated:
+
+  1. *Cost-share bound.* Take the push-off-plus-underwater portion as 5-8 m
+     per wall (19-31% of race distance in SCY) at a per-metre metabolic cost
+     of 40-80% of surface swimming (unmeasured; the push-off impulse is
+     skeletal-muscle work against a wall and the glide has no propulsive
+     cost). Then φ ≈ 1 − share·(1 − relative cost) ∈ **[0.81, 0.96]**.
+  2. *SC-LC extrapolation.* Freestyle is measured 2.0 ± 0.6% faster in 25 m
+     than 50 m pools (Wolfrum 2013). A 200 has 7 walls short-course against 3
+     long-course; if each extra wall contributes linearly, extrapolating to a
+     hypothetical wall-less pool gives ~3.5% speed from walls, and since
+     optimal speed scales as φ^(-1/3) at fixed engine, φ ≈ 1.035⁻³ ≈ **0.90**.
+
+  Both land in **0.80-0.95**. The calibrated M0/M1/M4 values (1.00, 0.88,
+  0.84) are consistent with that band or above it; the fatigue variants M2/M3
+  (0.77-0.78) sit slightly BELOW it, i.e. they demand a touch more course
+  economy than turns comfortably explain — one more reason the Task 19
+  segment model, which should replace φ with explicit turn physics, is the
+  discriminating test. These are order-of-magnitude checks on a calibrated
+  scalar, not measurements; every assumption above is in the open.
 
 ### p — cost exponent
 
