@@ -494,3 +494,116 @@
   note = {[full text read] Meta-analysis: male 400 m mean speed 1.39 m/s
           (n = 244). The 400-pace ceiling CS must sit below.}
 }
+
+% ---------------------------------------------------------------------------
+% Mathematical models of racing: the Keller line and optimal control
+% (verified 2026-09-01)
+% ---------------------------------------------------------------------------
+
+@article{keller1973theory,
+  author = {Keller, J. B.},
+  title = {A theory of competitive running},
+  journal = {Physics Today}, volume = {26}, number = {9}, pages = {43--47},
+  year = {1973}, doi = {10.1063/1.3128231},
+  note = {[abstract only] The founding model: bounded propulsive force,
+          linear resistance, finite energy reserve with constant resupply;
+          optimal strategy from the calculus of variations.}
+}
+
+@article{keller1974optimal,
+  author = {Keller, J. B.},
+  title = {Optimal Velocity in a Race},
+  journal = {The American Mathematical Monthly}, volume = {81}, number = {5},
+  pages = {474--480}, year = {1974}, doi = {10.1080/00029890.1974.11993589},
+  note = {[metadata only] The mathematical companion to keller1973theory;
+          paywalled, content not read. The often-quoted critical sprint
+          distance (~291 m) was NOT verified this session and is not cited
+          here.}
+}
+
+@article{behncke1993mathematical,
+  author = {Behncke, H.},
+  title = {A mathematical model for the force and energetics in competitive
+           running},
+  journal = {Journal of Mathematical Biology}, volume = {31}, number = {8},
+  pages = {853--878}, year = {1993}, doi = {10.1007/BF00168050},
+  note = {[abstract only] Keller line plus a hydraulic (Margaria/Morton)
+          multi-compartment energy model; biomechanics, energetics and
+          optimization coupled.}
+}
+
+@article{woodside1991optimal,
+  author = {Woodside, W.},
+  title = {The optimal strategy for running a race (A mathematical model for
+           world records from 50 m to 275 km)},
+  journal = {Mathematical and Computer Modelling}, volume = {15},
+  number = {10}, pages = {1--12}, year = {1991},
+  doi = {10.1016/0895-7177(91)90086-M},
+  note = {[metadata only] Keller-type optimal strategy fit of records out to
+          ultramarathon distances. No abstract retrievable.}
+}
+
+@article{mathis1989fatigue,
+  author = {Mathis, F.},
+  title = {The Effect of Fatigue on Running Strategies},
+  journal = {SIAM Review}, volume = {31}, number = {2}, pages = {306--309},
+  year = {1989}, doi = {10.1137/1031054},
+  note = {[abstract only] Adds a fatigue state to the Keller model, solved
+          numerically; directly relevant precedent for fatigue-coupled
+          variants like M2-M4.}
+}
+
+@article{aftalionbonnans2014,
+  author = {Aftalion, A. and Bonnans, J. F.},
+  title = {Optimization of Running Strategies Based on Anaerobic Energy and
+           Variations of Velocity},
+  journal = {SIAM Journal on Applied Mathematics}, volume = {74}, number = {5},
+  pages = {1615--1636}, year = {2014}, doi = {10.1137/130932697},
+  note = {[full text read, 2013 preprint] Keller extended with anaerobic-energy
+          hydraulics, VO2 kinetics, and energy re-creation on deceleration;
+          Pontryagin solution. Their headline: "constant speed is not
+          optimal" -- velocity oscillations pay BECAUSE of the re-creation
+          mechanism, which this project's model deliberately excludes. The
+          sharpest published counterpoint to our even-pacing theorem, and the
+          contrast is assumptional, not computational.}
+}
+
+@article{aftalion2016identify,
+  author = {Aftalion, A. and Despaigne, L.-H. and Frentz, A. and Gabet, P. and
+            Lajouanie, A. and Lorthiois, M.-A. and Roquette, L. and
+            Vernet, C.},
+  title = {How to identify the physiological parameters and run the optimal
+           race},
+  journal = {MathematicS In Action}, volume = {7}, number = {1},
+  pages = {1--10}, year = {2016}, doi = {10.5802/msia.9},
+  note = {[full text read] Identifies Keller-type parameters (tau, f_max, e0,
+          sigma) from two recorded races; predicted optimum is fast start and
+          finish with "an almost even pace in the middle part".
+          Methodologically the closest published workflow to fitting our
+          models from split sheets.}
+}
+
+@article{dekoning1999cycling,
+  author = {de Koning, J. J. and Bobbert, M. F. and Foster, C.},
+  title = {Determination of optimal pacing strategy in track cycling with an
+           energy flow model},
+  journal = {Journal of Science and Medicine in Sport}, volume = {2},
+  number = {3}, pages = {266--277}, year = {1999},
+  doi = {10.1016/S1440-2440(99)80178-9},
+  note = {[metadata only] The applied-physiology counterpart: pacing optimized
+          by simulating an energy-flow model. Abstract unreachable this
+          session; pacing conclusions not quoted.}
+}
+
+@article{maronski1996minimum,
+  author = {Maro{\'n}ski, R.},
+  title = {Minimum-time running and swimming: an optimal control approach},
+  journal = {Journal of Biomechanics}, volume = {29}, number = {2},
+  pages = {245--249}, year = {1996}, doi = {10.1016/0021-9290(95)00041-0},
+  note = {[abstract only, full abstract retrieved] THE direct antecedent:
+          formal optimal control applied to swimming race pacing. Two ODEs
+          (motion + power balance), Miele's extremization; optimal profile is
+          acceleration, constant-velocity cruise, and "the negative kick at
+          the end of the race"; in swimming the initial acceleration "is
+          replaced by the gliding phase".}
+}
