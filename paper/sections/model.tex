@@ -1,3 +1,83 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
 \section{The Model}\label{sec:model}
-[Pending.]
+
+\subsection{Race, control, objective}
+
+A 200-yard short-course race covers $L = 182.88$~m in a 25-yard pool,
+recorded as four cumulative 50-yard splits. The control is the velocity
+profile; in the discrete model the swimmer chooses one velocity per 50,
+$v = (v_1,\dots,v_4)$, $v_i \in [v_{\min}, v_{\max}]$, and the objective is
+the race time
+\begin{equation}
+  T(v) \;=\; \sum_{i=1}^{4} \frac{d}{v_i},
+  \qquad d = L/4 = 45.72~\text{m}.
+  \label{eq:objective}
+\end{equation}
+
+\subsection{Cost of speed, from drag}
+
+Steady swimming against hydrodynamic drag $F_D = \tfrac12 \rho C_D A v^2$
+requires mechanical power $P = F_D v = K_d v^3$ with
+$K_d = \tfrac12 \rho C_D A$. Propulsion converts metabolic power to useful
+thrust with propelling efficiency $\eta_p$ and gross efficiency $\eta_g$, so
+the metabolic cost rate of swimming at velocity $v$ is
+\begin{equation}
+  C(v) \;=\; \phi\,\frac{K_d}{\eta_p \eta_g}\, v^{3}
+        \;=\; k\, v^{p}, \qquad p = 3 .
+  \label{eq:cost}
+\end{equation}
+The drag block uses measured values ($C_D = 0.30$, $A = 0.230$~m$^2$,
+active-drag literature), giving $K_d = 34.4$ inside the independently
+measured 22--38~kg/m band. Two honesty notes attach to
+Eq.~\eqref{eq:cost}. First, published gross efficiencies disagree by a factor
+of $3$--$4$ for definitional reasons, so $k$ is \emph{not identifiable from
+the literature} and every absolute energy in this paper is model-internal.
+Second, $\phi \in (0,1]$ is a \emph{course economy factor}, the model's one
+openly calibrated scalar: it names the per-metre discount of racing in a
+short-course pool, where turn sections occupy roughly half of total race time
+and wall push-offs and underwater kicking move the swimmer 20--30\% faster
+than surface swimming \citep{cuencafernandez2022turn, born2022imsections,
+veiga2022underwater}. The measured turn literature brackets the expected
+discount at roughly $\phi \in [0.80, 0.95]$; the calibrated values across
+model variants span 0.77--1.00.
+
+\subsection{Energy system}
+
+The engine is a two-parameter critical-power structure: an aerobic supply
+ceiling $R$ and a finite anaerobic reserve $E_0$, with optional oxygen-uptake
+kinetics of time constant $\tau$. With distance $x$ as independent variable
+and states $t(x)$ (elapsed time) and $\Erem(x)$ (remaining reserve),
+\begin{equation}
+  \frac{\dd t}{\dd x} = \frac{1}{v(x)}, \qquad
+  \frac{\dd \Erem}{\dd x} = \frac{R\big(t(x)\big) - C\big(v(x)\big)}{v(x)},
+  \qquad
+  R(t) = R\big(1 - e^{-t/\tau}\big),
+  \label{eq:dynamics}
+\end{equation}
+with $t(0)=0$, $\Erem(0)=E_0$, the path constraint $\Erem(x) \ge 0$ (a
+swimmer cannot borrow energy), and free terminal reserve. Setting $\tau = 0$
+recovers instantaneous aerobic supply. The reference calibration
+($R = 1250$~W, $E_0 = 50.3$~kJ at the model-internal $k$) reproduces a
+1:40.0 optimum for the target population; this is a calibration to a target
+time, not a physiological measurement, and the identifiability analysis in
+the repository documents which parameters race data can and cannot pin down.
+The engine's aerobic--anaerobic proportions are independently checked against
+the swimming critical-speed literature: the model's dimensionless ratio of
+critical speed to 200-m race speed is 0.893 against a measured 0.898 for
+trained male adolescents \citep{nikitakis2019cs}, with an implied anaerobic
+distance capacity of 19.5~m inside the measured 14--31~m band
+\citep{zacca2010critical, machado2009cv}.
+
+\subsection{Raced space and recorded space}
+
+The model describes free swimming from a moving start; a recorded race
+includes a dive, which makes recorded lap~1 \emph{faster} than swimming it at
+race pace. Measured elite 15-m start times imply a dive value of
+1.7--3.0~s at elite pace, and the same measurements imply
+$S(v) \approx 15/v - t_{15}$, i.e.\ a larger credit at slower field paces. A
+course-level start credit $S$ (default 1.80~s, elite-anchored, Category~B
+provenance) maps between the two spaces: model~$\to$~recorded subtracts $S$
+from lap~1; data~$\to$~raced adds it back. Exactly one transform is applied
+per comparison. Because $S$ is a constant time credit it cannot change which
+velocity profile is optimal, so it never enters the optimizer --- but it
+turns out to sit directly on the model comparison, a point
+Section~\ref{sec:results-empirical} returns to at length.
