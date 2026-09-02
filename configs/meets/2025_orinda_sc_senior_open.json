@@ -1,0 +1,16 @@
+{
+  "meet_id": "2025_ORINDA_SC_SENIOR_OPEN",
+  "meet_name": "Orinda Aquatics SCY Senior Open Meet",
+  "meet_date": "2025-01-25",
+  "course": "SCY",
+  "round": "timed_final",
+  "source_file": "data/private/sources/orinda_2025-01-25_boys_200_free.txt",
+  "source_sha256": "f1dd9fd3532349e78814c13547be354799067f0e1138df90a69d8e113b61b7c1",
+  "data_source": "Official Hy-Tek results, Orinda Aquatics SCY Senior Open Meet 1/25-26/2025, Sanction #25-010, Boys 200 Yard Freestyle, https://www.pacswim.org/userfiles/meets/documents/2616/2025-01-25-orinda-sc-senior-open-meet---results.htm (retrieved 2026-08-31, checksum-verified)",
+  "expected_event": {
+    "sex": "Boys",
+    "event": "200 Yard Freestyle"
+  },
+  "notes": "meet ran 2025-01-25 to 2025-01-26, event day not stated; senior open field includes ages outside 15-18 by design",
+  "retrieval": "Saved verbatim from the official pacswim.org results page via the user's browser on 2026-08-31; verified against the live page at retrieval time by dual text checksum (len=21128, hash31=1012769622, weighted=963084735); sha256 recorded above governs the file from then on."
+}
