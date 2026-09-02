@@ -9,3 +9,13 @@ data/raw/*
 data/processed/*
 !data/**/.gitkeep
 data/private/
+
+# LaTeX build outputs (paper/): the CI job publishes the compiled PDF artifact
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/main.pdf

@@ -1,0 +1,53 @@
+% Mathematical Optimization of Pacing Strategies in Competitive
+% 200-Yard Freestyle Swimming
+%
+% Build:  cd paper && latexmk -pdf main.tex
+% Bibliography is the repo's single source of truth:
+% ../literature/references.bib (access-level notes included by the style).
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{underscore} % bib notes contain identifiers like beta_x
+
+\graphicspath{{../figures/}{../figures/empirical/}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\newcommand{\Erem}{E}
+\newcommand{\dd}{\,\mathrm{d}}
+
+\title{Mathematical Optimization of Pacing Strategies in Competitive
+       200-Yard Freestyle Swimming}
+\author{Om Joshi}
+\date{Working draft --- \today}
+
+\begin{document}
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/model}
+\input{sections/theorems}
+\input{sections/competing_models}
+\input{sections/data}
+\input{sections/methods_validation}
+\input{sections/results_theory}
+\input{sections/results_empirical}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+
+\bibliographystyle{plainnat}
+\bibliography{../literature/references}
+
+\end{document}
