@@ -187,6 +187,44 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
             "new_ids": len(created), "source_sha256": digest}
 
 
+INTEGRITY_HEADER = (
+    "## Source integrity (public record of private sources)\n\n"
+    "The verbatim sources live in `data/private/` and are never published; "
+    "their sha256 digests are public, so anyone re-retrieving the official "
+    "page can verify the dataset was built from the genuine file.\n\n"
+    "| meet_id | source file | sha256 | rows | ingested |\n"
+    "|---|---|---|---|---|\n")
+
+
+def record_integrity(cfg: dict, summary: dict, repo: str = REPO,
+                     versions_md: str | None = None) -> None:
+    """
+    Publish the source's sha256 in data/DATASET_VERSIONS.md: provenance is
+    verifiable without exposing a file full of minors' names. Idempotent by
+    meet_id (a re-ingest updates its row in place).
+    """
+    from datetime import date
+
+    path = versions_md or os.path.join(repo, "data", "DATASET_VERSIONS.md")
+    text = open(path).read()
+    row = (f"| {cfg['meet_id']} | {os.path.basename(cfg['source_file'])} | "
+           f"`{summary['source_sha256']}` | {summary['rows']} | "
+           f"{date.today().isoformat()} |\n")
+    if INTEGRITY_HEADER not in text:
+        text = text.rstrip() + "\n\n" + INTEGRITY_HEADER + row
+    else:
+        head, _, tail = text.partition(INTEGRITY_HEADER)
+        lines = [ln for ln in tail.splitlines(keepends=True)
+                 if ln.startswith("|")]
+        rest = "".join(ln for ln in tail.splitlines(keepends=True)
+                       if not ln.startswith("|"))
+        lines = [ln for ln in lines
+                 if not ln.startswith(f"| {cfg['meet_id']} ")] + [row]
+        text = head + INTEGRITY_HEADER + "".join(lines) + rest
+    with open(path, "w") as f:
+        f.write(text)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("config", nargs="?", help="meet config JSON")
@@ -198,7 +236,10 @@ def main() -> None:
         return
     if not args.config:
         ap.error("give a meet config, or --record SOURCE")
-    ingest(load_config(args.config))
+    cfg = load_config(args.config)
+    summary = ingest(cfg)
+    record_integrity(cfg, summary)
+    print("integrity row recorded in data/DATASET_VERSIONS.md")
 
 
 if __name__ == "__main__":

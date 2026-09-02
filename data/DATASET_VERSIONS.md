@@ -24,3 +24,11 @@ name; map in `data/private/swimmer_id_map.csv`.
 Planned pilot-v0.2: 200-300 races across several meets via `src/hytek_parser.py`
 on official pacswim.org results, prioritizing repeated swimmers so pre-race PBs
 and the mixed-effects structure become available.
+
+## Source integrity (public record of private sources)
+
+The verbatim sources live in `data/private/` and are never published; their sha256 digests are public, so anyone re-retrieving the official page can verify the dataset was built from the genuine file.
+
+| meet_id | source file | sha256 | rows | ingested |
+|---|---|---|---|---|
+| 2025_ORINDA_SC_SENIOR_OPEN | orinda_2025-01-25_boys_200_free.txt | `f1dd9fd3532349e78814c13547be354799067f0e1138df90a69d8e113b61b7c1` | 132 | 2026-09-01 |
