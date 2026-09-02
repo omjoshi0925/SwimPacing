@@ -327,3 +327,51 @@ Listed in full in `assumptions.md`. The ones that matter most here:
 4. `E0` and `R` are fixed within a race and there is no reserve recovery.
 5. The swimmer executes the chosen velocities exactly. No pacing noise.
 6. No tactical or psychological effects. The model races a clock, not a field.
+
+## 9. Where this sits in the racing-models literature (added 2026-09-01)
+
+The mathematical study of optimal race pacing begins with Keller
+(`keller1973theory`, `keller1974optimal`): bounded propulsive force, linear
+resistance, a finite energy reserve with constant aerobic resupply, and the
+calculus of variations, applied to running world records. Successors deepened
+the energetics (hydraulic multi-compartment models, `behncke1993mathematical`),
+extended the record fits from 50 m to ultramarathons (`woodside1991optimal`),
+and added explicit fatigue states (`mathis1989fatigue`). One paper applies the
+formal machinery to swimming itself: Maroński (`maronski1996minimum`) derives
+a minimum-time swim profile — glide, constant-velocity cruise, terminal
+"negative kick" — from a two-ODE optimal control problem.
+
+Three relationships worth stating precisely:
+
+1. **M4 is this project's Keller-type model.** A velocity ceiling that falls
+   with the spent reserve is the constraint-shaped mechanism of the Keller
+   line, discretized to four splits and put in competition with cost-shaped
+   mechanisms (M2, M3) that the running literature treats separately
+   (`mathis1989fatigue`). The contribution here is not a new mechanism but a
+   falsifiable comparison between mechanisms on real split data.
+
+2. **The even-pacing theorem does not contradict Aftalion-Bonnans.**
+   `aftalionbonnans2014` prove constant speed is NOT optimal in their runner
+   model. The disagreement is assumptional, not computational: their result is
+   driven by anaerobic energy re-creation when the runner decelerates plus
+   within-race velocity dynamics, both of which this model excludes by
+   assumption (§8; no reserve recovery, piecewise-constant velocity). Under a
+   terminal energy budget with velocity-only cost, §2-3 make even pacing a
+   theorem; under their richer energetics, oscillation pays. Which assumption
+   set describes 200-yard swimming is an empirical question, and the split
+   data cannot see within-lap oscillation at all — a stated limitation, not a
+   hidden one.
+
+3. **Parameter identification from races has a precedent.**
+   `aftalion2016identify` recover Keller-type parameters from two recorded
+   races. The identifiability discipline in `docs/parameters.md` (only the
+   fatigue couplings are fittable from split shapes; the engine trades off
+   inside one equation) is the same problem met in a smaller model, and their
+   fast-start-fast-finish optimum with "an almost even pace in the middle" is
+   qualitatively the shape family our corrected pilot data lands in.
+
+The niche this project occupies against that line: multiple competing fatigue
+mechanisms with distinct falsifiable shape predictions, pre-registered
+validation against a purpose-built dataset of real age-group races, and an
+explicit accounting of what the start credit confounds — rather than fitting
+one model to world records.
