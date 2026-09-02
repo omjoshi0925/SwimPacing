@@ -23,7 +23,7 @@ Coverage by topic after the two passes:
 | Anaerobic capacity, adolescents | **done**: AOD 3.2 ± 1.3 L (Campos 2022), E0 anchor |
 | Observed 200 free pacing | **done**: Robertson 2009 (n=3057), McGibbon 2020, Oliveira 2023, Menting 2022 (abstract) |
 | Dive start | **done**: measured 15 m start times 6.1-8.2 s by level, implying 1.7-3.0 s dive value at 200 pace |
-| Turn time contributions | **not started** — the biggest remaining gap, and what phi stands in for |
+| Turn time contributions | **done** (2026-09-01, 5 full-text sources): turn sections are ~51% of 200 SC race time (vs ~33% LC); push-off 2.96 vs swim 1.41 m/s; within-swimmer underwater 21-28% faster than surface; world-class 100 SC is 39% non-swimming time |
 | Critical swimming speed (numeric CS/W') | confirmed to exist (Toussaint 1998; Zacca 2010) but paywalled; **no numbers yet** |
 | Mathematical models of athletic performance (Keller line) | **not started** |
 | Optimal control in endurance sport | **not started** |
@@ -159,3 +159,36 @@ which extrapolates well above 960 at 1.83 m/s. The model therefore looks
 metre), but the sign and rough size should be checked properly once the Capelli
 figures are confirmed against the PDF. If the gap turns out to be much larger
 than turns can explain, the cost function is wrong somewhere.
+
+---
+
+## Turns and underwater phases (added 2026-09-01)
+
+The gap the previous pass called "the biggest remaining" is now closed with
+five full-text sources (verification agent-assisted, same policy: nothing
+reported that was not actually fetched; access levels in the .bib).
+
+What the numbers establish, in the model's terms:
+
+1. **Turn sections dominate short-course racing.** Using the standard section
+   definition (5 m into the wall + 10 m out), turns account for
+   **50.84 ± 0.28% of 200 m SC race time** (Cuenca-Fernández 2022, elite men
+   and women) against ~33% in long course; Born 2021 independently gives
+   ~51.8-52.7% for women's 200 SC free. The turn sections cover 57% of the
+   distance in ~51% of the time, i.e. they are swum meaningfully faster than
+   the surface sections.
+2. **The wall is a speed subsidy.** Push-off velocity 2.96 ± 0.14 m/s against
+   free swimming at 1.41 ± 0.06 m/s in the same SC races (Born 2022, IM);
+   within the same swimmers, underwater dolphin kick runs 1.76-1.86 m/s vs
+   1.43-1.45 m/s surface (Veiga 2022, youth national team) — a 21-28%
+   within-swimmer premium. At world-class level, 39% of a SC 100 free is
+   non-swimming time (Pla 2021).
+3. Still missing at full text: 200-free-specific underwater usage (Veiga &
+   Roig 2016, metadata only) and absolute elite freestyle turn times (Born's
+   male-benchmark paper, metadata only).
+
+This is precisely the physical content of `phi`: a large fraction of an SCY
+race is ridden on wall push-offs and underwater kicking that move the swimmer
+faster than surface swimming at plausibly lower propulsive cost per metre.
+The quantitative synthesis (what band this implies for `phi`) lives in
+`docs/parameters.md` under the phi entry.
