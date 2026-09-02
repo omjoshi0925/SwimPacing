@@ -198,5 +198,40 @@ Then run:
 python -m src.preprocessing data/raw/200_free_scy_raw.csv
 ```
 
+## Adding a meet: the multi-meet ingest protocol (Phase 8)
+
+How every official Hy-Tek meet enters the dataset after the pilot. One meet is
+one JSON config; the code never changes per meet.
+
+1. **Retrieve the official section verbatim.** Open the meet's results page on
+   the sanctioning body's own site (for Pacific Swimming, pacswim.org) in the
+   browser, copy the full event section (header line through the last split
+   line), and save it unmodified to `data/private/sources/<meet>_<event>.txt`.
+   Official results only; aggregator pages (SwimCloud etc.) publish no splits
+   and no ages and are recorded as separate sources when used at all.
+2. **Record the checksum.**
+   `python -m scripts.ingest_hytek --record data/private/sources/<file>.txt`
+   prints the sha256. Verify the saved text against the live page at retrieval
+   time (length plus spot checks at minimum; the pilot used a dual rolling
+   checksum in the browser).
+3. **Write the config** from `configs/meets/TEMPLATE.json`: meet identity,
+   date, course, round, the exact source URL and retrieval date in
+   `data_source`, the sha256, and the expected event header. The config is
+   committed; the source file never is.
+4. **Ingest:** `python -m scripts.ingest_hytek configs/meets/<meet>.json`.
+   Refuses on checksum mismatch, event mismatch, or any parse problem.
+   Re-running is idempotent (rows for that meet_id are replaced). The source's
+   sha256 lands in the public integrity table in `data/DATASET_VERSIONS.md`.
+5. **Reprocess:** `python -m src.preprocessing data/raw/200_free_scy_raw.csv`,
+   then check the flag-count summary it prints before trusting new rows.
+
+**Identity across meets.** Swimmers keep one S-number across meets and
+sources; matching is on normalized (first, last) name tokens over every
+recorded spelling variant. Known limitation: two different swimmers sharing a
+normalized name would collide onto one ID. With ages present on official
+results, an age discontinuity within one ID is the tell; check the private map
+when a match looks suspicious, and record any manual resolution in the map's
+name field rather than editing silently.
+
 which writes the processed file and prints a flag summary. Fix flagged rows at
 the source rather than editing the processed file.
