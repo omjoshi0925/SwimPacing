@@ -1,3 +1,82 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
 \section{Competing Fatigue Models}\label{sec:competing}
-[Pending.]
+
+Theorem~\ref{thm:even} converts the empirical fact of positive splitting
+into a model-selection problem: some mechanism outside the pure budget makes
+late swimming different from early swimming, and different mechanisms leave
+different fingerprints on the splits. We formalize five, sharing one
+objective, one measured hydrodynamic block, one engine
+($R$, $E_0$, and measured $\tau = 16.5$~s), and differing only in the active
+mechanism plus a per-model $\phi$ calibrated so every variant reproduces the
+same 1:40.0 optimum. Holding the engine fixed is what makes the comparison
+about mechanism rather than fitness. The shared cost and constraint family is
+\begin{equation}
+  C(v, \Erem, x) = k\,v^{3}\Big(1 + \beta_E D + \beta_x \tfrac{x}{L}\Big),
+  \qquad
+  v \;\le\; v_{\max}\big(1 - \gamma D\big),
+  \qquad
+  D = 1 - \Erem/E_0 ,
+  \label{eq:family}
+\end{equation}
+with $(\beta_E, \beta_x, \gamma)$ the couplings; setting all three to zero
+with $\tau = 0$ recovers the baseline.
+
+\begin{description}
+\item[M0 — constant economy.] Nothing changes during the race. Prediction:
+exactly even fractions $(0.2500)^{\times 4}$, by Theorem~\ref{thm:even}. As a
+description of behaviour it is wrong; as the null it is exactly right.
+
+\item[M1 — oxygen kinetics.] $\tau = 16.5$~s, no fatigue coupling.
+Prediction: exactly even, and a slower race
+(Proposition~\ref{prop:kinetics}). M1 can never beat M0 on shape; it is
+included because ruling out the most intuitive story is informative.
+
+\item[M2 — reserve-coupled cost.] Economy degrades as the tank empties
+($\beta_E > 0$): a full reserve is worth protecting for its own sake, so the
+optimum holds back early and empties the tank late. Prediction: a
+\emph{strong negative split}, fractions $(.277, .259, .240, .224)$ at the
+registry coupling. This is sign-falsifiable against any positively split
+dataset, which is precisely why it earns its place.
+
+\item[M3 — position-coupled cost.] The same velocity is simply cheaper early
+than late ($\beta_x > 0$): declining propelling efficiency, rising body
+position cost, accumulating metabolite --- lumped as a linear-in-distance
+multiplier. By Theorem~\ref{thm:shape} the optimum is closed-form,
+$t_i \propto w_i^{1/3}$: a smooth, near-linear \emph{positive} split,
+$(.242, .248, .253, .258)$. Measured lap-by-lap propelling efficiency does
+fall significantly across a 200-m swim \citep{figueiredo2011energy}, though
+the measured lap energy cost is U-shaped rather than linear, so linearity is
+a first approximation and is treated as such.
+
+\item[M4 — fatigue-coupled velocity ceiling.] Positive splitting through a
+\emph{constraint} rather than a cost ($\gamma > 0$): the swimmer does not
+choose to slow down, they become unable to go fast, the Keller-type
+structure \citep{keller1973theory, mathis1989fatigue}. Prediction: a
+\emph{front-loaded} positive split with the ceiling binding at the optimum,
+$(.240, .249, .254, .257)$.
+\end{description}
+
+\subsection{Three shapes, one discriminator}
+
+The five models make three qualitatively distinct predictions: even (M0/M1),
+negative (M2), and two kinds of positive (M3/M4). M0 and M1 are
+shape-identical by Proposition~\ref{prop:kinetics} and are reported as one
+shape hypothesis. M3 and M4 are separated not by aggregate fit but by
+\emph{where the fade lives}: M3 predicts an even fade (lap-1$\to$2 drop
+$\approx$ lap-3$\to$4 drop, $0.53$ vs $0.49$~s at registry parameters), M4
+concentrates the loss between the first two laps and flattens late
+($0.99$ vs $0.24$~s, a ratio near four). The per-race statistic
+$\Delta_{12}/\Delta_{34}$ is therefore pre-registered as the discriminating
+secondary outcome; it is sharper than RMSE because it is a shape ratio rather
+than a magnitude.
+
+\subsection{What each model would need to be believed}
+
+M0 wins if observed pacing is even after start correction. M1 cannot win on
+shape and no shape claim is made for it. M2 wins only if corrected pacing is
+negatively split. M3 wins if the fade is near-linear; M4 if it is
+front-loaded with a flat finish. And for either positive-split model, a
+fitted coupling is believable only when it is not standing in for the
+un-modelled dive start: the start credit and both couplings push lap~1 the
+same way, a confound quantified in Section~\ref{sec:results-empirical} and
+governed by the pre-registered start-uncertainty clause of the validation
+plan.
