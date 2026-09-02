@@ -20,20 +20,29 @@ positively split. Split 1 contains a dive worth roughly 1.5 to 2.5 s relative to
 racing into that 50 at pace. If the start is not credited back before comparing
 with the model, the entire dive advantage is misattributed to physiology.
 
-**Current handling.** A constant `START_OFFSET_S = 1.80` is subtracted from model
-split 1 when comparing with recorded splits. Because it is constant it shifts `T`
-by a constant and cannot change the optimum, which is why it is applied only at
+**Current handling.** A constant credit (`Course.start_credit_s` = 1.80 s)
+maps between raced and recorded space: subtracted from model lap 1, or added
+to observed lap 1 — one transform per comparison (`docs/model_definitions.md`,
+"Raced space vs recorded space"; a sign error that double-counted the credit
+was found and fixed 2026-09-01). Because it is constant it shifts `T` by a
+constant and cannot change the optimum, which is why it is applied only at
 comparison time and never inside the optimizer.
 
-**Why this is still weak.** 1.80 s is a literature-informed guess, not a
-measurement, and the true value varies by swimmer and by start quality. It is
-also not really constant: a better start carries more speed into the swim. Turns
-2 through 7 are not credited at all, on the assumption that they are roughly
-evenly distributed across splits 2 to 4, which is only approximately true.
+**Why this is still weak — now with measurements (2026-09-01).** 1.80 s is
+elite-anchored, and the credit is provably pace-dependent: S ≈ 15/v − t15
+gives 3.1-3.4 s at the pilot field's race pace, and the pilot model ranking
+changes across the registered 1.2-3.4 s band, so per validation-plan §7.3 the
+surviving models are not distinguishable until S is measured. The turn
+literature now quantifies what the un-modelled walls carry: turn sections are
+~51% of 200 m SC race time (Cuenca-Fernández 2022; Born 2021), push-off
+leaves the wall at 2.96 m/s vs 1.41 m/s swimming (Born 2022), and underwater
+kicking is 21-28% faster than surface swimming within the same swimmers
+(Veiga 2022). Turns 2-7 are still not credited at all, on the assumption
+their effect distributes roughly evenly across laps 2-4.
 
-**Fix.** Estimate the start credit from data in Phase 9, ideally from 15 m and
-25 m splits rather than 50s. Report every model-versus-data result with a
-sensitivity band over the credit.
+**Fix.** Measure the start: 15 m or 25 m splits wherever published, or a
+per-race pace-dependent credit S(v) = 15/v − t15 as the minimum upgrade; then
+the Task 19 eight-segment model, whose target is driving `phi` toward 1.
 
 ### A2. Velocity is constant within each 50
 
@@ -45,6 +54,15 @@ with more variable velocity.
 
 **Direction of the bias.** This inflates the fitted `E0` and `R`, absorbing the
 missing cost into the engine parameters.
+
+**A sharper edge to this assumption (2026-09-01).** Aftalion & Bonnans (2014)
+prove that in a runner model with anaerobic energy re-creation on
+deceleration, constant speed is NOT optimal — deliberate velocity variation
+pays. This model excludes re-creation and within-lap dynamics by assumption,
+which is what makes even pacing a theorem here (docs/01_derivation.md §9).
+Split-sheet data cannot see within-lap oscillation either way, so this
+assumption is untestable at the data's resolution and is stated rather than
+defended.
 
 ### A3. Economy decay is linear in position
 
