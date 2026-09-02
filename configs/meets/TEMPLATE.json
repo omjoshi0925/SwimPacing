@@ -1,0 +1,14 @@
+{
+  "_readme": "Copy to <meet>.json and fill in. Protocol: data/data_dictionary.md, 'Adding a meet'. The config is committed; the source file under data/private/ never is. Get source_sha256 from: python -m scripts.ingest_hytek --record <source_file>.",
+  "meet_id": "YYYY_SHORT_MEET_SLUG",
+  "meet_name": "Full official meet name",
+  "meet_date": "YYYY-MM-DD",
+  "course": "SCY",
+  "round": "timed_final",
+  "source_file": "data/private/sources/<meet>_<event>.txt",
+  "source_sha256": "<64 hex chars from --record>",
+  "data_source": "Official Hy-Tek results, <meet name> <dates>, Sanction #<n>, <event>, <exact URL> (retrieved YYYY-MM-DD, checksum-verified)",
+  "expected_event": {"sex": "Boys", "event": "200 Yard Freestyle"},
+  "notes": "anything a reader of the raw rows should know (event day ambiguity, field composition, etc.)",
+  "retrieval": "how and when the source was saved and verified against the live page"
+}
