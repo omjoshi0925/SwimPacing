@@ -110,6 +110,56 @@ def test_event_mismatch_refuses(sandbox):
         run(sandbox)
 
 
+SECTION_B = """Boys 200 Yard Freestyle
+===============================================================================
+              1:58.59  SRII
+    Name                     Age Team                    Seed     Finals
+===============================================================================
+  1 Alpha, Test               16 AAAA-PC              1:37.01    1:36.20 SRII
+       22.50    46.80  1:11.40  1:36.20
+  2 Epsilon, New              17 DDDD-PC                   NT    1:44.10
+       24.90    51.00  1:17.55  1:44.10
+"""
+
+
+def test_two_meet_merge_keeps_one_identity(sandbox):
+    """
+    The cross-meet contract: the same swimmer in a second meet keeps the same
+    S-number (through the hytek name variant recorded by meet one), new
+    swimmers get new IDs, and re-ingesting meet one afterwards disturbs
+    nothing about meet two.
+    """
+    run(sandbox)  # meet 1
+
+    src2 = os.path.join(sandbox["repo"], "sources", "meet2.txt")
+    open(src2, "w").write(SECTION_B)
+    cfg2 = dict(sandbox["cfg"], meet_id="TEST_MEET_2", meet_name="Test Meet 2",
+                meet_date="2025-03-01", source_file="sources/meet2.txt")
+    s2 = ingest(cfg2, repo=sandbox["repo"], raw_csv=sandbox["raw"],
+                map_csv=sandbox["map"], verbose=False)
+    assert s2["matches"] == 1 and s2["new_ids"] == 1  # Alpha matched, Epsilon new
+
+    rows = list(csv.DictReader(open(sandbox["raw"])))
+    alpha_ids = {r["swimmer_id"] for r in rows
+                 if r["final_time"] in ("1:37.01", "1:36.20")}
+    assert alpha_ids == {"S001"}, "same swimmer must keep one ID across meets"
+    assert {r["meet_id"] for r in rows} == {"TEST_MEET", "TEST_MEET_2"}
+
+    idmap = {r["swimmer_id"]: r for r in csv.DictReader(open(sandbox["map"]))}
+    assert "TEST_MEET" in idmap["S001"]["meets"]
+    assert "TEST_MEET_2" in idmap["S001"]["meets"]
+
+    # re-ingesting meet 1 leaves the dataset content-identical (its rows are
+    # replaced as a block and re-appended, so ORDER may change but no row may
+    # appear, vanish, or drift)
+    before = sorted(open(sandbox["raw"]).read().splitlines())
+    run(sandbox)
+    assert sorted(open(sandbox["raw"]).read().splitlines()) == before
+    map_before = sorted(open(sandbox["map"]).read().splitlines())
+    run(sandbox)
+    assert sorted(open(sandbox["map"]).read().splitlines()) == map_before
+
+
 def test_config_validation_names_missing_keys(tmp_path):
     p = tmp_path / "bad.json"
     p.write_text(json.dumps({"meet_id": "X"}))
