@@ -1,3 +1,113 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
 \section{Structural Results}\label{sec:theorems}
-[Pending.]
+
+Three results organize everything that follows. The first two are proved in
+split-time coordinates, where the problem's convexity is visible; the third
+is a two-line consequence of the supply dynamics. All three are verified
+numerically in the repository against three independent solvers (closed form,
+sequential quadratic programming in split-time space, and direct integration
+of Eq.~\eqref{eq:dynamics}), which agree to about $10^{-11}$~s.
+
+\subsection{Even pacing is a theorem, not a finding}
+
+Work in split times $t_i = d/v_i$. The objective
+Eq.~\eqref{eq:objective} becomes linear, $T = \sum_i t_i$, and with
+instantaneous supply ($\tau=0$) the terminal energy budget is
+\begin{equation}
+  B(t) \;=\; \sum_{i=1}^{4} C\!\left(\frac{d}{t_i}\right) t_i
+       \;=\; k\, d^{\,p} \sum_{i=1}^{4} t_i^{\,1-p}
+       \;\le\; R\,T + E_0 .
+  \label{eq:budget}
+\end{equation}
+
+\begin{theorem}[Even pacing]\label{thm:even}
+For every $p > 1$ and every $k, R, E_0 > 0$, the minimizer of $T$ subject to
+Eq.~\eqref{eq:budget} and box bounds on $t_i$ has $t_1 = t_2 = t_3 = t_4$
+whenever the bounds are slack, and it is unique.
+\end{theorem}
+
+\begin{proof}
+For $p>1$ each term $t_i^{\,1-p}$ is strictly convex and decreasing on
+$t_i>0$, so $g(t) = k d^p \sum_i t_i^{1-p} - R\sum_i t_i - E_0$ is strictly
+convex, and the feasible set $\{g \le 0\}$ is convex; minimizing the linear
+objective $\sum_i t_i$ over it is a convex program, so the
+Karush--Kuhn--Tucker conditions are necessary and sufficient. The budget is
+active at any optimum (otherwise every $t_i$ could be reduced), so with
+multiplier $\mu > 0$ stationarity reads, for each $i$,
+\[
+  1 \;=\; \mu\Big( (p-1)\,k\,d^{\,p}\, t_i^{-p} + R \Big).
+\]
+The bracket is strictly decreasing in $t_i$, hence invertible, and its value
+is the same for every $i$; therefore all $t_i$ are equal. Uniqueness follows
+from strict convexity of $g$ on the active budget.
+\end{proof}
+
+Theorem~\ref{thm:even} is the reason a model of this class cannot explain
+observed positive splitting by appeal to fitness, drag, or reserve size:
+under a pure budget, \emph{any} departure from even pacing wastes time, for
+every parameter value. Real 200-yard races are positively split, so something
+outside the budget structure is at work, and Section~\ref{sec:competing}
+formalizes the candidates.
+
+\subsection{The optimal shape does not depend on the engine or the hull}
+
+Let economy decay with position: $C(v, x) = k v^p \,(1 + \beta_x\, x/L)$,
+the simplest mechanism that makes late metres dearer than early ones.
+Integrating the multiplier over lap $i$ gives the \emph{exact} per-lap weight
+$w_i = 1 + \beta_x\, \bar{x}_i / L$ with $\bar x_i$ the lap midpoint (the
+multiplier is linear in $x$, so midpoint weighting is exact, not a
+quadrature approximation).
+
+\begin{theorem}[Shape invariance]\label{thm:shape}
+With position-coupled economy the optimum of the program above satisfies
+\begin{equation}
+  t_i \;\propto\; w_i^{1/p},
+  \qquad w_i = 1 + \beta_x \frac{\bar x_i}{L},
+  \label{eq:shape}
+\end{equation}
+so the optimal split \emph{fractions} $t_i / T$ depend only on $\beta_x$ and
+$p$. They are independent of $k$, $R$, $E_0$, $\rho$, $C_D$, $A$, $\eta_p$,
+$\eta_g$, and $\phi$.
+\end{theorem}
+
+\begin{proof}
+The budget becomes $k d^p \sum_i w_i\, t_i^{1-p} \le R\,T + E_0$; the same
+KKT computation as in Theorem~\ref{thm:even} gives
+$1 = \mu\big((p-1) k d^p w_i t_i^{-p} + R\big)$, hence
+$w_i\, t_i^{-p}$ is constant across laps, which is Eq.~\eqref{eq:shape}.
+The constant of proportionality (and thus $T$) depends on all parameters;
+the fractions do not.
+\end{proof}
+
+\begin{corollary}\label{cor:engine}
+Within this model class, a swimmer with greater aerobic capacity, a larger
+anaerobic reserve, less drag, or better efficiency should race the
+\emph{same} pacing shape, faster. Only the fatigue coupling itself moves the
+optimal shape.
+\end{corollary}
+
+Numerically, sweeping every non-fatigue parameter over its plausible range
+moves the optimal fractions by less than $10^{-7}$ (solver noise), while
+$\beta_x$ moves them by percentage points. Corollary~\ref{cor:engine} is the
+model's most counterintuitive export to coaching: ``you have a big engine, so
+take it out faster'' has no support here.
+
+\subsection{Oxygen kinetics slow the race without bending the shape}
+
+\begin{proposition}\label{prop:kinetics}
+With supply $R(t) = R(1-e^{-t/\tau})$ and terminal-budget accounting, total
+aerobic energy over a race of duration $T$ is
+$R\big[T - \tau(1 - e^{-T/\tau})\big]$, a function of $T$ alone. Two
+velocity profiles finishing in the same time receive identical aerobic
+energy, so the optimal split fractions are unchanged for every $\tau$: the
+optimum is exactly as in Theorems~\ref{thm:even} and~\ref{thm:shape}, swum
+slower.
+\end{proposition}
+
+This is a useful negative result. ``Go out fast because the aerobic system
+is not up to speed yet'' is the most intuitive physiological story for
+front-loading, and within this model it is not a reason to front-load at
+all. (With a sufficiently small reserve and slow kinetics the path
+constraint $\Erem \ge 0$ can bind and shade the optimum off even; at the
+calibrated reserve this does not occur for any $\tau$ up to 200~s, a
+boundary the repository documents together with the retraction of an earlier
+claim about it.)
