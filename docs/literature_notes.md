@@ -1,9 +1,14 @@
 # Literature notes
 
-Task 3: **22 verified sources** against a target of 15-30 (10 from the
-2026-08-29 hydrodynamics pass, 9-12 from the 2026-08-31 physiology/start/pacing
-pass, including three energetics sources verified in a companion session and
-recorded in the project's `energetics_literature_sources.md`).
+Task 3: **47 verified sources** against a target of 15-30 (10 from the
+2026-08-29 hydrodynamics pass; 9-12 from the 2026-08-31 physiology/start/
+pacing pass, including three energetics sources verified in a companion
+session and recorded in the project's `energetics_literature_sources.md`; 25
+from the 2026-09-01 pass covering turns/underwater, SC-vs-LC conversion,
+critical speed and anaerobic distance capacity, and the Keller/optimal-control
+line). Access-level split across all 47: 24 full text, 15 abstract-only or
+partial, 8 metadata only — every metadata-only entry carries a "no numbers
+extracted" note.
 
 Files: `literature/references.bib`, `literature/literature_review.csv`.
 
@@ -25,16 +30,20 @@ Coverage by topic after the two passes:
 | Dive start | **done**: measured 15 m start times 6.1-8.2 s by level, implying 1.7-3.0 s dive value at 200 pace |
 | Turn time contributions | **done** (2026-09-01, 5 full-text sources): turn sections are ~51% of 200 SC race time (vs ~33% LC); push-off 2.96 vs swim 1.41 m/s; within-swimmer underwater 21-28% faster than surface; world-class 100 SC is 39% non-swimming time |
 | Critical swimming speed (numeric CS/D') | **done** (2026-09-01, 7 sources): adolescent male CS 1.22-1.32 m/s, CS/v200 = 0.898, D' 14-31 m (distance-set dependent); model check passes on the dimensionless ratio (docs/parameters.md). No swimming W' in joules exists anywhere reached; the field reports D' in metres |
-| Mathematical models of athletic performance (Keller line) | **not started** |
-| Optimal control in endurance sport | **not started** |
+| SC vs LC course conversion | **done**: measured 2.0 ± 0.6% freestyle speed advantage short course (Wolfrum 2013) |
+| Mathematical models of athletic performance (Keller line) | **done** (2026-09-01): Keller 1973/1974, Behncke 1993, Woodside 1991, Mathis 1989 verified with access levels; positioning written into docs/01_derivation.md §9 |
+| Optimal control in endurance sport | **done**: Aftalion-Bonnans 2014 (full preprint), Aftalion et al. 2016 (full), de Koning 1999 (metadata), and the direct swimming antecedent Maroński 1996 (full abstract) |
 
-Items 1-4 of the previous "highest-value remaining" list are now closed. The
+Every topic in the table is now at least "done" at the level described. The
 model's implied anaerobic share (28.7% for M0) sits inside the measured
-21.3-34.1% band — the plausibility check is now literature-bounded rather than
-assumed. **Remaining searches**, in order: turn and underwater time
-contributions in short course (what `phi` stands in for); numeric critical
-speed and W' values (papers identified, paywalled); Keller (1974) and the
-optimal-control-in-running line for positioning the paper.
+21.3-34.1% band, and the engine block now also passes the dimensionless
+critical-speed check (CS/v200: model 0.893 vs measured 0.898 for trained male
+adolescents; see docs/parameters.md). **Remaining gaps, explicitly:**
+200-free-specific underwater usage at full text (Veiga & Roig 2016, blocked);
+absolute elite freestyle turn times (Born male benchmarks, blocked); Keller
+1974's own text (metadata only — nothing from it is quoted); de Koning 1999's
+conclusions (metadata only); per-distance SC-LC deltas (tables did not
+render); Capelli 1998 energy-cost figures still await PDF confirmation.
 
 ---
 
@@ -50,10 +59,14 @@ far verification got:
 - **metadata only**: existence and bibliographic details confirmed, publisher
   page blocked. **No numbers extracted.**
 
-Across the 22 sources: 14 full text, 5 abstract-only or partial, 3 metadata
+Across the 47 sources: 24 full text, 15 abstract-only or partial, 8 metadata
 only. Three energetics entries were verified by a companion session on
 2026-08-29 under the same policy and are recorded in the project's
-`energetics_literature_sources.md` with per-number access marks.
+`energetics_literature_sources.md` with per-number access marks. The
+2026-09-01 pass (25 entries) was executed by verification agents under the
+same written policy, with load-bearing numbers confirmed by a second
+independent fetch; their access failures (PubMed/PMC captchas, publisher 403s)
+are recorded per entry rather than papered over.
 
 Notably, the three sources most often cited in this area (Kolmogorov &
 Duplishcheva 1992, Toussaint et al. 1988, Havriluk 2007) are precisely the three
