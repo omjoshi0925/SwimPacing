@@ -1,0 +1,31 @@
+name: paper
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "paper/**"
+      - "literature/references.bib"
+      - ".github/workflows/paper.yml"
+  pull_request:
+    paths:
+      - "paper/**"
+      - "literature/references.bib"
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile main.pdf
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: paper
+          root_file: main.tex
+          latexmk_use_lualatex: false
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: paper/main.pdf
+          if-no-files-found: error
