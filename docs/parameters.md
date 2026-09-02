@@ -370,6 +370,45 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
 
 ---
 
+## Engine-block plausibility: the critical-speed check (added 2026-09-01)
+
+The model's engine (`R`, `E0`) can be checked against the swimming
+critical-speed literature without fitting anything, because the two-parameter
+critical-power structure IS the model's aerobic-anaerobic split. Two model
+quantities map onto measured ones:
+
+- **Model critical speed:** the pace sustainable on `R` alone,
+  `v_cs = (R/k)^(1/3)` = **1.634 m/s** at the M0 reference.
+- **Model anaerobic distance capacity:** the CP identity `d = CS·t + D'`
+  evaluated at the optimum, `D' = L − v_cs·T*` = **19.5 m**.
+
+Absolute `v_cs` cannot be compared with published CS directly, because `k` is
+not literature-identifiable (see eta_g entry) and published CS values come
+from slower populations. Two comparisons survive both problems:
+
+| Quantity | Model | Measured, adolescent males | Sources |
+|---|---|---|---|
+| CS / 200-race speed | **0.893** (exactly `(R/(R+E0/T))^(1/3)`, `k` cancels) | **0.898** (CS 1.315 / v200 1.465) | Nikitakis 2019, full text |
+| D' (m) | **19.5** | 13.8-30.9 (model-dependent); ~21 from Nikitakis's means | Zacca 2010; Nikitakis 2019 (derived) |
+
+The ratio comparison is the strong one: it is dimensionless, `k` cancels
+analytically, and the model lands within half a percent of the measured value
+for exactly the target population — with `R` and `E0` calibrated only to a
+1:40 SCY time, never to any CS test. The D' agreement (19.5 m inside the
+measured 14-31 m band, near the 21 m implied by the adolescent 200/400 pair)
+is weaker but independent: Machado 2009 shows D' moves by a factor of two with
+the fitting distances, and Dekerle 2002 warns the d-t intercept is not a
+reliable anaerobic capacity, so the band, not the point, is the claim.
+
+What this does NOT show: absolute `R` or `E0` correctness (they trade off
+against `k`), and nothing here involves split shapes. It shows the engine's
+aerobic-anaerobic PROPORTIONS are the ones measured CP tests find in swimmers
+of this age. Caveat: the model `v_cs` (1.634 m/s) sits above every published
+CS (1.06-1.47 m/s) in absolute terms precisely because the reference swimmer
+(1:40.0 SCY) is faster than the tested populations and because `k` carries an
+efficiency convention; comparing absolutes would be the mistake the
+identifiability section warns against.
+
 ## Identifiability
 
 Which parameters can race data actually inform? This matters more than

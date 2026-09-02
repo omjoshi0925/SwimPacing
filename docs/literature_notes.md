@@ -24,7 +24,7 @@ Coverage by topic after the two passes:
 | Observed 200 free pacing | **done**: Robertson 2009 (n=3057), McGibbon 2020, Oliveira 2023, Menting 2022 (abstract) |
 | Dive start | **done**: measured 15 m start times 6.1-8.2 s by level, implying 1.7-3.0 s dive value at 200 pace |
 | Turn time contributions | **done** (2026-09-01, 5 full-text sources): turn sections are ~51% of 200 SC race time (vs ~33% LC); push-off 2.96 vs swim 1.41 m/s; within-swimmer underwater 21-28% faster than surface; world-class 100 SC is 39% non-swimming time |
-| Critical swimming speed (numeric CS/W') | confirmed to exist (Toussaint 1998; Zacca 2010) but paywalled; **no numbers yet** |
+| Critical swimming speed (numeric CS/D') | **done** (2026-09-01, 7 sources): adolescent male CS 1.22-1.32 m/s, CS/v200 = 0.898, D' 14-31 m (distance-set dependent); model check passes on the dimensionless ratio (docs/parameters.md). No swimming W' in joules exists anywhere reached; the field reports D' in metres |
 | Mathematical models of athletic performance (Keller line) | **not started** |
 | Optimal control in endurance sport | **not started** |
 
@@ -66,6 +66,15 @@ instead, and labelled as such.
 is **Paola Zamparo**. Two of the load-bearing sources here are hers. Half-
 remembered author names are exactly how fabricated citations enter a
 bibliography, and the correct response is to search, find nothing, and say so.
+
+**A second caution of the same species (2026-09-01).** A paper often wanted
+here — "Toussaint 1998" on critical power / W' in simulated front crawl — could
+not be verified beyond a bare PubMed search-result title (PMID 9475656): no
+authors, journal, pages, or numbers were reachable. It is therefore **not
+cited anywhere in this project**. If access improves, verify first, cite
+second. Likewise "Wakayoshi 1992, Int J Sports Med 13:367-371" exists only as
+a reference-list entry inside other papers and is not cited; the flume study
+(wakayoshi1992critical, EJAP) is the verified one.
 
 ---
 
