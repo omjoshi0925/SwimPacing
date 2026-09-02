@@ -29,10 +29,18 @@ def usable():
 # ---------------------------------------------------------------------------
 
 
+PILOT_V01_MEET = "2025_ORINDA_SC_SENIOR_OPEN"
+
+
 def test_loss_reproduces_the_published_pilot_comparison(usable):
-    """calibration.mean_rmse_pp must reproduce the pilot report's RMSE table."""
+    """
+    calibration.mean_rmse_pp must reproduce the pilot report's RMSE table.
+    The comparison CSV is a FROZEN pilot-v0.1 artifact (80 Orinda races), so
+    the check runs on that frozen subset; the processed file itself keeps
+    growing as the expansion toward v0.2 proceeds.
+    """
     published = pd.read_csv(COMPARISON).set_index("model")["mean_RMSE_pp"]
-    shares = calibration.observed_shares(usable)
+    shares = calibration.observed_shares(usable[usable["meet_id"] == PILOT_V01_MEET])
     preds = preprocessing.model_predictions(SCY_200)
     for name, star in preds.items():
         short = name.split("_")[0]
@@ -150,25 +158,28 @@ def test_leakage_guard_raises_on_test_rows():
         calibration.assert_no_test_rows(smuggled, PROCESSED)
 
 
-def test_fit_beta_x_on_train_rows_matches_the_committed_report():
+def test_fit_beta_x_on_train_rows_matches_the_committed_report(usable):
     """
-    Determinism against the committed artifact: refitting beta_x on the
-    registered training rows must reproduce the value recorded in
-    results/validation/fits_train_pilot.csv, and that row must carry the
-    exploratory label and the registered seed.
+    Determinism against the committed artifact: the exploratory fit report is
+    a FROZEN pilot-v0.1 artifact, so refitting on the reconstructed v0.1
+    training rows (Orinda races, registered seed) must reproduce the recorded
+    value exactly, however much the live dataset has grown since.
     """
+    from src import data_split
+
     rep = pd.read_csv("results/validation/fits_train_pilot.csv")
     row = rep[rep["param"] == "beta_x"].iloc[0]
-    train, meta = calibration.training_frame(PROCESSED)
+    v01 = usable[usable["meet_id"] == PILOT_V01_MEET]
+    train, _ = data_split.split_by_swimmer(v01)
     fit = calibration.fit_beta_x(calibration.observed_shares(train))
     assert fit.value == pytest.approx(row["fitted_value"], abs=1e-3)
     assert bool(row["exploratory"]) is True
     assert int(row["seed"]) == 20260829
-    assert int(row["n_train_races"]) == meta["n_train_races"]
+    assert int(row["n_train_races"]) == len(train)
     # every fitted row in the pilot report is exploratory and train-sized
     fitted_rows = rep[rep["param"].astype(str).str.len() > 0]
     assert fitted_rows["exploratory"].astype(bool).all()
-    assert (fitted_rows["n_train_races"] == meta["n_train_races"]).all()
+    assert (fitted_rows["n_train_races"] == len(train)).all()
 
 
 @pytest.mark.slow

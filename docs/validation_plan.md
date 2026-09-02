@@ -10,6 +10,20 @@ start-transform sign error corrected and band extended to 3.4 s (see §7); at
 both amendment times no data had been used for calibration and the test set
 remained unopened.
 
+Amendment, 2026-09-02 (before the v0.2 freeze, test set unopened): the
+population rule gains a club-linked age path, approved by the project owner.
+Sources that publish grades instead of ages (high school results) produce
+age-blank rows; such a row enters the male-15-18 population ONLY when the
+same swimmer has age-published rows at other meets and every possible age
+across the date gap (birthday-counting bounds, intersected over all linked
+rows) lies inside 15-18. No point age is invented, grade labels are never
+used for inference, contradictory links derive nothing and are flagged, and
+`age_source` marks every admitted row (`club_linked` vs `published`) so any
+analysis can be re-run on the published-only stratum as a sensitivity check.
+Implementation: `preprocessing.derive_linked_ages`; audit at adoption: 41
+grade-only rows, 13 linkable, 11 admitted, 2 excluded (possible ages 19 and
+14), 0 conflicts, and a 13/13 grade-vs-linked-age consistency audit.
+
 Declared exploratory analysis, 2026-09-01: fatigue parameters (beta_x, gamma,
 beta_E) were fitted on the TRAINING side of pilot-v0.1 only, under the §3
 loss, to exercise the Task 14 machinery and quantify the start-credit

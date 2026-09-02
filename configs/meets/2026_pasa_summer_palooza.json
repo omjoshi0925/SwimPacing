@@ -1,0 +1,26 @@
+{
+  "meet_id": "2026_PASA_SUMMER_PALOOZA",
+  "meet_name": "PASA SCY Summer Palooza Championship Intrasquad Meet",
+  "meet_date": "2026-07-26",
+  "course": "SCY",
+  "meet_level": "intrasquad",
+  "data_source": "Official results, 2026 PASA Summer Palooza (Palo Alto Stanford Aquatics intrasquad, Menlo-Atherton HS, 7/26/2026), Event 16 Boys 13&Over 200 Yard Freestyle, https://www.pacswim.org/userfiles/meets/documents/3117/2026-palooza-results-3col.pdf (transcribed 2026-09-02 from user-provided screenshots of the official PDF; arithmetic-verified; top entries and A-final winner independently confirmed against the live PDF)",
+  "notes": "intrasquad meet, all entrants PASA-PC; prelims and A-final are same-day swims by the same swimmers",
+  "retrieval": "Screenshots of the official pacswim.org results PDF provided by the user 2026-09-02, archived in data/private/sources/screenshots/. Transcription verified by per-row lap-sum arithmetic (16/16 rows exact) and by an independent WebFetch of the official PDF confirming prelim places 1-3 with times and the A-final winner. Upgrade path: attach the full official PDF and re-verify every line against it.",
+  "sections": [
+    {
+      "source_file": "data/private/sources/palooza_2026-07-26_boys200free_prelims.txt",
+      "round": "prelim",
+      "format": "lap_times",
+      "source_sha256": "e1bd7d29f25ef905288a2dbd87f1314285c0bb578ded82579fd0eb9fc549ca7b",
+      "expected_event": {"sex": "Boys", "event": "200 Yard Free"}
+    },
+    {
+      "source_file": "data/private/sources/palooza_2026-07-26_boys200free_afinal.txt",
+      "round": "final",
+      "format": "lap_times",
+      "source_sha256": "c9d6efc99d2548903684435c878299d7548093add59eaa14a3cbfeb126eee3c5",
+      "expected_event": {"sex": "Boys", "event": "200 Yard Free"}
+    }
+  ]
+}

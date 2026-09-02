@@ -126,7 +126,8 @@ def parse_section(text: str) -> "tuple[dict, list[HytekEntry], list[str]]":
 
 def entries_to_raw_rows(entries, *, meet_id: str, meet_name: str,
                         meet_date: str, course: str, round_: str,
-                        data_source: str, sid_of, extra_note: str = ""):
+                        data_source: str, sid_of, extra_note: str = "",
+                        meet_level: str = "invitational"):
     """
     Convert parsed entries into the project's raw-CSV row dicts.
 
@@ -147,7 +148,10 @@ def entries_to_raw_rows(entries, *, meet_id: str, meet_name: str,
             "meet_id": meet_id,
             "meet_name": meet_name,
             "meet_date": meet_date,
-            "age": str(e.age),
+            # None = the source publishes no age (e.g. high school results
+            # list grades); the blank fails the pipeline's age gate, which is
+            # the intended conservative default.
+            "age": "" if e.age is None else str(e.age),
             "sex_category": "M",
             "event": "200 FR",
             "course": course,
@@ -161,7 +165,7 @@ def entries_to_raw_rows(entries, *, meet_id: str, meet_name: str,
             "split_200": e.splits[3],
             "data_source": data_source,
             "split_15m": "", "reaction_time": "",
-            "meet_level": "invitational",
+            "meet_level": meet_level,
             "team": e.team,
             "notes": "; ".join(note_bits),
         })

@@ -173,6 +173,54 @@ def derive_pre_race_pb(df: pd.DataFrame) -> pd.Series:
 # ---------------------------------------------------------------------------
 
 
+def derive_linked_ages(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Club-linked age ranges for rows whose source publishes no age (Task:
+    dataset expansion; registered amendment 2026-09-02, validation_plan).
+
+    Some official sources (high school results) list grades, not ages. When
+    the SAME swimmer has age-published rows at other meets, the age at the
+    age-blank meet is bounded by counting possible birthdays across the date
+    gap: with known age a0 at date d0 and target date d, elapsed = (d-d0) in
+    years, the age lies in [a0 + floor(elapsed), a0 + ceil(elapsed)] (works
+    for both directions in time). Multiple age-published rows intersect their
+    ranges; an empty intersection marks a link conflict (possible identity
+    false-merge) and derives nothing.
+
+    Adds: `age_lo`, `age_hi` (equal to `age` where published), `age_source`
+    in {published, club_linked, link_conflict, none}. No published age is
+    ever overwritten, and no single point value is invented for linked rows.
+    """
+    import math
+
+    df = df.copy()
+    dates = pd.to_datetime(df["meet_date"], errors="coerce")
+    df["age_lo"] = df["age"].astype(float)
+    df["age_hi"] = df["age"].astype(float)
+    df["age_source"] = np.where(df["age"].notna(), "published", "none")
+
+    for sid, grp in df.groupby("swimmer_id", sort=False):
+        known = grp[grp["age"].notna()]
+        blank = grp[grp["age"].isna()]
+        if known.empty or blank.empty:
+            continue
+        for idx in blank.index:
+            bounds = []
+            for kidx in known.index:
+                delta = (dates[idx] - dates[kidx]).days / 365.25
+                a0 = float(df.at[kidx, "age"])
+                bounds.append((a0 + math.floor(delta), a0 + math.ceil(delta)))
+            lo = max(b[0] for b in bounds)
+            hi = min(b[1] for b in bounds)
+            if lo <= hi:
+                df.at[idx, "age_lo"] = lo
+                df.at[idx, "age_hi"] = hi
+                df.at[idx, "age_source"] = "club_linked"
+            else:
+                df.at[idx, "age_source"] = "link_conflict"
+    return df
+
+
 def add_flags(df: pd.DataFrame, course: Course = SCY_200,
               age_range=(15, 18), expected_course="SCY") -> pd.DataFrame:
     """
@@ -206,7 +254,14 @@ def add_flags(df: pd.DataFrame, course: Course = SCY_200,
     )
 
     df["flag_course_mismatch"] = df["course"].str.upper().str.strip() != expected_course
-    df["flag_age_out_of_scope"] = ~df["age"].between(*age_range)
+    # A row is in scope when its ENTIRE possible age range lies inside the
+    # registered band: published ages have lo == hi == age; club-linked rows
+    # (see derive_linked_ages, registered amendment 2026-09-02) carry a
+    # derived [lo, hi]; rows with neither have NaN bounds and fail.
+    if "age_lo" not in df.columns:
+        df = derive_linked_ages(df)
+    in_scope = (df["age_lo"] >= age_range[0]) & (df["age_hi"] <= age_range[1])
+    df["flag_age_out_of_scope"] = ~in_scope.fillna(False)
     df["flag_no_pb"] = df["pre_race_pb_s"].isna()
 
     # flag_no_pb is NOT blocking: those rows still inform the shape analysis.

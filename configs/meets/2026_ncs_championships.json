@@ -1,0 +1,19 @@
+{
+  "meet_id": "2026_NCS_CHAMPIONSHIPS",
+  "meet_name": "CIF North Coast Section Swimming and Diving Championship Meet 2026",
+  "meet_date": "2026-05-07",
+  "course": "SCY",
+  "meet_level": "championship",
+  "data_source": "Official results, 2026 NCS Swimming & Diving Championship Meet (5/7-9/2026, Novato CA), Boys 200 Yard Freestyle Preliminaries, https://www.pacswim.org/userfiles/meets/documents/3082/ncsresultswithalleventswithsplitsandscores.pdf (transcribed 2026-09-02 from user-provided screenshots of the official PDF; arithmetic-verified; top-5 entries, field size, and CIF tags independently confirmed against the live PDF)",
+  "notes": "high school championship: results publish grade (FR/SO/JR/SR), not age, so ages are blank and these rows sit outside the primary age-verified population unless a registered amendment admits grade-based bands; finals sections of the same meet not yet ingested",
+  "retrieval": "Screenshots of the official pacswim.org results PDF provided by the user 2026-09-02, archived in data/private/sources/screenshots/. Transcription verified by the format's internal redundancy (every cumulative-minus-cumulative equals its printed lap, 41/41 rows exact) and by an independent WebFetch of the official PDF confirming entries 1-5 verbatim and the 41-swimmer field. Upgrade path: attach the full official PDF, re-verify every line, ingest the finals sections.",
+  "sections": [
+    {
+      "source_file": "data/private/sources/ncs_2026-05-07_boys200free_prelims.txt",
+      "round": "prelim",
+      "format": "hs_championship",
+      "source_sha256": "46f3e376765d18331c1e0c0376c6d41e932f66e73f4dcf822f62fb70ba40ab25",
+      "expected_event": {"sex": "Boys", "event": "200 Yard Freestyle"}
+    }
+  ]
+}

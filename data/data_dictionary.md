@@ -225,6 +225,34 @@ one JSON config; the code never changes per meet.
 5. **Reprocess:** `python -m src.preprocessing data/raw/200_free_scy_raw.csv`,
    then check the flag-count summary it prints before trusting new rows.
 
+### Source provenance tiers
+
+Every ingested source sits in one of two tiers, named in its config's
+`retrieval` field:
+
+1. **Checksum-verified retrieval.** The official page or file saved verbatim
+   through a browser, verified against the live original at retrieval time,
+   sha256 recorded. The default and the standard.
+2. **Verified transcription.** Results transcribed from screenshots or images
+   of the official file. Admissible only when ALL of: the official file is
+   identified by URL; the transcription passes the format's internal
+   arithmetic in full (lap sums or cumulative-lap redundancy, enforced by the
+   parsers, which refuse otherwise); and at least the top entries and field
+   size are independently confirmed against the live official file. The
+   config's `retrieval` field names an upgrade path (attach the full official
+   file, re-verify every line). Tier 2 exists so usable official data is not
+   discarded for arriving as pictures; it never applies to sources whose
+   official file cannot be located.
+
+Sources listing **grades instead of ages** (high school results): rows ingest
+with a blank age and the grade recorded in the notes. Under the registered
+club-linkage amendment (2026-09-02, validation_plan), such a row enters the
+population only when the swimmer's age-published rows at other meets bound
+every possible age inside 15-18. The processed file carries `age_lo`,
+`age_hi`, and `age_source` (`published` / `club_linked` / `link_conflict` /
+`none`); the age gate requires the whole [lo, hi] range in band. Grade labels
+are never used for age inference.
+
 **Identity across meets.** Swimmers keep one S-number across meets and
 sources; matching is on normalized (first, last) name tokens over every
 recorded spelling variant. Known limitation: two different swimmers sharing a

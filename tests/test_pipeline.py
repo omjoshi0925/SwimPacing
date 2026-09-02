@@ -192,6 +192,54 @@ def test_start_correction_raises_the_first_split_share():
     assert np.allclose(back, ok["split1_time"], atol=1e-9)
 
 
+def test_club_linked_ages_bound_and_gate_correctly():
+    """
+    The registered club-linkage amendment: an age-blank row is in scope only
+    when every possible age across the date gap stays inside 15-18; a
+    contradictory pair of linked ages derives nothing and marks a conflict.
+    """
+    df = pd.DataFrame({
+        "swimmer_id": ["A", "A", "B", "B", "C", "C"],
+        "meet_date": ["2025-01-25", "2026-05-07", "2025-01-25", "2026-05-07",
+                      "2025-01-25", "2025-03-01"],
+        "age": [16, None, 17, None, 13, None],
+    })
+    out = preprocessing.derive_linked_ages(df)
+    a = out[(out.swimmer_id == "A") & out.age.isna()].iloc[0]
+    assert (a.age_lo, a.age_hi, a.age_source) == (17, 18, "club_linked")
+    b = out[(out.swimmer_id == "B") & out.age.isna()].iloc[0]
+    assert (b.age_lo, b.age_hi) == (18, 19)  # 19 possible -> must be gated out
+    # a contradictory link derives nothing
+    df2 = pd.DataFrame({"swimmer_id": ["D", "D", "D"],
+                        "meet_date": ["2025-01-25", "2025-03-01", "2025-06-01"],
+                        "age": [13, 17, None]})
+    out2 = preprocessing.derive_linked_ages(df2)
+    d = out2[out2.age.isna()].iloc[0]
+    assert d.age_source == "link_conflict"
+    assert np.isnan(d.age_lo)
+
+
+def test_age_gate_admits_full_range_only():
+    """Gate on [lo, hi] subseteq [15, 18], published and linked alike."""
+    df = pd.DataFrame({
+        "swimmer_id": ["A", "A", "B", "B"],
+        "meet_date": ["2025-01-25", "2026-05-07", "2025-01-25", "2026-05-07"],
+        "age": [16, None, 17, None],
+        "final_time": ["1:40.00"] * 4, "course": ["SCY"] * 4,
+        "split1_time": [24.0] * 4, "split2_time": [25.0] * 4,
+        "split3_time": [25.5] * 4, "split4_time": [25.5] * 4,
+        "split_50_s": [24.0] * 4, "split_100_s": [49.0] * 4,
+        "split_150_s": [74.5] * 4, "split_200_s": [100.0] * 4,
+        "final_time_s": [100.0] * 4, "round": ["timed_final"] * 4,
+        "meet_id": ["M1", "M2", "M1", "M2"], "pre_race_pb_s": [np.nan] * 4,
+    })
+    out = preprocessing.add_flags(df)
+    linked_a = out[(out.swimmer_id == "A") & out.age.isna()].iloc[0]
+    linked_b = out[(out.swimmer_id == "B") & out.age.isna()].iloc[0]
+    assert not linked_a.flag_age_out_of_scope  # [17,18] admitted
+    assert linked_b.flag_age_out_of_scope      # [18,19] excluded
+
+
 def test_half_difference_sign_matches_split_direction():
     df, _ = preprocessing.process(FIXTURE)
     ok = df[df["usable"]]

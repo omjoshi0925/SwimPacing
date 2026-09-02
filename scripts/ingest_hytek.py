@@ -35,9 +35,46 @@ REPO = os.path.dirname(HERE)
 sys.path.insert(0, REPO)
 
 from src.hytek_parser import parse_section, entries_to_raw_rows  # noqa: E402
+from src.results_parsers import (parse_hs_champ_section,  # noqa: E402
+                                 parse_lap_section)
 
-REQUIRED_KEYS = ["meet_id", "meet_name", "meet_date", "course", "round",
-                 "source_file", "data_source", "expected_event"]
+#: Section formats the ingester can read. "hytek" is the classic results
+#: section; the others are documented in src/results_parsers.py.
+PARSERS = {
+    "hytek": parse_section,
+    "lap_times": parse_lap_section,
+    "hs_championship": parse_hs_champ_section,
+}
+
+REQUIRED_KEYS = ["meet_id", "meet_name", "meet_date", "course", "data_source"]
+SECTION_KEYS = ["source_file", "round", "expected_event"]
+
+
+def config_sections(cfg: dict) -> "list[dict]":
+    """
+    A meet is one or more sections (e.g. prelims and finals as separate
+    source files). Multi-section configs carry a "sections" list; classic
+    single-section configs keep their top-level keys. Each section:
+    source_file, round, expected_event, optional format (default "hytek")
+    and optional source_sha256.
+    """
+    if "sections" in cfg:
+        secs = cfg["sections"]
+    else:
+        secs = [{k: cfg.get(k) for k in
+                 ("source_file", "round", "expected_event", "source_sha256")}
+                | {"format": cfg.get("format", "hytek")}]
+    out = []
+    for s in secs:
+        missing = [k for k in SECTION_KEYS if not s.get(k)]
+        if missing:
+            raise SystemExit(f"section missing required keys: {missing}")
+        fmt = s.get("format", "hytek")
+        if fmt not in PARSERS:
+            raise SystemExit(f"unknown section format {fmt!r}; "
+                             f"known: {sorted(PARSERS)}")
+        out.append(dict(s, format=fmt))
+    return out
 
 
 def norm_key(name: str) -> "tuple[str, str]":
@@ -90,32 +127,39 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
     """
     raw_csv = raw_csv or os.path.join(repo, "data", "raw", "200_free_scy_raw.csv")
     map_csv = map_csv or os.path.join(repo, "data", "private", "swimmer_id_map.csv")
-    src_path = os.path.join(repo, cfg["source_file"])
 
-    digest = sha256_of(src_path)
-    if cfg.get("source_sha256") and cfg["source_sha256"] != digest:
-        raise SystemExit(
-            f"source checksum mismatch for {cfg['meet_id']}: config says "
-            f"{cfg['source_sha256'][:12]}…, file is {digest[:12]}…. The saved "
-            "source changed since its checksum was recorded; re-verify against "
-            "the official page before ingesting.")
+    parsed_sections, files = [], []
+    for sec in config_sections(cfg):
+        src_path = os.path.join(repo, sec["source_file"])
+        digest = sha256_of(src_path)
+        if sec.get("source_sha256") and sec["source_sha256"] != digest:
+            raise SystemExit(
+                f"source checksum mismatch for {cfg['meet_id']} "
+                f"({sec['source_file']}): config says "
+                f"{sec['source_sha256'][:12]}…, file is {digest[:12]}…. The "
+                "saved source changed since its checksum was recorded; "
+                "re-verify against the official page before ingesting.")
 
-    section = open(src_path).read()
-    info, entries, problems = parse_section(section)
-    if info != cfg["expected_event"]:
-        raise SystemExit(f"event mismatch: parsed {info}, "
-                         f"config expects {cfg['expected_event']}")
-    if problems:
-        for p in problems:
-            print("  PARSE PROBLEM:", p)
-        raise SystemExit(f"{len(problems)} parse problems, refusing to ingest")
+        info, entries, problems = PARSERS[sec["format"]](open(src_path).read())
+        if info != sec["expected_event"]:
+            raise SystemExit(f"event mismatch in {sec['source_file']}: parsed "
+                             f"{info}, config expects {sec['expected_event']}")
+        if problems:
+            for p in problems:
+                print("  PARSE PROBLEM:", p)
+            raise SystemExit(f"{len(problems)} parse problems in "
+                             f"{sec['source_file']}, refusing to ingest")
 
-    completed = [e for e in entries if e.completed]
-    skipped = [e for e in entries if not e.completed]
-    if verbose:
-        print(f"parsed {len(entries)} entries: {len(completed)} completed, "
-              f"{len(skipped)} skipped "
-              f"({', '.join(e.final for e in skipped) or '-'})")
+        completed = [e for e in entries if e.completed]
+        skipped = [e for e in entries if not e.completed]
+        if verbose:
+            print(f"{os.path.basename(sec['source_file'])} "
+                  f"[{sec['format']}, {sec['round']}]: {len(entries)} entries, "
+                  f"{len(completed)} completed, {len(skipped)} skipped "
+                  f"({', '.join(e.final for e in skipped) or '-'})")
+        parsed_sections.append((sec, completed))
+        files.append({"file": os.path.basename(sec["source_file"]),
+                      "sha256": digest, "rows": len(completed)})
 
     with open(map_csv) as f:
         existing = list(csv.DictReader(f))
@@ -147,12 +191,15 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
         created.append((hytek_name, sid))
         return sid
 
-    rows = entries_to_raw_rows(
-        completed, meet_id=cfg["meet_id"], meet_name=cfg["meet_name"],
-        meet_date=cfg["meet_date"], course=cfg["course"],
-        round_=cfg["round"], data_source=cfg["data_source"], sid_of=sid_of,
-        extra_note=cfg.get("notes", ""),
-    )
+    rows = []
+    for sec, completed in parsed_sections:
+        rows.extend(entries_to_raw_rows(
+            completed, meet_id=cfg["meet_id"], meet_name=cfg["meet_name"],
+            meet_date=cfg["meet_date"], course=cfg["course"],
+            round_=sec["round"], data_source=cfg["data_source"],
+            sid_of=sid_of, extra_note=cfg.get("notes", ""),
+            meet_level=cfg.get("meet_level", "invitational"),
+        ))
 
     for r in existing:
         meets = set(filter(None, (r.get("meets") or "").split("; ")))
@@ -184,7 +231,7 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
 
     return {"meet_id": cfg["meet_id"], "rows": len(rows),
             "raw_total": len(merged), "matches": len(matches),
-            "new_ids": len(created), "source_sha256": digest}
+            "new_ids": len(created), "files": files}
 
 
 INTEGRITY_HEADER = (
@@ -207,11 +254,11 @@ def record_integrity(cfg: dict, summary: dict, repo: str = REPO,
 
     path = versions_md or os.path.join(repo, "data", "DATASET_VERSIONS.md")
     text = open(path).read()
-    row = (f"| {cfg['meet_id']} | {os.path.basename(cfg['source_file'])} | "
-           f"`{summary['source_sha256']}` | {summary['rows']} | "
-           f"{date.today().isoformat()} |\n")
+    new_rows = [(f"| {cfg['meet_id']} | {f['file']} | `{f['sha256']}` | "
+                 f"{f['rows']} | {date.today().isoformat()} |\n")
+                for f in summary["files"]]
     if INTEGRITY_HEADER not in text:
-        text = text.rstrip() + "\n\n" + INTEGRITY_HEADER + row
+        text = text.rstrip() + "\n\n" + INTEGRITY_HEADER + "".join(new_rows)
     else:
         head, _, tail = text.partition(INTEGRITY_HEADER)
         lines = [ln for ln in tail.splitlines(keepends=True)
@@ -219,7 +266,7 @@ def record_integrity(cfg: dict, summary: dict, repo: str = REPO,
         rest = "".join(ln for ln in tail.splitlines(keepends=True)
                        if not ln.startswith("|"))
         lines = [ln for ln in lines
-                 if not ln.startswith(f"| {cfg['meet_id']} ")] + [row]
+                 if not ln.startswith(f"| {cfg['meet_id']} ")] + new_rows
         text = head + INTEGRITY_HEADER + "".join(lines) + rest
     with open(path, "w") as f:
         f.write(text)

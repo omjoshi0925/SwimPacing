@@ -25,10 +25,32 @@ Planned pilot-v0.2: 200-300 races across several meets via `src/hytek_parser.py`
 on official pacswim.org results, prioritizing repeated swimmers so pre-race PBs
 and the mixed-effects structure become available.
 
+## Expansion toward pilot-v0.2 (IN PROGRESS, not frozen)
+
+Status 2026-09-02, after ingesting the 2026 PASA Summer Palooza (16 rows,
+prelims + A-final, ages published) and the 2026 NCS Championships Boys 200
+Free prelims (41 rows, grades published, ages blank):
+
+| | |
+|---|---|
+| Raw rows | 638 |
+| Usable races | 100 (80 Orinda + 9 Palooza + 11 NCS via the club-linked age amendment of 2026-09-02) |
+| Age provenance among usable | 89 published, 11 club-linked ([lo, hi] fully inside 15-18; 2 linkable NCS rows excluded, ages 19/14 possible; 0 link conflicts) |
+| Swimmers with >1 usable race | 12 |
+| Usable races with a pre-race PB | 15 (H1 minimally covered for the first time) |
+
+`results/validation/pilot_report.md` remains the frozen **pilot-v0.1**
+analysis (80 races); the processed CSV now reflects the expansion in
+progress. The registered fits and held-out comparison wait for the v0.2
+freeze (~250 usable races).
+
 ## Source integrity (public record of private sources)
 
 The verbatim sources live in `data/private/` and are never published; their sha256 digests are public, so anyone re-retrieving the official page can verify the dataset was built from the genuine file.
 
 | meet_id | source file | sha256 | rows | ingested |
 |---|---|---|---|---|
-| 2025_ORINDA_SC_SENIOR_OPEN | orinda_2025-01-25_boys_200_free.txt | `f1dd9fd3532349e78814c13547be354799067f0e1138df90a69d8e113b61b7c1` | 132 | 2026-09-01 |
+| 2025_ORINDA_SC_SENIOR_OPEN | orinda_2025-01-25_boys_200_free.txt | `f1dd9fd3532349e78814c13547be354799067f0e1138df90a69d8e113b61b7c1` | 132 | 2026-09-02 |
+| 2026_PASA_SUMMER_PALOOZA | palooza_2026-07-26_boys200free_prelims.txt | `e1bd7d29f25ef905288a2dbd87f1314285c0bb578ded82579fd0eb9fc549ca7b` | 10 | 2026-09-02 |
+| 2026_PASA_SUMMER_PALOOZA | palooza_2026-07-26_boys200free_afinal.txt | `c9d6efc99d2548903684435c878299d7548093add59eaa14a3cbfeb126eee3c5` | 6 | 2026-09-02 |
+| 2026_NCS_CHAMPIONSHIPS | ncs_2026-05-07_boys200free_prelims.txt | `46f3e376765d18331c1e0c0376c6d41e932f66e73f4dcf822f62fb70ba40ab25` | 41 | 2026-09-02 |
