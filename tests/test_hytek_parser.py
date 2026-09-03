@@ -58,6 +58,44 @@ def test_completed_entry_with_missing_splits_is_a_problem():
     assert any("expected 4" in p for p in problems)
 
 
+SPLITLESS = """Boys 15 & Over 200 Yard Freestyle
+===============================================================================
+    Name                     Age Team                    Seed     Finals
+===============================================================================
+    1 Balva, Arthur A           16 PASA-PC              1:46.59    1:42.37
+     3 Tsang, Jonathan C                              16 PASA-PC                                1:48.20            1:47.13
+   10 Conover-Hustis, Austin J 13 PASA-PC               2:04.02    2:11.05
+"""
+
+
+def test_splitless_sections_parse_under_require_splits_false():
+    """
+    Some official files publish final times only, and print-to-PDF renderings
+    vary indent and squeeze the name-age gap to one space. All three entry
+    layouts above occur verbatim in the BAC 2021 official file.
+    """
+    info, entries, problems = parse_section(SPLITLESS, require_splits=False)
+    assert info == {"sex": "Boys", "event": "15 & Over 200 Yard Freestyle"}
+    assert problems == []
+    assert [e.name for e in entries] == ["Balva, Arthur A", "Tsang, Jonathan C",
+                                         "Conover-Hustis, Austin J"]
+    assert all(e.splits == [] for e in entries)
+
+
+def test_splitless_sections_still_refuse_by_default():
+    _, _, problems = parse_section(SPLITLESS)
+    assert len(problems) == 3 and all("expected 4" in p for p in problems)
+
+
+def test_partial_splits_are_a_problem_even_when_not_required():
+    partial = SPLITLESS.replace(
+        "    1 Balva, Arthur A           16 PASA-PC              1:46.59    1:42.37\n",
+        "    1 Balva, Arthur A           16 PASA-PC              1:46.59    1:42.37\n"
+        "       24.00    50.00\n")
+    _, _, problems = parse_section(partial, require_splits=False)
+    assert any("expected 4" in p for p in problems)
+
+
 def test_rows_carry_schema_fields_and_skip_dfs():
     _, entries, _ = parse_section(SYNTHETIC)
     rows = entries_to_raw_rows(

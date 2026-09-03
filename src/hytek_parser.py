@@ -31,9 +31,13 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+# Leading indent up to 8 spaces and a single-space name-age gap both occur in
+# print-to-PDF renderings of the same official files (long names squeeze the
+# column); names never contain digits, so the non-greedy name safely stops at
+# the age either way.
 RESULT_LINE = re.compile(
-    r"^\s{0,3}(?P<place>\d{1,3}|--)\s+"
-    r"(?P<name>[A-Za-z' .,()-]+?)\s{2,}"
+    r"^\s{0,8}(?P<place>\d{1,3}|--)\s+"
+    r"(?P<name>[A-Za-z' .,()-]+?)\s+"
     r"(?P<age>\d{1,2})\s+"
     r"(?P<team>[A-Z0-9-]+)\s+"
     r"(?P<seed>(?:\d{1,2}:)?\d{2}\.\d{2}|NT)\s+"
@@ -65,13 +69,20 @@ class HytekEntry:
         return self.final not in ("DFS", "DQ", "NS", "SCR")
 
 
-def parse_section(text: str) -> "tuple[dict, list[HytekEntry], list[str]]":
+def parse_section(text: str,
+                  require_splits: bool = True) -> "tuple[dict, list[HytekEntry], list[str]]":
     """
     Parse one event section.
 
     Returns (event_info, entries, problems). Every line that looks like a
     result but does not parse cleanly lands in `problems` rather than being
     guessed at.
+
+    `require_splits=False` accepts sections whose official file prints no
+    split lines at all (some meets publish final times only); such entries
+    keep empty splits and feed PB history rather than shape analysis. An
+    entry with a PARTIAL split set is a problem in either mode, and when any
+    entry in the section has splits, all completed entries must.
     """
     lines = [ln for ln in text.splitlines() if not ln.startswith("#")]
     event_info: dict = {}
@@ -107,15 +118,17 @@ def parse_section(text: str) -> "tuple[dict, list[HytekEntry], list[str]]":
             continue
 
         # A line that resembles a result but failed to parse must be surfaced.
-        if re.match(r"^\s{0,3}(\d{1,3}|--)\s+\S", ln):
+        if re.match(r"^\s{0,8}(\d{1,3}|--)\s+\S", ln):
             problems.append(ln)
 
     # structural validation
+    any_splits = any(e.splits for e in entries)
     for e in entries:
         if e.completed:
-            if len(e.splits) != 4:
+            if len(e.splits) != 4 and (require_splits or any_splits
+                                       or len(e.splits) != 0):
                 problems.append(f"{e.name}: {len(e.splits)} splits, expected 4")
-            elif e.splits[-1] != e.final:
+            elif e.splits and e.splits[-1] != e.final:
                 problems.append(
                     f"{e.name}: last cumulative split {e.splits[-1]} != final {e.final}")
         elif e.splits:
@@ -159,10 +172,10 @@ def entries_to_raw_rows(entries, *, meet_id: str, meet_name: str,
             "seed_time": "" if e.seed == "NT" else e.seed,
             "pre_race_pb": "",
             "final_time": e.final,
-            "split_50": e.splits[0],
-            "split_100": e.splits[1],
-            "split_150": e.splits[2],
-            "split_200": e.splits[3],
+            "split_50": e.splits[0] if e.splits else "",
+            "split_100": e.splits[1] if e.splits else "",
+            "split_150": e.splits[2] if e.splits else "",
+            "split_200": e.splits[3] if e.splits else "",
             "data_source": data_source,
             "split_15m": "", "reaction_time": "",
             "meet_level": meet_level,

@@ -140,7 +140,12 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
                 "saved source changed since its checksum was recorded; "
                 "re-verify against the official page before ingesting.")
 
-        info, entries, problems = PARSERS[sec["format"]](open(src_path).read())
+        text = open(src_path).read()
+        if sec["format"] == "hytek":
+            info, entries, problems = parse_section(
+                text, require_splits=sec.get("require_splits", True))
+        else:
+            info, entries, problems = PARSERS[sec["format"]](text)
         if info != sec["expected_event"]:
             raise SystemExit(f"event mismatch in {sec['source_file']}: parsed "
                              f"{info}, config expects {sec['expected_event']}")

@@ -50,7 +50,9 @@ The verbatim sources live in `data/private/` and are never published; their sha2
 
 | meet_id | source file | sha256 | rows | ingested |
 |---|---|---|---|---|
-| 2025_ORINDA_SC_SENIOR_OPEN | orinda_2025-01-25_boys_200_free.txt | `f1dd9fd3532349e78814c13547be354799067f0e1138df90a69d8e113b61b7c1` | 132 | 2026-09-02 |
 | 2026_PASA_SUMMER_PALOOZA | palooza_2026-07-26_boys200free_prelims.txt | `e1bd7d29f25ef905288a2dbd87f1314285c0bb578ded82579fd0eb9fc549ca7b` | 10 | 2026-09-02 |
 | 2026_PASA_SUMMER_PALOOZA | palooza_2026-07-26_boys200free_afinal.txt | `c9d6efc99d2548903684435c878299d7548093add59eaa14a3cbfeb126eee3c5` | 6 | 2026-09-02 |
 | 2026_NCS_CHAMPIONSHIPS | ncs_2026-05-07_boys200free_prelims.txt | `46f3e376765d18331c1e0c0376c6d41e932f66e73f4dcf822f62fb70ba40ab25` | 41 | 2026-09-02 |
+| 2025_ORINDA_SC_SENIOR_OPEN | orinda_2025-01-25_boys_200_free.txt | `f1dd9fd3532349e78814c13547be354799067f0e1138df90a69d8e113b61b7c1` | 132 | 2026-09-02 |
+| 2021_BAC_SPOOKY_FALL | bac_2021-10-23_boys1314_200free.txt | `461b282708ee41e55fb69b46a68657a2d0751dcc0de328948542038ff7086a4b` | 24 | 2026-09-02 |
+| 2021_BAC_SPOOKY_FALL | bac_2021-10-23_boys15over_200free.txt | `ce06079b869adf640a3e8027b7345ebedbfd4075d3b7b66a0042d3ae51ef04a2` | 42 | 2026-09-02 |
