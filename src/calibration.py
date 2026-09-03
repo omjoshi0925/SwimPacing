@@ -222,14 +222,25 @@ def m3_shape(beta_x: float, course: Course = SCY_200) -> np.ndarray:
     return np.asarray(_model.optimal_solution_closed_form(sw, course)["split_fractions"])
 
 
+#: Minimum restart count for inner ODE solves during fitting. The pilot-era
+#: ladder (1, 2, 5) escalated only on EXCEPTIONS, and on pilot-v0.2 the
+#: single-start M4 solve was found to return non-global inner optima
+#: (race time 0.1 s slower and a shape 0.35 pp off the 12-start solution at
+#: the registry gamma), which corrupts the loss landscape without raising.
+#: Five starts reproduce the cached 12-start registry shapes to 4 decimals.
+INNER_STARTS_LADDER = (5, 12)
+
+
 def _ode_shape(registry_key: str, param: str, value: float,
-               course: Course, cache: dict, n_starts_ladder=(1, 2, 5)) -> np.ndarray:
+               course: Course, cache: dict,
+               n_starts_ladder=INNER_STARTS_LADDER) -> np.ndarray:
     """
     Raced-space split fractions of an ODE model (M2/M4) with one fatigue
     parameter overridden. Solves through `optimization.optimize_full`, walking
-    up a restart ladder on failure (the same remedy the recalibration work
-    needed for M4 at tight parameters), and caching by rounded value because
-    scalar minimizers revisit points.
+    up a restart ladder on failure, and caching by rounded value because
+    scalar minimizers revisit points. See INNER_STARTS_LADDER for why the
+    ladder starts at five: an inner solve that converges to a local optimum
+    is worse than one that fails, because it returns quietly.
     """
     from . import optimization  # local import; optimization pulls the solver stack
 
@@ -281,13 +292,25 @@ def _fit_ode_param(registry_key: str, param: str, shares: np.ndarray,
     cand = [(float(res.fun), float(res.x)), (float(losses[i]), float(grid[i]))]
     best_loss, best_v = min(cand)
     registry_value = float(getattr(MODELS[registry_key], param))
+    baseline = objective(registry_value)
+    # inner-solver reliability check: at the registry value the solve must
+    # reproduce the cached 12-start registry shape (parameters.py)
+    from .parameters import PREDICTED_SHAPES_SCY200
+    solver_note = ""
+    if course is SCY_200 and registry_key in PREDICTED_SHAPES_SCY200:
+        got = _ode_shape(registry_key, param, registry_value, course, cache)
+        dev = float(np.abs(got - np.asarray(PREDICTED_SHAPES_SCY200[registry_key])).max() * 100)
+        solver_note = f"; inner solve vs cached registry shape: max |dP| = {dev:.3f} pp"
+        if dev > 0.05:
+            solver_note += " (UNRELIABLE inner solve; do not use this fit)"
     return FitResult(
         model=registry_key, param=param, value=best_v, loss_pp=best_loss,
-        baseline_pp=objective(registry_value),
+        baseline_pp=baseline,
         shape=tuple(np.round(_ode_shape(registry_key, param, best_v, course,
                                         cache), 6)),
         n_races=int(shares.shape[0]), n_evals=evals["n"], bounds=tuple(bounds),
-        notes=f"ODE inner solve; {coarse}-point grid + bounded Brent; cached",
+        notes=(f"ODE inner solve (>= {INNER_STARTS_LADDER[0]} starts); "
+               f"{coarse}-point grid + bounded Brent; cached" + solver_note),
     )
 
 

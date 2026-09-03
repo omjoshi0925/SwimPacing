@@ -40,15 +40,31 @@ RESULT_LINE = re.compile(
     r"(?P<name>[A-Za-z' .,()-]+?)\s+"
     r"(?P<age>\d{1,2})\s+"
     r"(?P<team>[A-Z0-9-]+)\s+"
-    r"(?P<seed>(?:\d{1,2}:)?\d{2}\.\d{2}|NT)\s+"
+    r"(?:(?P<seed>(?:\d{1,2}:)?\d{2}\.\d{2}|NT)\s+)?"  # seed column is optional
     r"(?P<final>(?:\d{1,2}:)?\d{2}\.\d{2}|DFS|DQ|NS|SCR)"
-    r"(?P<tags>[A-Za-z+ ]*)$"
+    r"(?P<tags>[A-Za-z+ ]*?)(?:\s+(?P<points>\d{1,3}(?:\.\d+)?))?\s*$"
 )
 
-SPLIT_LINE = re.compile(
-    r"^\s+((?:\d{1,2}:)?\d{2}\.\d{2})(?:\s+((?:\d{1,2}:)?\d{2}\.\d{2}))?"
-    r"(?:\s+((?:\d{1,2}:)?\d{2}\.\d{2}))?(?:\s+((?:\d{1,2}:)?\d{2}\.\d{2}))?\s*$"
-)
+_T = r"(?:\d{1,2}:)?\d{2}\.\d{2}"
+#: A split line is 1-4 cumulative times, each optionally followed by the lap
+#: time in parentheses (Hy-Tek prints "47.74 (24.61)"); nothing else.
+_SPLIT_LINE_SHAPE = re.compile(rf"^\s+(?:{_T}(?:\s*\({_T}\))?\s*)+$")
+_SPLIT_TOKEN = re.compile(rf"({_T})(?:\s*\(({_T})\))?")
+
+
+def _seconds(t: str) -> float:
+    if ":" in t:
+        m, s = t.split(":")
+        return 60 * int(m) + float(s)
+    return float(t)
+
+
+def parse_split_line(ln: str):
+    """(cumulatives, laps) for a split line, or None if the line is not one."""
+    if not _SPLIT_LINE_SHAPE.match(ln):
+        return None
+    toks = _SPLIT_TOKEN.findall(ln.strip())
+    return [c for c, _ in toks], [lap for _, lap in toks]
 
 EVENT_HEADER = re.compile(r"^(?P<sex>Boys|Girls|Men|Women|Mixed)\s+(?P<event>.+)$")
 
@@ -69,8 +85,8 @@ class HytekEntry:
         return self.final not in ("DFS", "DQ", "NS", "SCR")
 
 
-def parse_section(text: str,
-                  require_splits: bool = True) -> "tuple[dict, list[HytekEntry], list[str]]":
+def parse_section(text: str, require_splits: bool = True,
+                  missing_splits: str = "refuse") -> "tuple[dict, list[HytekEntry], list[str]]":
     """
     Parse one event section.
 
@@ -82,7 +98,11 @@ def parse_section(text: str,
     split lines at all (some meets publish final times only); such entries
     keep empty splits and feed PB history rather than shape analysis. An
     entry with a PARTIAL split set is a problem in either mode, and when any
-    entry in the section has splits, all completed entries must.
+    entry in the section has splits, all completed entries must — unless
+    `missing_splits="blank"`, which handles the real-world case of an
+    official file where a few entries have no or broken split lines (timing
+    gaps): those entries keep their final time with splits cleared and a
+    tag noting it, while every other entry is still held to the full check.
     """
     lines = [ln for ln in text.splitlines() if not ln.startswith("#")]
     event_info: dict = {}
@@ -105,16 +125,25 @@ def parse_section(text: str,
                 name=m.group("name").strip(),
                 age=int(m.group("age")),
                 team=m.group("team"),
-                seed=m.group("seed"),
+                seed=m.group("seed") or "",
                 final=m.group("final"),
                 tags=m.group("tags").strip(),
             )
             entries.append(current)
             continue
 
-        m = SPLIT_LINE.match(ln)
-        if m and current is not None:
-            current.splits = [g for g in m.groups() if g]
+        parsed = parse_split_line(ln)
+        if parsed is not None and current is not None:
+            cums, laps = parsed
+            current.splits = cums
+            # printed lap times are redundant with the cumulatives; any
+            # disagreement is a real inconsistency in the source, surfaced
+            for i in range(1, len(cums)):
+                if laps[i] and abs(_seconds(cums[i]) - _seconds(cums[i - 1])
+                                   - _seconds(laps[i])) > 0.011:
+                    problems.append(
+                        f"{current.name}: {cums[i]} - {cums[i-1]} != printed "
+                        f"lap {laps[i]}")
             continue
 
         # A line that resembles a result but failed to parse must be surfaced.
@@ -125,6 +154,12 @@ def parse_section(text: str,
     any_splits = any(e.splits for e in entries)
     for e in entries:
         if e.completed:
+            if len(e.splits) != 4 and missing_splits == "blank":
+                note = ("no split line published" if not e.splits
+                        else f"partial splits ({len(e.splits)}) dropped")
+                e.splits = []
+                e.tags = (e.tags + "; " + note).strip("; ")
+                continue
             if len(e.splits) != 4 and (require_splits or any_splits
                                        or len(e.splits) != 0):
                 problems.append(f"{e.name}: {len(e.splits)} splits, expected 4")
@@ -157,7 +192,7 @@ def entries_to_raw_rows(entries, *, meet_id: str, meet_name: str,
         if extra_note:
             note_bits.append(extra_note)
         rows.append({
-            "swimmer_id": sid_of(e.name),
+            "swimmer_id": sid_of(e.name, e.age, meet_date),
             "meet_id": meet_id,
             "meet_name": meet_name,
             "meet_date": meet_date,

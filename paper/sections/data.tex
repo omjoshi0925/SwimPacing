@@ -1,3 +1,119 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
 \section{Data}\label{sec:data}
-[Pending.]
+
+\subsection{Sources and provenance}
+
+The empirical material is official meet results: Hy-Tek Meet Manager
+result sheets published by the host clubs and by Pacific Swimming for
+USA~Swimming sanctioned meets in Northern California, and the official
+result sheets of the North Coast Section and CIF State high-school
+championships. Every source publishes cumulative splits at 50, 100, 150 and
+200 yards for each completed swim, together with the swimmer's name, age
+(club meets) or grade (high-school meets), team, seed time and final time.
+Nothing was measured by us; the dataset is a verified transcription of
+public records.
+
+Sources were admitted at one of two provenance tiers, decided per file and
+recorded in the repository's dataset register. \emph{Tier~1, checksum-verified
+retrieval}: the event section was extracted from the official page by a
+scripted browser procedure that recomputes length and hash checks on the
+saved text, and the file's SHA-256 digest is published so that anyone
+re-retrieving the official page can confirm the dataset was built from the
+genuine file. \emph{Tier~2, verified transcription}: for five meets a
+third-party extraction workbook was supplied by the project owner; each meet
+was admitted only after the official file was identified and its rows were
+independently spot-verified against it. That check was not a formality: one
+workbook meet was contradicted by its official file and was excluded, and in
+another the third and fourth laps appeared transposed, so only its final
+times were kept. Sixteen meets swum between October~2021 and July~2026
+contributed 1{,}382 rows in total; five of them (three SwimCloud final-time
+listings, one meet whose official sheet prints no splits, and the
+transposed-lap meet) contribute final times only and serve the personal-best
+history rather than the shape analysis.
+
+Every row passes through one parser that refuses, rather than guesses at,
+anything it does not recognize: the printed lap times are checked against
+the cumulative splits, the last cumulative split must equal the final time,
+and an entry with a partial split set is reported as a problem in every
+mode. Swimmers are anonymized at ingest to identifiers of the form S\#\#\#
+through a single private identity map that is never published; cross-meet
+identity is matched on normalized name, and, because two different people
+shared a name in the expanded data, a published age that is impossible for
+the matched identity (by birthday-counting bounds across the date gap) now
+forces a separate identity. No name, and no file containing names, enters
+the public repository.
+
+\subsection{Population rule and the club-linked age path}
+
+The target population is male swimmers aged 15--18 racing the 200-yard
+freestyle in a short-course-yards pool. Club meets publish a point age, so
+the rule is applied directly. High-school championships publish grades,
+which we never use to infer age. Instead, under an amendment to the
+analysis plan approved by the project owner before the dataset was frozen
+and before the test set was opened, a grade-only row enters the population
+only when the same swimmer has age-published rows at other meets and every
+age consistent with those rows across the date gap lies inside 15--18. No
+point age is invented, contradictory links derive nothing and are flagged,
+and a field \texttt{age\_source} marks each admitted row as
+\texttt{published} or \texttt{club\_linked} so every result can be re-run on
+the published-only stratum (Section~\ref{sec:results-empirical} does so).
+At adoption the audit found zero conflicting links.
+
+\subsection{The frozen dataset}
+
+Table~\ref{tab:funnel} gives the pre-registered exclusion funnel. Of the
+832 rows with complete cumulative splits, none failed the monotonicity,
+final-time agreement ($|S_{200}-T|\le 0.05$~s), implausible-lap or duplicate
+checks; every exclusion after the split requirement is the population rule.
+The frozen dataset, \texttt{pilot-v0.2}, holds \textbf{345 usable races} by
+248 swimmers across eleven meets (seven club invitationals, three
+high-school championships, one intrasquad meet): 268 timed finals, 57
+preliminary swims and 20 finals. Ages are published for 291 races (15:~91,
+16:~110, 17:~71, 18:~19) and club-linked for 54. Final times average
+1:53.2 (SD 9.7~s, range 1:37.0--2:40.0), a broad age-group field rather
+than an elite one. Sixty swimmers have more than one usable race (157 races
+in all), and 110 races by 71 swimmers have a pre-race personal best derived
+from an earlier row of the same identity within the dataset; no personal
+best is imported from outside it. No source publishes 15~m start times.
+
+\begin{table}[htbp]
+\centering
+\caption{Exclusion funnel for pilot-v0.2, applied in the pre-registered
+order. Every exclusion is a flag in the processed file; nothing is dropped
+silently.}
+\label{tab:funnel}
+\begin{tabular}{lr}
+\toprule
+Step & Rows \\
+\midrule
+Raw rows ingested (16 meets) & 1{,}382 \\
+\quad with complete cumulative splits & 832 \\
+\quad monotonic; $|S_{200}-T|\le0.05$~s; every lap within 0.5--2.0$\times$ race mean; no duplicate & 832 \\
+\quad short-course yards & 832 \\
+\quad male, age 15--18 (published or club-linked) & \textbf{345} \\
+\midrule
+Usable races with a pre-race personal best (H1 set) & 110 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dataset is frozen by digest: the raw and processed files' SHA-256 values
+are recorded in the dataset register together with the per-meet counts and
+provenance tiers, and any later change requires a new version entry. The
+earlier 80-race pilot (\texttt{pilot-v0.1}, one meet, January 2025) is
+preserved unchanged as the exploratory baseline discussed in
+Section~\ref{sec:methods}.
+
+\subsection{Known biases}
+
+All eleven meets are in one region (Northern California), so the sample
+reflects one competitive culture and a small set of pools. The two largest
+contributors are senior-open invitationals whose 15--18 entrants are
+committed club swimmers; the high-school championship rows are, by
+selection, the region's faster swimmers. Preliminary swims (57 races) may be
+paced to qualify rather than to minimize time, a point taken up in
+Section~\ref{sec:limitations}. Personal bests are derived only from races in
+the dataset, so ``improvement on personal best'' is improvement on the
+swimmer's best \emph{recorded here}, which for a developing 15-year-old with
+one earlier row is a weak proxy for expectation.
+
+\FloatBarrier

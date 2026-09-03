@@ -1,3 +1,42 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
-\section{Conclusion}
-[Pending.]
+\section{Conclusion}\label{sec:conclusion}
+
+We asked what pacing minimizes 200-yard freestyle time under realistic
+energetic and fatigue constraints, and whether competitive swimmers use it.
+On the first question the answer has a structure that does not depend on
+parameters: under a fixed energy budget with a velocity-only cost, even
+pacing is the unique optimum for every cost exponent above one, and with
+position-coupled economy decay the optimal split allocation
+$t_i\propto w_i^{1/p}$ is invariant to aerobic capacity, anaerobic
+capacity, drag and efficiency. Fitness sets the speed of the race and not
+its shape, oxygen kinetics slow the race and do not bend it, and every
+departure of a real race from even pacing is evidence about a mechanism
+outside the budget.
+
+On the second question we built a verified pipeline from official result
+sheets to anonymized, checksum-registered data, wrote and froze an analysis
+plan before any race was in hand, and tested five fatigue mechanisms on 345
+races by male swimmers aged 15--18 with a swimmer-grouped held-out set
+opened once. The races are positively split; the even and negative-split
+mechanisms are rejected on held-out accuracy at the elite-anchored start
+credit; the two positive-split mechanisms, position-coupled cost and a
+fatigue-coupled velocity ceiling, tie, because the observed fade is
+front-loaded in kind but between them in degree. The ranking among the
+surviving models changes inside the literature-anchored band of dive-start
+credits, which under the registered plan means the data cannot distinguish
+them given start uncertainty; the hypothesis that swimmers nearer the
+predicted optimum perform better relative to expectation returned the null
+the plan anticipated; and the mean profile carries a finishing kick that no
+monotone mechanism can produce.
+
+The next steps are set by those findings rather than by ambition. The
+dive-start credit must be measured, with 15~m splits, or at least modelled
+as a function of pace, before any fatigue coupling fitted to split sheets
+can be interpreted. The finishing kick calls for a model with uncertainty
+in the swimmer's state, which is a different and more interesting
+optimization problem than the deterministic one solved here. And the
+deviation--performance question needs many races of few swimmers with a
+real expectation model, not few races of many swimmers with a stale one.
+The code, the analysis plan with its amendment log, the dataset register
+with the digests of every official source, and every number in this paper
+are in the project repository, so that the next attempt can start where
+this one stopped rather than where it started.

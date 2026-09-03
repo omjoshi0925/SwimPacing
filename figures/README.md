@@ -33,10 +33,24 @@ not reused, so stale references fail loudly.)
 | empirical/emp04_start_effect | lap-1 advantage vs dive value; ranking across the credit band |
 | empirical/emp05_fitted_shapes | exploratory fits vs training mean; the start-credit confound |
 
+## Registered held-out evaluation (`python -m scripts.evaluate_holdout`, pilot-v0.2)
+
+| Figure | Shows |
+|---|---|
+| empirical/emp06_holdout_comparison | held-out mean RMSE per model with swimmer-cluster bootstrap CIs; held-out mean profile vs fitted shapes |
+| empirical/emp07_start_band_holdout | held-out ranking across the registered 1.2-3.4 s start-credit band, fitted parameters fixed |
+| empirical/emp08_deviation_vs_performance | H1: improvement on pre-race PB vs deviation from the best-supported model's optimum, with the registered quadratic fit |
+
+`evaluate_holdout.py` is the one script that opens the test set; it is not
+part of `run_all.py` and is not re-run casually (validation_plan §5).
+
 Order to regenerate everything from scratch:
 
 ```bash
 python -m src.preprocessing data/raw/200_free_scy_raw.csv
 python scripts/run_all.py
-python scripts/empirical_analysis.py
+python scripts/empirical_analysis.py      # pilot-v0.1 descriptive figures (emp01-05)
+python -m scripts.fit_models --registered --dataset pilot-v0.2 \
+    --out results/model_calibration/fits_train_v0_2.csv   # training side only
+python -m scripts.evaluate_holdout        # emp06-08; opens the test set ONCE
 ```

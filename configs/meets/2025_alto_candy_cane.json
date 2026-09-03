@@ -1,0 +1,23 @@
+{
+  "meet_id": "2025_ALTO_CANDY_CANE",
+  "meet_name": "ALTO Candy Cane Classic",
+  "meet_date": "2025-12-19",
+  "meet_level": "invitational",
+  "data_source": "Official Hy-Tek results, ALTO Candy Cane Classic 12/19-21/2025, Boys 11 & Over 200 Yard Freestyle, https://www.pacswim.org/userfiles/meets/documents/2981/altos-candy-cane-lane-meet.htm (retrieved via browser 2026-09-02, checksum-verified)",
+  "notes": "meet ran 2025-12-19 to 2025-12-21, event day not stated; six entries have no or broken split lines in the official file and enter final-time only",
+  "sections": [
+    {
+      "source_file": "data/private/sources/alto_2025-12-19_boys11over_200free.txt",
+      "round": "timed_final",
+      "format": "hytek",
+      "missing_splits": "blank",
+      "expected_event": {
+        "sex": "Boys",
+        "event": "11 & Over 200 Yard Freestyle"
+      },
+      "source_sha256": "aaa461d7f4bf262eced3303d1abb2bf029eb09598f664fc9cfca6004ccd46f7c"
+    }
+  ],
+  "course": "SCY",
+  "retrieval": "Official pacswim.org Hy-Tek results page loaded in the user's browser 2026-09-02; the Boys/Men 200 Yard Freestyle section text was extracted verbatim (trailing whitespace normalized) and verified against the live page by three checksums (length, rolling hash31, position-weighted sum) computed in the browser and recomputed on the saved file."
+}

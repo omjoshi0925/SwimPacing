@@ -1,0 +1,22 @@
+{
+  "meet_id": "2025_ORINDA_SC_SENIOR_OPEN_OCT",
+  "meet_name": "Orinda Aquatics SCY Senior Open Meet (October)",
+  "meet_date": "2025-10-18",
+  "meet_level": "invitational",
+  "data_source": "Official Hy-Tek results, Orinda Aquatics SCY Senior Open 10/18-19/2025, Men 200 Yard Freestyle, https://www.pacswim.org/userfiles/meets/documents/2810/orinda-senior-open-sc.htm (retrieved via browser 2026-09-02, checksum-verified)",
+  "notes": "meet ran 2025-10-18 to 2025-10-19, event day not stated; senior open field includes ages outside 15-18 by design",
+  "sections": [
+    {
+      "source_file": "data/private/sources/orinda_2025-10-18_men_200_free.txt",
+      "round": "timed_final",
+      "format": "hytek",
+      "expected_event": {
+        "sex": "Men",
+        "event": "200 Yard Freestyle"
+      },
+      "source_sha256": "f3a09ee6231f80b259e0c0617673f4280751f0894d9bc1f93bad008e5b766a62"
+    }
+  ],
+  "course": "SCY",
+  "retrieval": "Official pacswim.org Hy-Tek results page loaded in the user's browser 2026-09-02; the Boys/Men 200 Yard Freestyle section text was extracted verbatim (trailing whitespace normalized) and verified against the live page by three checksums (length, rolling hash31, position-weighted sum) computed in the browser and recomputed on the saved file."
+}

@@ -26,9 +26,11 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import os
 import re
 import sys
+from datetime import date
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -101,6 +103,10 @@ def name_variants(field: str) -> "list[str]":
     return [re.sub(r"^hytek:\s*", "", p) for p in parts if p]
 
 
+def _date(s: str) -> date:
+    return date.fromisoformat(str(s)[:10])
+
+
 def sha256_of(path: str) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -143,7 +149,8 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
         text = open(src_path).read()
         if sec["format"] == "hytek":
             info, entries, problems = parse_section(
-                text, require_splits=sec.get("require_splits", True))
+                text, require_splits=sec.get("require_splits", True),
+                missing_splits=sec.get("missing_splits", "refuse"))
         else:
             info, entries, problems = PARSERS[sec["format"]](text)
         if info != sec["expected_event"]:
@@ -166,33 +173,84 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
         files.append({"file": os.path.basename(sec["source_file"]),
                       "sha256": digest, "rows": len(completed)})
 
+    return merge_parsed_sections(cfg, parsed_sections, files, raw_csv=raw_csv,
+                                 map_csv=map_csv, verbose=verbose)
+
+
+def merge_parsed_sections(cfg: dict, parsed_sections, files, *, raw_csv: str,
+                          map_csv: str, verbose: bool = True) -> dict:
+    """
+    Shared merge step for every ingest path (Hy-Tek sections, transcriptions,
+    verified spreadsheet extracts): anonymize through the ONE private identity
+    map, replace this meet_id's rows in the raw CSV, update the map's meet
+    membership. `parsed_sections` is a list of (section_dict, completed_entries);
+    `files` a list of {file, sha256, rows} for the integrity record.
+    """
     with open(map_csv) as f:
         existing = list(csv.DictReader(f))
+    # every recorded spelling indexes its row; a key may hold SEVERAL rows
+    # once two different people share a normalized name (see sid_of)
     by_key: dict = {}
     for r in existing:
         for v in name_variants(r["name"]):
-            # first writer wins; two different swimmers sharing a normalized
-            # (first, last) is the known limitation of name-based matching and
-            # is documented in data/data_dictionary.md
-            by_key.setdefault(norm_key(v), r)
+            by_key.setdefault(norm_key(v), [])
+            if r not in by_key[norm_key(v)]:
+                by_key[norm_key(v)].append(r)
     next_n = 1 + max((int(r["swimmer_id"][1:]) for r in existing), default=0)
-    matches, created = [], []
+    matches, created, split_off = [], [], []
 
-    def sid_of(hytek_name: str) -> str:
+    # ages already on file per identity, for age-aware matching (this meet's
+    # own prior rows are excluded so a re-ingest reproduces a first ingest)
+    known: dict = {}
+    with open(raw_csv) as f:
+        for r in csv.DictReader(f):
+            if r.get("age") and r["meet_id"] != cfg["meet_id"]:
+                known.setdefault(r["swimmer_id"], []).append(
+                    (int(float(r["age"])), r["meet_date"]))
+
+    def _consistent(sid: str, age, meet_date) -> bool:
+        """Could a person aged `age` on `meet_date` be identity `sid`?"""
+        if age is None or not meet_date:
+            return True
+        d = _date(meet_date)
+        for a0, d0 in known.get(sid, []):
+            delta = (d - _date(d0)).days / 365.25
+            if not (a0 + math.floor(delta) <= age <= a0 + math.ceil(delta)):
+                return False
+        return True
+
+    def sid_of(hytek_name: str, age=None, meet_date=None) -> str:
+        """
+        Anonymous ID for a name. Name match alone is not enough: when the
+        entry's published age is impossible for the matched identity (two
+        different people sharing a name, which happened on the first
+        multi-meet expansion), the entry gets its OWN identity and the split
+        is recorded in the map. Age-blank entries match by name only, the
+        documented limitation.
+        """
         nonlocal next_n
         key = norm_key(hytek_name)
-        if key in by_key:
-            row = by_key[key]
-            if hytek_name not in row["name"]:
-                row["name"] = f"{row['name']} | hytek: {hytek_name}"
-            matches.append((hytek_name, row["swimmer_id"]))
-            return row["swimmer_id"]
+        cands = by_key.get(key, [])
+        for row in cands:
+            if _consistent(row["swimmer_id"], age, meet_date):
+                if hytek_name not in row["name"]:
+                    row["name"] = f"{row['name']} | hytek: {hytek_name}"
+                matches.append((hytek_name, row["swimmer_id"]))
+                if age is not None and meet_date:
+                    known.setdefault(row["swimmer_id"], []).append((age, meet_date))
+                return row["swimmer_id"]
         sid = f"S{next_n:03d}"
         next_n += 1
         row = {"swimmer_id": sid, "name": f"hytek: {hytek_name}",
                "teams": "", "meets": ""}
+        if cands:
+            row["teams"] = (f"distinct person from {cands[0]['swimmer_id']}: "
+                            f"same name, age-inconsistent")
+            split_off.append((hytek_name, sid, cands[0]["swimmer_id"]))
         existing.append(row)
-        by_key[key] = row
+        by_key.setdefault(key, []).append(row)
+        if age is not None and meet_date:
+            known[sid] = [(age, meet_date)]
         created.append((hytek_name, sid))
         return sid
 
@@ -232,7 +290,9 @@ def ingest(cfg: dict, repo: str = REPO, raw_csv: str | None = None,
         print(f"raw file now {len(merged)} rows "
               f"({len(old)} prior + {len(rows)} from this meet)")
         print(f"identity map: {len(matches)} cross-source matches, "
-              f"{len(created)} new IDs (total {len(existing)})")
+              f"{len(created)} new IDs (total {len(existing)})"
+              + (f"; {len(split_off)} same-name identities split off on age"
+                 if split_off else ""))
 
     return {"meet_id": cfg["meet_id"], "rows": len(rows),
             "raw_total": len(merged), "matches": len(matches),

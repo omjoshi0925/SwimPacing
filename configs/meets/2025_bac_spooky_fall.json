@@ -1,0 +1,23 @@
+{
+  "meet_id": "2025_BAC_SPOOKY_FALL",
+  "meet_name": "TYR-BAC Spooky Fall Classic",
+  "meet_date": "2025-10-25",
+  "meet_level": "invitational",
+  "data_source": "Official Hy-Tek results, TYR-BAC Spooky Fall Classic 10/25-26/2025, Boys 11 & Over 200 Yard Freestyle, https://www.pacswim.org/userfiles/meets/documents/2945/bac-results.htm (retrieved via browser 2026-09-02, checksum-verified)",
+  "notes": "meet ran 2025-10-25 to 2025-10-26, event day not stated; 11 & Over age-group event, ages 11-19 present; one entry has a broken split line in the official file and enters final-time only",
+  "sections": [
+    {
+      "source_file": "data/private/sources/bac_2025-10-25_boys11over_200free.txt",
+      "round": "timed_final",
+      "format": "hytek",
+      "missing_splits": "blank",
+      "expected_event": {
+        "sex": "Boys",
+        "event": "11 & Over 200 Yard Freestyle"
+      },
+      "source_sha256": "b757e70fa1000d1f8aae7ba4dfcc009f0e18bba1da1b1be8d39cf35601ea0925"
+    }
+  ],
+  "course": "SCY",
+  "retrieval": "Official pacswim.org Hy-Tek results page loaded in the user's browser 2026-09-02; the Boys/Men 200 Yard Freestyle section text was extracted verbatim (trailing whitespace normalized) and verified against the live page by three checksums (length, rolling hash31, position-weighted sum) computed in the browser and recomputed on the saved file."
+}

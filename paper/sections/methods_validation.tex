@@ -1,3 +1,139 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
-\section{Methods Validation}
-[Pending.]
+\section{Validation Methods}\label{sec:methods}
+
+The analysis plan was written on 29~August~2026, when zero races were in
+hand, and is kept in the repository with an amendment log. Everything in
+this section was fixed before any parameter was fitted to any race. The
+plan's function is to make the empirical section falsifiable in advance:
+what is measured, what counts as a win, what is fitted, and what is done
+about the dive start were all decided when the data could not yet influence
+the decision.
+
+\subsection{Primary metric}
+
+For each race with cumulative splits $S_1<S_2<S_3<S_4=T$ we form lap times
+$s_i=S_i-S_{i-1}$ and the free-swimming-equivalent shares
+\begin{equation}
+  P_i \;=\; \frac{s_i + \delta_{i1}\,c}{T + c}, \qquad i=1,\dots,4,
+  \label{eq:shares}
+\end{equation}
+where $c$ is the dive-start credit added back to lap~1
+(Section~\ref{sec:start}). The model predicts raced-space fractions
+$P_i^\ast$, and the per-race primary metric is
+$\mathrm{RMSE}=\big[\tfrac14\sum_i (P_i-P_i^\ast)^2\big]^{1/2}$, reported
+in percentage points and averaged over races. The metric is scale-free, so a
+1:37 swimmer and a 2:30 swimmer contribute comparably. Because the $P_i$ sum
+to one, only three residuals are free; RMSE over four terms remains a valid
+comparison statistic since every model is scored identically, but it is
+never treated as having four independent components. Secondary metrics are
+the mean absolute error, the per-lap signed error (which is what actually
+separates M3 from M4), and the pre-registered discriminator: the lap
+$1\!\to\!2$ drop against the lap $3\!\to\!4$ drop. Race-time error is
+reported but never used for selection, because race time depends on
+parameters the shape cannot identify (Theorem~\ref{thm:shape}). Likelihood
+criteria such as AIC are not used: the models are deterministic and carry no
+error model, and inventing one for the convenience of a statistic would be a
+modelling choice made backwards.
+
+\subsection{What counts as a win}
+
+A model \emph{wins on shape} if its predicted sign of $P_4-P_1$ matches the
+observed mean's and no other model's does; M0 and M1 are shape-identical and
+count once. A model \emph{wins on accuracy} if its held-out mean RMSE is
+lower than every other model's by more than the 95\% bootstrap confidence
+half-width of that difference. If neither criterion separates the models,
+the registered conclusion is that the data do not distinguish them, and
+that is reported as the result.
+
+\subsection{Split, fitting, and the leakage guard}
+
+Races are split into training and test sets \emph{by swimmer}, never by race:
+repeated races from one swimmer share technique, start quality and habitual
+pacing, so a race-level split would score models partly on how well they
+memorized individuals. Swimmers are assigned whole to one side until the
+test side holds at least a quarter of the races, with a seed (20260829)
+fixed in the plan. On pilot-v0.2 this gives 256 training races by 188
+swimmers and 89 held-out races by 60 swimmers. Fitting code can obtain data
+only through a function that withholds the test rows, and a structural guard
+raises an exception if any frame containing a held-out swimmer reaches an
+objective; the guard is unit-tested. The test set is opened once, by one
+script, which records the time it did so.
+
+Exactly one parameter per model is fitted to shape: $\beta_E$ for M2,
+$\beta_x$ for M3, $\gamma$ for M4; M0 and M1 have none. Nothing else is
+fitted to pacing data. By Theorem~\ref{thm:shape} the engine parameters
+($E_0$, $R$, $\tau$), the drag block and the efficiencies do not enter the
+optimal shape, so fitting them to splits would produce numbers that are
+pure noise, and reporting those as physiology would be the worst error
+available to this project. Each fit minimizes the mean training RMSE over
+its parameter: for M3 the shape is closed-form and a bounded scalar search
+is exact; for M2 and M4 every objective evaluation is an inner
+optimal-control solve, so a coarse grid brackets the minimum and a bounded
+Brent refinement follows, with the evaluation budget recorded. One free
+parameter each makes the comparison fair without a complexity penalty.
+
+\subsection{The dive start}\label{sec:start}
+
+The model describes free swimming; recorded lap~1 contains a dive. Because
+the start and both positive-split couplings push lap~1 the same way, an
+uncorrected fit would absorb the dive into the fatigue parameter and
+overstate it. The plan therefore (i) adds a credit $c$ to lap~1 before
+computing shares, with $c=1.80$~s anchored to measured elite 15~m start
+times \citep{tor2014characteristics,rudnik2023kinematic}; (ii) reports every
+headline result across a sensitivity band, originally 1.2--2.4~s and
+widened by two logged amendments to 1.2--3.4~s once those same start times
+were converted to this field's slower race pace
+($c \approx 15/\bar v - t_{15} \approx 3.1$--$3.4$~s); and (iii) rules that
+if the model ranking changes anywhere inside the band, the conclusion is
+that the data cannot distinguish the models given start uncertainty. A
+third amendment, logged on 1~September~2026, corrected a sign error in the
+implementation of item~(i): the credit had been subtracted from observed
+lap~1 as well as from the model's, double-counting it. The metric definition
+did not change; the code was made to match it, and every pilot output was
+regenerated. All three amendments preceded any calibration and any use of
+the test set, and appear in the plan's amendment log rather than as silent
+edits.
+
+\subsection{Deviation and performance}
+
+The primary hypothesis is that swimmers whose pacing lies closer to the
+predicted optimum perform better relative to expectation. For race $j$ of
+swimmer $i$ we compute the deviation $D_{ij}$, the RMSE of the race's shares
+from the best-supported model's fitted optimum, and the relative improvement
+$I_{ij}=(T^{\mathrm{PB}}_{ij}-T_{ij})/T^{\mathrm{PB}}_{ij}$, where
+$T^{\mathrm{PB}}_{ij}$ is the swimmer's best time \emph{before} that race; a
+later best would leak the outcome into the predictor. The registered model is
+a mixed-effects regression with a random intercept per swimmer,
+$I_{ij}=b_0+b_1 D_{ij}+b_2 D_{ij}^2+u_i+e_{ij}$, quadratic because the
+theory predicts a quadratic penalty near the optimum
+(Section~\ref{sec:results-theory}), with a pre-registered fallback to
+ordinary least squares with swimmer-clustered standard errors if the
+random-effect variance is not identifiable at the achieved sample size.
+Confidence intervals for every held-out quantity are percentile bootstrap
+intervals that resample swimmers, not races (10{,}000 draws, one resample
+applied to all models so that differences are computed on matched draws).
+
+\subsection{Power, stated in advance}
+
+The theoretical effect is small: a 5\% opening error costs about
+0.09~s in 100~s, while meet-to-meet variation in a swimmer's 200 free is of
+order 1\%. The plan states that even 200--300 races may be underpowered for
+the deviation--performance relationship and that a null there will be
+reported as a null. The model-comparison question is better powered, because
+the shape differences between M2, M3 and M4 are large relative to the
+race-to-race noise in shares.
+
+\subsection{Exploratory versus registered}
+
+The 80-race first pilot was used to exercise the fitting machinery and to
+quantify the start-credit confound; those fits are labelled exploratory in
+the repository and are not the calibration. The registered calibration was
+run on the training side of the frozen pilot-v0.2 dataset after the freeze
+(with one inner-solver fix, described in
+Section~\ref{sec:results-empirical}, made and logged before the test set
+was opened); the held-out evaluation was then run once on its test side. All code, the plan, its amendments, the dataset
+register with source digests, and a continuous-integration test suite are in
+the project repository. The anonymized race table itself is not published,
+because ages, teams and exact times at named meets would re-identify
+minors; the chain from official result sheet to every number in this paper
+can nonetheless be re-executed by anyone holding those public sheets, whose
+digests are recorded.

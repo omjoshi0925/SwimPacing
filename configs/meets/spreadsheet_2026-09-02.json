@@ -1,0 +1,67 @@
+{
+  "workbook": "data/private/sources/mens_200_free_scy_meets_2026-09-02.xlsx",
+  "workbook_sha256": "079024f19964c615ca7dc0e87ac6f7dfccafd059d715d39d6e9ddcde9fae88e6",
+  "sheet": "Men 200 Free",
+  "meets": [
+    {
+      "sheet_meet": "NCS Championships 2025",
+      "meet_id": "2025_NCS_CHAMPIONSHIPS",
+      "meet_name": "CIF North Coast Section Swimming and Diving Championship Meet 2025",
+      "meet_date": "2025-05-09",
+      "course": "SCY",
+      "meet_level": "championship",
+      "splits": "use",
+      "data_source": "Official results, 2025 NCS Swimming & Diving Championship (5/9-10/2025), Boys 200 Yard Freestyle prelims and finals, https://www.pacswim.org/userfiles/meets/documents/2878/ncsresultsfinalswithallsplitsforpacswim.pdf (verified extraction workbook, 2026-09-02)",
+      "verification": "Third-party extraction workbook provided by the project owner 2026-09-02 (sha256 079024f19964c615ca7dc0e87ac6f7dfccafd059d715d39d6e9ddcde9fae88e6). Extraction quality graded against verbatim official HTML sections held by this project: 356/356 rows exact across four meets. Every row in this workbook passes internal split arithmetic (905/905). Independent WebFetch of the official PDF confirmed 3 of 3 sampled entries exactly (names, grades, schools, times, all four cumulative splits) and the field sizes (40 prelims, 16 finals).",
+      "notes": "high school championship: grades published, ages blank (club-linked age rule applies)"
+    },
+    {
+      "sheet_meet": "NCS Championships 2024",
+      "meet_id": "2024_NCS_CHAMPIONSHIPS",
+      "meet_name": "CIF North Coast Section Swimming and Diving Championship Meet 2024",
+      "meet_date": "2024-05-03",
+      "course": "SCY",
+      "meet_level": "championship",
+      "splits": "use",
+      "data_source": "Official results, 2024 NCS Swimming & Diving Championships (5/3-4/2024), Boys 200 Yard Freestyle prelims and finals, https://www.pacswim.org/userfiles/meets/documents/2662/ncs-full-results.pdf (verified extraction workbook, 2026-09-02)",
+      "verification": "Third-party extraction workbook provided by the project owner 2026-09-02 (sha256 079024f19964c615ca7dc0e87ac6f7dfccafd059d715d39d6e9ddcde9fae88e6). Extraction quality graded against verbatim official HTML sections held by this project: 356/356 rows exact across four meets. Every row in this workbook passes internal split arithmetic (905/905). Independent WebFetch of the official PDF confirmed the top prelim entry exactly (time and all cumulative splits) and the presence of the event with a ~40-swimmer prelim field.",
+      "notes": "high school championship: grades published, ages blank (club-linked age rule applies)"
+    },
+    {
+      "sheet_meet": "CIF State Championships",
+      "meet_id": "2024_CIF_STATE_CHAMPIONSHIPS",
+      "meet_name": "CIF State Swimming and Diving Championships 2024",
+      "meet_date": "2024-05-09",
+      "course": "SCY",
+      "meet_level": "championship",
+      "splits": "use",
+      "data_source": "Official results, 2024 CIF State Swimming Championships (5/9-11/2024), Boys 200 Yard Freestyle prelims and finals, https://www.pacswim.org/userfiles/meets/documents/2674/2024-cif-statemeet-final-results080485.pdf (verified extraction workbook, 2026-09-02)",
+      "verification": "Third-party extraction workbook provided by the project owner 2026-09-02 (sha256 079024f19964c615ca7dc0e87ac6f7dfccafd059d715d39d6e9ddcde9fae88e6). Extraction quality graded against verbatim official HTML sections held by this project: 356/356 rows exact across four meets. Every row in this workbook passes internal split arithmetic (905/905). Independent WebFetch of the official PDF (which prints per-50 lap times) confirmed the winning final exactly, lap by lap, establishing that the workbook's lap-to-cumulative conversion is correct for this file.",
+      "notes": "high school state championship: grades published, ages blank (club-linked age rule applies); statewide field, mostly outside the Pacific Swimming identity pool"
+    },
+    {
+      "sheet_meet": "ALTO Rock the Blocks Invitational",
+      "meet_id": "2025_ALTO_ROCK_THE_BLOCKS",
+      "meet_name": "ALTO Rock the Blocks Invitational",
+      "meet_date": "2025-03-29",
+      "course": "SCY",
+      "meet_level": "invitational",
+      "splits": "use",
+      "data_source": "Official results, ALTO Rock the Blocks Invitational (3/29-30/2025), Boys 200 Yard Freestyle (all age groups, prelims and finals), https://www.pacswim.org/userfiles/meets/documents/2808/rtb-meet-results-updated.pdf (verified extraction workbook, 2026-09-02)",
+      "verification": "Third-party extraction workbook provided by the project owner 2026-09-02 (sha256 079024f19964c615ca7dc0e87ac6f7dfccafd059d715d39d6e9ddcde9fae88e6). Extraction quality graded against verbatim official HTML sections held by this project: 356/356 rows exact across four meets. Every row in this workbook passes internal split arithmetic (905/905). Independent WebFetch of the official PDF confirmed the Boys 15 & Over final winner exactly (time and all cumulative splits); ages published in the file.",
+      "notes": "age-group invitational, ages 8-18 present; prelims and finals as separate rounds"
+    },
+    {
+      "sheet_meet": "PASA Summer Palooza Championships",
+      "meet_id": "2025_PASA_SUMMER_PALOOZA",
+      "meet_name": "PASA SCY Summer Palooza Championship Intrasquad Meet 2025",
+      "meet_date": "2025-07-20",
+      "course": "SCY",
+      "meet_level": "intrasquad",
+      "splits": "blank",
+      "data_source": "Official results, 2025 PASA Summer Palooza (7/20/2025), Boys 200 Yard Freestyle prelims and finals, https://www.pacswim.org/userfiles/meets/documents/2937/25palooza-results.pdf (verified extraction workbook, 2026-09-02; final times only)",
+      "verification": "Third-party extraction workbook provided by the project owner 2026-09-02 (sha256 079024f19964c615ca7dc0e87ac6f7dfccafd059d715d39d6e9ddcde9fae88e6). Extraction quality graded against verbatim official HTML sections held by this project: 356/356 rows exact across four meets. Every row in this workbook passes internal split arithmetic (905/905). Independent WebFetch of the official PDF confirmed all 3 sampled final times, ages, teams and rounds, but read the 3rd and 4th per-50 lap times in the opposite order from the workbook in all three cases; unresolved without the file itself, so splits are withheld and only final times enter (PB history). Upgrade path: attach the official PDF.",
+      "notes": "intrasquad, all PASA-PC; splits withheld pending lap-order verification"
+    }
+  ]
+}

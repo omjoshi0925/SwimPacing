@@ -1,3 +1,246 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
-\section{Results Empirical}\label{sec:results-empirical}
-[Pending.]
+\section{Empirical Results}\label{sec:results-empirical}
+
+All results in this section come from the frozen pilot-v0.2 dataset under
+the plan of Section~\ref{sec:methods}. Calibration used the 256 training
+races only; the 89 held-out races (60 swimmers, ten meets, final times
+1:39.6--2:25.2) were opened once, by one script, on 3~September~2026, after
+every fitted value had been written to disk.
+
+\subsection{What the races look like}
+
+Across all 345 usable races the mean free-swimming-equivalent shares at the
+registered 1.80~s credit are $(24.17, 24.79, 25.57, 25.47)\%$: a positive
+split, with 91\% of races having $P_4>P_1$. Two features of the profile are
+worth stating before any model is scored. The fade is front-loaded --- the
+mean lap slows by 0.76~s from lap~1 (credited) to lap~2 and by 0.92~s from
+lap~2 to lap~3 --- and then it stops: the fourth lap is on average
+0.13~s \emph{faster} than the third, and in 52\% of races the last 50 is
+the faster of the two. The third lap is the slowest lap in 48\% of races.
+No model in the family of Section~\ref{sec:competing} produces a
+non-monotone profile, because every mechanism in it is monotone in position
+or reserve; the finishing kick is therefore outside the model class by
+construction, and we return to it in Section~\ref{sec:discussion}.
+
+\subsection{Registered calibration}
+
+Table~\ref{tab:fits} gives the training-side fits. The position-coupled
+model's $\beta_x$ moved from the registry guess of 0.28 to 0.228, improving
+the training loss from 0.472 to 0.465 percentage points; the
+velocity-ceiling coupling $\gamma$ moved from 0.18 to 0.269 (0.472 to
+0.461~pp); and the reserve-coupled $\beta_E$ was driven to its lower bound
+of 0.02, where M2 is nearly even and still worse than M0, which is exactly
+how a sign-contradicted mechanism should behave under a fit. The fitted
+shapes are $(24.35, 24.79, 25.22, 25.63)\%$ for M3 and
+$(24.07, 25.04, 25.37, 25.51)\%$ for M4. Two remarks. First, the
+improvements from fitting are in the third decimal of a percentage point:
+the registry shapes were already near the dispersion floor of the data, and
+most of every model's loss is race-to-race scatter, not misplacement of the
+mean. Second, during this calibration the inner optimal-control solve for
+M4 was found to return a quiet local optimum from a single restart; the
+registered fitter therefore uses at least five restarts and records, for
+every ODE fit, that it reproduces the independently computed registry shape
+(to 0.004~pp here). The exploratory pilot fits predate that fix and are
+labelled accordingly.
+
+\begin{table}[htbp]
+\centering
+\caption{Registered calibration on the training side of pilot-v0.2 (256
+races, 188 swimmers). Loss is the mean per-race RMSE of split shares in
+percentage points at the 1.80~s start credit.}
+\label{tab:fits}
+\begin{tabular}{llrrrrr}
+\toprule
+Model & Parameter & Registry & Fitted & Bounds & Loss at registry & Loss fitted \\
+\midrule
+M0 / M1 & --- & --- & --- & --- & 0.653 & 0.653 \\
+M2 & $\beta_E$ & 0.28 & 0.020 (bound) & [0.02, 1] & 2.522 & 0.764 \\
+M3 & $\beta_x$ & 0.28 & 0.228 & [0, 1.5] & 0.472 & 0.465 \\
+M4 & $\gamma$ & 0.18 & 0.269 & [0.02, 0.45] & 0.472 & 0.461 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Held-out comparison}
+
+Table~\ref{tab:holdout} and Figure~\ref{fig:holdout} give the registered
+comparison. The positive-split models are decisively more accurate than the
+alternatives: M3's held-out mean RMSE is 0.454~pp [0.398, 0.523] and M4's
+0.461~pp [0.415, 0.515], against 0.653~pp [0.568, 0.759] for the even
+models and 0.771~pp [0.682, 0.880] for M2. The paired differences are
+unambiguous --- the even models are worse than M3 by 0.200~pp
+[0.144, 0.262] and M2 by 0.317~pp [0.256, 0.385], both intervals far from
+zero --- so the pre-registered criterion rejects the even class and the
+negative-split class. Between M3 and M4 the data have nothing to say: the
+difference is 0.007~pp with a 95\% interval of $[-0.019, +0.030]$, M3 is
+the better model in 30 held-out races and M4 in 37, and on shape both
+predict the observed sign of $P_4-P_1$. Applying Section~\ref{sec:methods}
+mechanically, no single model wins on accuracy and no single model wins on
+shape; the registered conclusion is that \emph{the data distinguish the
+shape classes but not the two positive-split mechanisms}. The
+published-age stratum (73 held-out races, club-linked rows removed) gives
+the same picture, M4 at 0.463~pp and M3 at 0.469~pp, both far below M0 at
+0.706~pp.
+
+\begin{table}[htbp]
+\centering
+\caption{Registered held-out comparison (89 races, 60 swimmers). Intervals
+are swimmer-cluster percentile bootstrap 95\% CIs (10{,}000 draws);
+differences are against the lowest-RMSE model on matched draws.}
+\label{tab:holdout}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Mean RMSE (pp) & 95\% CI & $\Delta$ vs M3 (pp) & $\Delta$ 95\% CI & Best in $n$ races \\
+\midrule
+M0 / M1 & 0.653 & [0.568, 0.759] & $+0.200$ & [$+0.144$, $+0.262$] & 20 \\
+M2      & 0.771 & [0.682, 0.880] & $+0.317$ & [$+0.256$, $+0.385$] & 2 \\
+M3      & 0.454 & [0.398, 0.523] & ---      & ---                   & 30 \\
+M4      & 0.461 & [0.415, 0.515] & $+0.007$ & [$-0.019$, $+0.030$] & 37 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{emp06_holdout_comparison}
+\caption{Left: held-out mean RMSE per model at its training-fitted
+parameter, with swimmer-cluster bootstrap CIs. Right: the held-out mean
+profile (with CIs) against the fitted shapes. The observed profile is
+front-loaded like M4 through lap~3 and then turns upward on lap~4, which no
+model in the family can do.}
+\label{fig:holdout}
+\end{figure}
+
+The pre-registered discriminator explains why M3 and M4 tie. The held-out
+drop from lap~1 to lap~2 is $+0.75$~s [0.56, 0.99] and from lap~3 to lap~4
+is $-0.03$~s [$-0.18$, $+0.10$]. At the held-out mean race duration the
+fitted M3 predicts drops of 0.51 and 0.47~s (an even fade) and the fitted
+M4 predicts 1.11 and 0.16~s (a front-loaded fade). The observed pattern is
+M4's in kind --- large early loss, flat finish --- but M4 overshoots the
+early drop by as much as M3 undershoots it, and neither predicts a final
+lap faster than the third. The per-lap signed errors say the same thing:
+the mean held-out shares are $(24.15, 24.76, 25.56, 25.53)\%$, so M3 puts
+0.20 points too much time in lap~1 and 0.34 too little in lap~3, while M4
+gets laps~1 and~4 within 0.1 points but puts 0.28 too much in lap~2 and
+0.19 too little in lap~3. Aggregate RMSE, which sums these, cannot prefer
+one, and the discriminating statistic points to a profile between them with
+a feature outside both.
+
+\subsection{The start credit decides the ranking}
+
+Figure~\ref{fig:band} and Table~\ref{tab:band} sweep the credit applied to
+the held-out data across the registered band while every fitted parameter
+stays at its 1.80~s training value. The ranking changes twice inside the
+band: M4 is the most accurate model for credits of 1.2--1.6~s, M3 for
+1.8--2.6~s, and the even models for 2.8--3.4~s; at 3.4~s the observed mean
+profile itself becomes a negative split. Under item~3 of the plan's
+start-uncertainty clause, the registered conclusion is that the data cannot
+distinguish the surviving models given the uncertainty in the start credit.
+The upper part of the band is not an academic extreme: it is where the
+measured elite 15~m start times land when converted to this field's
+race pace. Refitting $\beta_x$ at each credit on the training side (a
+supplementary analysis, closed-form and therefore cheap) shows the same
+confound from the parameter's side: the fitted coupling falls from 0.334 at
+1.2~s to 0.010 at 3.4~s, roughly 0.15 of $\beta_x$ per second of assumed
+credit, and its held-out advantage over the even model shrinks from
+0.34~pp to 0.002~pp across the band. Position fatigue and the dive are, at
+this population's pace, nearly the same thing to a split sheet.
+
+\begin{table}[htbp]
+\centering
+\caption{Held-out mean RMSE (pp) across the registered start-credit band,
+fitted parameters fixed at their 1.80~s values.}
+\label{tab:band}
+\begin{tabular}{rrrrrrl}
+\toprule
+Credit (s) & M0/M1 & M2 & M3 & M4 & sign$(P_4-P_1)$ & Best \\
+\midrule
+1.2 & 0.835 & 0.960 & 0.526 & 0.454 & $+$ & M4 \\
+1.6 & 0.708 & 0.830 & 0.466 & 0.447 & $+$ & M4 \\
+1.8 & 0.653 & 0.771 & 0.454 & 0.461 & $+$ & M3 \\
+2.2 & 0.569 & 0.671 & 0.463 & 0.514 & $+$ & M3 \\
+2.6 & 0.529 & 0.607 & 0.509 & 0.593 & $+$ & M3 \\
+2.8 & 0.526 & 0.590 & 0.542 & 0.640 & $+$ & M0/M1 \\
+3.2 & 0.544 & 0.585 & 0.628 & 0.745 & $+$ & M0/M1 \\
+3.4 & 0.564 & 0.594 & 0.678 & 0.803 & $-$ & M0/M1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\linewidth]{emp07_start_band_holdout}
+\caption{Held-out ranking across the registered start-credit band. The
+curves cross twice inside the band, which is the plan's definition of
+``cannot distinguish given start uncertainty''.}
+\label{fig:band}
+\end{figure}
+
+\subsection{Deviation and performance: a null}
+
+The registered regression (Table~\ref{tab:h1}, Figure~\ref{fig:h1}) uses
+the 110 races by 71 swimmers with a pre-race personal best. The random
+intercept per swimmer was identifiable in every fit, so the mixed model was
+used throughout. With deviation measured from the fitted M3 optimum the
+linear coefficient is $b_1=+0.38$~\% per point with a 95\% interval of
+$[-4.09, +4.86]$; from the M4 optimum, $+1.04$ $[-3.72, +5.80]$; from the
+even optimum, $-1.46$ $[-4.62, +1.69]$. No interval excludes zero, in
+either direction, for any model. The primary hypothesis is not supported,
+and per the plan this is reported as a null, not as an absence of evidence
+to be argued around.
+
+The registered fit also returned a significantly positive curvature for M3
+and M4 ($b_2=+14.7$ $[+6.3, +23.2]$ and $+19.9$ $[+9.5, +30.3]$), which
+would say that large deviations go with large improvements. Inspection
+showed what it was: the three largest ``improvements'' in the set (29\%,
+14\% and 13\%) were measured against personal bests swum four years earlier
+at ages 13--14, which are not expectations in any useful sense. A post-hoc
+supplement --- exploratory, and reported as such --- restricting the
+personal best to one set within the previous 365 days (85 races, 65
+swimmers) removes the curvature entirely ($b_2=+0.4$ $[-8.8, +9.6]$ for
+M3) and leaves the linear term null ($b_1=+2.6$ $[-1.3, +6.6]$). The
+lesson is about the expectation model rather than about pacing, and it is
+taken up in Section~\ref{sec:limitations}.
+
+\begin{table}[htbp]
+\centering
+\caption{Deviation--performance regression
+($I=b_0+b_1D+b_2D^2+u_i+e$, $D$ centred, in percentage points of RMSE
+from the fitted M3 optimum; $I$ in percent of pre-race PB). Mixed model
+with a random intercept per swimmer.}
+\label{tab:h1}
+\begin{tabular}{lrrrrr}
+\toprule
+Stratum & Races / swimmers & $b_1$ & 95\% CI & $b_2$ & 95\% CI \\
+\midrule
+Registered (every race with a PB) & 110 / 71 & $+0.38$ & [$-4.09$, $+4.86$] & $+14.7$ & [$+6.3$, $+23.2$] \\
+Supplement (PB within 365 days)    & 85 / 65  & $+2.62$ & [$-1.33$, $+6.58$] & $+0.4$  & [$-8.8$, $+9.6$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\linewidth]{emp08_deviation_vs_performance}
+\caption{Improvement on pre-race personal best against deviation from the
+fitted M3 optimum, with the registered quadratic mixed-model fit. The
+curvature is carried by three races scored against four-year-old personal
+bests.}
+\label{fig:h1}
+\end{figure}
+
+\subsection{Two descriptive observations, not registered}
+
+Two patterns in the full usable set are worth recording for the next
+study, with the caveat that neither was pre-registered. First, faster
+swimmers pace more evenly: the fastest tercile by final time has mean
+corrected shares of $24.61\%$ on lap~1 and $25.32\%$ on lap~4 (a spread of
+0.7 points), the slowest tercile $23.71\%$ and $25.64\%$ (1.9 points).
+This is the direction the theory predicts if pacing skill is part of what
+makes a swimmer fast, but a constant 1.80~s credit under-corrects slower
+swimmers, whose dive is worth more seconds at their pace, so part of the
+pattern is the start again. Second, swims at the high-school championships are slightly more
+evenly paced than swims at club invitationals (lap-1 share 24.6\% against
+24.1\%), consistent with the same reading, since the championship fields
+are faster, or with a difference in how a heat and a final are raced.
+
+\FloatBarrier

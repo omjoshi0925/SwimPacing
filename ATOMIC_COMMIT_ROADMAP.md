@@ -233,6 +233,26 @@ sections wait for band G.
 | 097 | docs(paper) | figures and captions integration | `paper/`, selected `figures/` | | 094 |
 | 098 | docs(paper) | conclusion, future work, final bibliography pass | `paper/sections/` | | 095-097 |
 
+## Execution note, 2026-09-03 (single large commit by owner's instruction)
+
+Rows 055-058 (freeze), 059-072 (registered fits, held-out comparison,
+bootstrap CIs, H1, mixed effects) and 091-098 (paper data, methods,
+theoretical results, empirical results, discussion, limitations, figures,
+conclusion) were executed together and delivered as ONE commit, at the
+owner's request ("for this next commit just do a single large commit").
+Deviations from the planned file names: fits land in
+`results/model_calibration/fits_train_v0_2.csv` (validation_plan §11) and
+the comparison in `results/validation/model_comparison.csv`; the evaluator
+is `scripts/evaluate_holdout.py` with its synthetic tests in
+`tests/test_evaluate_holdout.py`; rows 067/069/071 share `src/stats.py`.
+Rows 063/064 produced emp06-08 from the evaluator rather than from
+`empirical_analysis.py`, so the frozen pilot-v0.1 outputs stay untouched.
+Row 087 (background) remains folded into the introduction; band J is open.
+Also in this commit, outside the plan: age-aware identity matching in the
+ingester (a false merge of two same-name swimmers found during expansion)
+and the inner-solver restart fix in `src/calibration.py` (found during the
+registered calibration, before the test set was opened; docs/calibration.md).
+
 ## Band J — Code quality and documentation (099-106)
 
 Executed only where a real gain exists; any row that turns out cosmetic is

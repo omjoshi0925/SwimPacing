@@ -1,3 +1,71 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
 \section{Limitations}\label{sec:limitations}
-[Pending.]
+
+\paragraph{The start is assumed, not measured.} Every empirical statement in
+this paper is conditional on the dive credit $c$. The credit is anchored to
+elite 15~m start times, and the band we sweep was widened twice, by logged
+amendment, once we converted those times to this field's slower pace; but
+no source in our data publishes a 15~m split, so the credit is never
+observed for any race we analyse. Because the credit and both positive-split
+couplings push lap~1 the same way, the fitted $\beta_x$ and $\gamma$ are
+credit-conditional estimates, and the width of the credit band is the width
+of our ignorance about them. A pace-dependent start term,
+$c(v) \approx 15/v - t_{15}$, and 15~m timing at even one meet would do more
+for the model comparison than any additional race sheet.
+
+\paragraph{Turns and underwaters are folded into $\phi$.} Short-course yards
+racing contains seven turns in 200 yards, and the underwater phase is faster
+than surface swimming. The model represents the whole course discount by one
+calibrated factor $\phi$ and treats each 50 as free swimming at constant
+velocity. The shape-invariance theorem means $\phi$ cannot move the M3
+optimum, so this does not bias the shape comparison, but it does mean the
+model cannot distinguish a swimmer who fades because of surface economy from
+one whose turns deteriorate; both appear as $\beta_x$.
+
+\paragraph{Constant velocity within a 50.} Cost is convex in velocity, so
+this systematically understates energy cost, and the missing cost is absorbed
+into the calibrated engine. It also excludes by assumption the within-lap
+oscillation mechanisms of the optimal-control literature; split-level data
+cannot test those in either direction.
+
+\paragraph{One region, one course, a broad field.} All eleven meets are in
+Northern California; the sample is one competitive culture and a handful of
+pools. Final times span 1:37 to 2:40, a developmental range in which pacing
+skill itself varies, and the population rule admits 54 races on club-linked
+rather than published age. We report the published-age stratum separately
+and the conclusions do not change, but a replication elsewhere, on
+long-course metres, and on female and older swimmers is required before any
+of this is a statement about the 200 freestyle in general.
+
+\paragraph{Preliminary swims and the finishing kick.} Fifty-seven usable
+races are preliminaries, which may be paced to qualify rather than to
+minimize time. And the observed mean profile has a feature none of the five
+models can produce: the third lap is the slowest and the fourth is faster
+than it. Every model in the family predicts monotone lap times, because
+every mechanism is monotone in position or reserve. A terminal kick is the
+signature of a swimmer holding something back and spending it once the
+finish is certain, which is a rational response to uncertainty about one's
+own state or a tactical response to the field, and neither is in the model.
+
+\paragraph{Fitted parameters are not physiology.} $\beta_x$, $\gamma$ and
+$\beta_E$ are estimates under this model family, conditional on the start
+credit, on the constant-velocity assumption and on the calibrated engine.
+They are not measurements of any swimmer, and we have taken care nowhere to
+describe them as such. The same applies with more force to the engine
+parameters $E_0$, $R$ and $\phi$, which are calibrated to reproduce a target
+time and, by Theorem~\ref{thm:shape}, are not identifiable from pacing data
+at all.
+
+\paragraph{Expectation is weak.} The pre-race personal best is derived only
+from earlier rows in this dataset, so for most swimmers it is one earlier
+race, often months before, in a developing athlete. Improvement on that
+number mixes training gains with pacing quality, which is one reason the
+deviation--performance regression was pre-registered as likely underpowered
+and why its result is reported as a null rather than explained away.
+
+\paragraph{What we did not do.} We did not fit any engine or hull parameter
+to pacing data, did not use AIC or likelihood comparison, did not examine
+the test set before the registered evaluation, and did not adjust anything
+after it. The exploratory 80-race pilot informed the start-credit band and
+exposed the sign error; both are logged as amendments made before any
+calibration. We regard the ordering of those steps as the main
+methodological contribution of the empirical half of the paper.

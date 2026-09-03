@@ -101,7 +101,7 @@ def test_rows_carry_schema_fields_and_skip_dfs():
     rows = entries_to_raw_rows(
         entries, meet_id="TEST", meet_name="Synthetic Meet",
         meet_date="2025-01-25", course="SCY", round_="timed_final",
-        data_source="synthetic test fixture", sid_of=lambda n: "S999")
+        data_source="synthetic test fixture", sid_of=lambda n, *a: "S999")
     assert len(rows) == 3  # DFS skipped
     r = rows[0]
     assert r["split_200"] == r["final_time"] == "1:37.01"

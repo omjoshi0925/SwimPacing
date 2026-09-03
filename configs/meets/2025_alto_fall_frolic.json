@@ -1,0 +1,33 @@
+{
+  "meet_id": "2025_ALTO_FALL_FROLIC",
+  "meet_name": "ALTO Fall Frolic",
+  "meet_date": "2025-11-15",
+  "meet_level": "invitational",
+  "data_source": "Official Hy-Tek results, Alto Nov 15-16 Fall Frolic 11/15-16/2025, Boys 11 & Over 200 Yard Freestyle (two sessions), https://www.pacswim.org/userfiles/meets/documents/2947/alto-results.htm (retrieved via browser 2026-09-02, checksum-verified)",
+  "notes": "meet ran 2025-11-15 to 2025-11-16; the event was held as two separately listed sessions, both ingested; one entry has no split line in the official file and enters final-time only",
+  "sections": [
+    {
+      "source_file": "data/private/sources/alto_2025-11-15_boys11over_200free_a.txt",
+      "round": "timed_final",
+      "format": "hytek",
+      "missing_splits": "blank",
+      "expected_event": {
+        "sex": "Boys",
+        "event": "11 & Over 200 Yard Freestyle"
+      },
+      "source_sha256": "5a29f8c0f0edd9b2391c429b2bee0c4673e201d1ddfb64c0d0995b9f3fce46a5"
+    },
+    {
+      "source_file": "data/private/sources/alto_2025-11-15_boys11over_200free_b.txt",
+      "round": "timed_final",
+      "format": "hytek",
+      "expected_event": {
+        "sex": "Boys",
+        "event": "11 & Over 200 Yard Freestyle"
+      },
+      "source_sha256": "976703beaf5c9d616386261184445098a067f43136b053ddba2f52eaf248bc2e"
+    }
+  ],
+  "course": "SCY",
+  "retrieval": "Official pacswim.org Hy-Tek results page loaded in the user's browser 2026-09-02; the Boys/Men 200 Yard Freestyle section text was extracted verbatim (trailing whitespace normalized) and verified against the live page by three checksums (length, rolling hash31, position-weighted sum) computed in the browser and recomputed on the saved file."
+}

@@ -10,6 +10,12 @@ one auditable CSV via `calibration.write_fit_report`.
     python -m scripts.fit_models --models M4 M2         # ODE fits, minutes each
     python -m scripts.fit_models --out results/validation/fits_train_pilot.csv
 
+The REGISTERED calibration (validation_plan §6, run once on the training side
+of the frozen pilot-v0.2 dataset) is an explicit mode, never the default:
+
+    python -m scripts.fit_models --registered --dataset pilot-v0.2 \
+        --out results/model_calibration/fits_train_v0_2.csv
+
 Rows merge into an existing report CSV by model, so per-model runs can land
 separately without clobbering each other.
 """
@@ -42,11 +48,16 @@ def main() -> None:
                     choices=sorted(FITTERS), help="which models to fit")
     ap.add_argument("--processed", default=PROCESSED)
     ap.add_argument("--out", default=DEFAULT_OUT)
-    ap.add_argument("--exploratory", action="store_true", default=True,
-                    help="label rows exploratory (pilot-era default; the "
-                         "registered run on the expanded frozen dataset "
-                         "will unset this deliberately)")
+    ap.add_argument("--registered", action="store_true",
+                    help="label rows as the registered calibration (not "
+                         "exploratory); requires --dataset naming a FROZEN "
+                         "version in data/DATASET_VERSIONS.md")
+    ap.add_argument("--dataset", default="pilot-v0.1",
+                    help="dataset version label recorded in the report")
     args = ap.parse_args()
+    if args.registered and args.dataset == "pilot-v0.1":
+        ap.error("pilot-v0.1 fits are exploratory by declaration "
+                 "(validation_plan, 2026-09-01); name the frozen dataset")
 
     train, meta = calibration.training_frame(args.processed)
     calibration.assert_no_test_rows(train, args.processed)
@@ -55,8 +66,8 @@ def main() -> None:
           f"{meta['n_train_swimmers']} swimmers (seed {meta['seed']}); "
           f"test rows withheld: {meta['n_test_races_unopened']}")
 
-    meta = dict(meta, exploratory=bool(args.exploratory),
-                dataset="pilot-v0.1", loss="mean per-race RMSE of split "
+    meta = dict(meta, exploratory=not args.registered,
+                dataset=args.dataset, loss="mean per-race RMSE of split "
                 "proportions (pp), validation_plan §3")
 
     fits = []

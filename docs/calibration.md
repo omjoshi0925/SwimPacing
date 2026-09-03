@@ -38,10 +38,23 @@ code minimizes the registered per-race form directly anyway.
 - **M3 / `beta_x`** — closed-form inner solve, bounded Brent, deterministic,
   ~10 evaluations, milliseconds.
 - **M4 / `gamma`**, **M2 / `beta_E`** — each objective evaluation is a full
-  ODE optimization (`optimize_full`, tens of seconds), so: coarse grid to
-  bracket, bounded Brent inside the bracket, per-value caching, and a restart
-  ladder (1 → 2 → 5 starts) on solver failure. Explicit eval budgets, printed
-  and recorded.
+  ODE optimization (`optimize_full`, minutes), so: coarse grid to bracket,
+  bounded Brent inside the bracket, per-value caching, and a restart ladder
+  on solver failure. Explicit eval budgets, printed and recorded.
+  **Inner-solve reliability (found 2026-09-03, training side, before the
+  test set was opened).** The pilot-era ladder started at ONE restart and
+  escalated only on exceptions. On pilot-v0.2 the single-start M4 solve at
+  the registry gamma returned a solution 0.1 s slower than the 12-start
+  registry solution with a shape 0.35 pp away from it — a quiet local
+  optimum, not a failure — and at the "fitted" gamma it returned a
+  meaningless 2.7 pp shape. The registered fitter therefore starts the
+  ladder at five restarts (`INNER_STARTS_LADDER = (5, 12)`), which
+  reproduces the cached 12-start registry shapes to four decimals, and every
+  ODE fit now records a reliability check ("inner solve vs cached registry
+  shape: max |dP|") in its notes; a deviation above 0.05 pp marks the fit
+  unusable. The exploratory pilot-v0.1 gamma fit in
+  `results/validation/fits_train_pilot.csv` predates this and should be read
+  with that caveat (it was never the calibration).
 - Lower bounds sit off zero for `gamma` and `beta_E`: at zero the mechanism is
   absent and the parameter unidentified.
 - `phi` is held at each model's registry value during fitting. By the

@@ -9,27 +9,40 @@ the 200 yard freestyle (SCY), built to be validated against real race data.
 optimization, drag-derived cost function, ODE energy model, five competing
 fatigue models (M0-M4), sensitivity analysis, and the full data pipeline.
 
-**First real data ingested 2026-08-31:** 581 rows from public results, of
-which **80 usable races** (male 15-18, SCY, official checksum-verified Hy-Tek
-splits from the Orinda SC Senior Open, Jan 2025). First empirical comparison:
-[`results/validation/pilot_report.md`](results/validation/pilot_report.md) and
-`figures/empirical/`. **Corrected 2026-09-01** after a sign error in the start
-transform was found and fixed (the dive credit had been double-counted; see
-the correction notes in the pilot report and `docs/RESULTS.md`). The corrected
-picture: observed pacing is positive-split in every race, so M2 stays
-sign-contradicted; the observed mean shape sits directly on the front-loaded
-M3/M4 family (within 0.2-0.3 pp); the corrected lap-drop pattern
-(+0.92 s / -0.23 s) matches M4's predicted signature (0.99 / 0.24); and the
-M4-vs-M3-vs-M0 ranking moves with the assumed start credit, which makes a
-pace-aware start term the highest-leverage next modelling step. Descriptive
-only — single meet, held-out test set untouched, per
-[`docs/validation_plan.md`](docs/validation_plan.md). **Exploratory fits**
-(declared, training rows only) now exist for beta_x, gamma, and beta_E:
-`results/validation/fits_train_pilot.csv`, protocol in
-[`docs/calibration.md`](docs/calibration.md); the headline is the quantified
-start-credit confound (figure emp05), not the fitted values. Synthetic
-pipeline fixtures remain quarantined in `results/placeholder_data/` and
-`tests/fixtures/`.
+**Registered results, 2026-09-03 (pilot-v0.2, frozen).** The dataset now
+holds **345 usable races** by 248 male swimmers aged 15-18 across eleven
+meets (1,382 raw rows, 16 meets, official checksum-verified Hy-Tek sections
+and spot-verified transcriptions; `data/DATASET_VERSIONS.md`). The
+pre-registered analysis was run once: fatigue parameters fitted on the
+training side only (`results/model_calibration/fits_train_v0_2.csv`), the
+swimmer-grouped test set opened once (89 races / 60 swimmers), results in
+[`results/validation/report_v0_2.md`](results/validation/report_v0_2.md)
+and the paper draft in `paper/`. Headline, applied mechanically under
+`docs/validation_plan.md` §4 and §7:
+
+- Observed pacing is positively split (91% of races). The even models
+  (M0/M1) and the negative-split model (M2) are rejected on held-out
+  accuracy at the registered 1.80 s start credit: mean split-share RMSE
+  0.653 and 0.771 pp against 0.454 (M3) and 0.461 (M4), with bootstrap
+  intervals on the differences well clear of zero.
+- M3 (position-coupled cost) and M4 (fatigue-coupled ceiling) **tie**:
+  difference 0.007 pp, CI [−0.019, +0.030]. The observed fade is
+  front-loaded in kind (M4) but between the two in degree, and the last lap
+  is faster than the third in half the races — a finishing kick no monotone
+  mechanism in the family can produce.
+- The ranking changes inside the registered start-credit band
+  (M4 best at 1.2-1.6 s, M3 at 1.8-2.6 s, M0 at 2.8-3.4 s), so by §7.3 the
+  data cannot distinguish the surviving models given start uncertainty.
+  Fitted beta_x runs from 0.33 to 0.01 across the band.
+- H1 (closer to the optimum → better vs pre-race PB) returns the null the
+  plan anticipated (b1 CI includes zero for every model). A post-hoc,
+  labelled supplement shows the registered fit's curvature came from three
+  four-year-old PBs.
+
+The first 80-race pilot (`results/validation/pilot_report.md`, corrected
+2026-09-01 after a sign error in the start transform) is preserved unchanged
+as the exploratory baseline. Synthetic pipeline fixtures remain quarantined
+in `results/placeholder_data/` and `tests/fixtures/`.
 
 ---
 
@@ -96,16 +109,21 @@ python -m pytest tests -q                # full verification suite (~2 min)
 python -m pytest tests -q -m "not slow"  # quick subset (~6 s), what CI runs
 ```
 
-Measured on this project's reference environment: the full suite is 108 tests
-in about 124 s, nearly all of it in two ODE-heavy tests carrying the `slow`
-marker; the remaining 106 run in about 6 s. For `run_all.py`, runtime depends
+Measured on this project's reference environment: the quick tier is 146
+tests in about 6 s (what CI runs); the `slow` tier adds five ODE-heavy
+tests (151 total) that take about 21 minutes, nearly all of it in the two
+parameter-recovery fits, which now use the reliable five-restart inner
+solve (docs/calibration.md). For `run_all.py`, runtime depends
 on hardware and settings; `--quick` trades grid resolution and solver restarts
 for speed. Results land in
 `results/` as CSV, figures in `figures/` as PNG and PDF.
 
 ```bash
-python -m src.preprocessing data/raw/200_free_scy_raw.csv   # once races exist
+python -m src.preprocessing data/raw/200_free_scy_raw.csv   # rebuild the processed file
 python -m scripts.refresh_predictions                        # after editing MODELS
+python -m scripts.fit_models --registered --dataset pilot-v0.2 \
+    --out results/model_calibration/fits_train_v0_2.csv      # training side only, ~40 min
+python -m scripts.evaluate_holdout                           # opens the test set ONCE (see plan §5)
 ```
 
 ### Using it directly
@@ -249,21 +267,25 @@ that matter most:
 
 ## What comes next
 
-1. **Finish the literature review.** Hydrodynamics and energetics are cited in
-   `docs/parameters.md`. Exercise physiology (`R`, `E0`, `tau`), observed pacing,
-   and the start/turn credit are still **PROVENANCE GAPs** and are marked as such
-   everywhere they appear.
-2. **Collect the first 50 races.** Schema, templates, cleaning pipeline and
-   collection protocol are ready; see
-   [`data/data_dictionary.md`](data/data_dictionary.md). Per Task 9 these 50 are
-   a pipeline test, not a sample to draw conclusions from.
-3. **Measure the dive-start credit.** Record 15 m splits wherever available. It
-   is the weakest number in the model and it sits directly on the main
-   comparison.
-4. **Then the held-out model comparison**, following the pre-registered plan.
+1. **Measure the dive-start credit.** 15 m splits at even one meet would pin
+   the credit for its field; failing that, a pace-dependent term
+   `c(v) = 15/v - t15` replaces a constant that is wrong in a known direction
+   for slower swimmers. This is the decisive open quantity: the registered
+   comparison is hostage to it.
+2. **A model that can produce the finishing kick.** Every mechanism in M0-M4
+   is monotone; the data are not. A stochastic-state (uncertainty about own
+   reserve) formulation is the natural candidate and makes a testable
+   prediction (the kick should shrink with experience).
+3. **A better expectation model for H1.** Many races of few swimmers, with
+   seed or season-best trajectories as expectation, rather than few races of
+   many swimmers with a stale in-file PB.
+4. **Upgrade the Tier-2 meets** (workbook transcriptions) to Tier-1 from the
+   official PDFs, and admit the withheld meets (ALTO Valentine, Palooza 2025
+   splits, TCA/TERA) once their official files are verified.
+5. **Replicate elsewhere**: other regions, LCM, female and older swimmers.
 
-Deliberately not started yet: the public tool, optimal control, other events,
-other courses, machine learning. All of it comes after real-world validation.
+Deliberately not started: the public tool, optimal control, other events,
+machine learning. All of it comes after the start credit is measured.
 
 ---
 

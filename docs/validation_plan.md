@@ -33,6 +33,27 @@ calibration, which runs once on the training side of the expanded frozen
 dataset. The held-out test rows remain unopened; `src/calibration.py`
 enforces this structurally (CalibrationLeakageError).
 
+**Freeze and registered run, 2026-09-03.** pilot-v0.2 frozen at 345 usable
+races (`data/DATASET_VERSIONS.md`, file digests recorded). Registered
+calibration run once on the training side (256 races / 188 swimmers):
+`results/model_calibration/fits_train_v0_2.csv`. During that run the inner
+ODE solve used by the M4/M2 fitters was found to return quiet local optima
+from a single restart (docs/calibration.md); the fitter's restart floor was
+raised to five and the fits re-run, all before the test set was opened —
+this is a fix to the fitting procedure of §6, not a change to it. **Test
+set opened once at 2026-09-03T02:00:12Z** by `scripts/evaluate_holdout.py`
+(89 races / 60 swimmers); results in `results/validation/report_v0_2.md`.
+Registered outcomes, applied mechanically: no single model wins on shape
+(M3 and M4 both match the observed sign) or on accuracy (M3–M4 difference
+0.007 pp, CI [−0.019, +0.030]); the even and negative-split classes are
+rejected at the registered credit; the ranking changes inside the §7 band
+(M4 → M3 → M0), so §7 item 3 applies; H1 null. One post-hoc supplement was
+added after the first run and is labelled exploratory in the report: the
+§8 regression restricted to pre-race PBs set within 365 days, because the
+three largest improvements in the registered set were against PBs swum four
+years earlier (ages 13-14). Nothing upstream of the test set was changed
+after it was opened.
+
 ---
 
 ## 1. Research question

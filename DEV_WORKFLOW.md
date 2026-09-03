@@ -22,7 +22,9 @@ analysis-script edits.
 | `src/parameters.py` MODELS registry | `python -m scripts.refresh_predictions`, then full test tier (the cache-vs-live test enforces freshness) |
 | model/optimizer code | `python scripts/run_all.py` (theoretical results + figures) |
 | `src/preprocessing.py` or raw data | `python -m src.preprocessing data/raw/200_free_scy_raw.csv` |
-| anything feeding the empirical analysis | `python scripts/empirical_analysis.py` (figures `emp*`, `results/validation/pilot_report.md`, comparison CSVs) |
+| anything feeding the pilot-v0.1 analysis | `python scripts/empirical_analysis.py` (figures `emp01-05`, `results/validation/pilot_report.md`, pilot CSVs) — note this rewrites the FROZEN pilot report; only run it to reproduce, never to update |
+| the registered calibration (frozen dataset, training side) | `python -m scripts.fit_models --registered --dataset pilot-v0.2 --out results/model_calibration/fits_train_v0_2.csv` (~40 min; M2/M4 use the five-restart inner solve) |
+| the registered held-out evaluation | `python -m scripts.evaluate_holdout` — this opens the test set; the first opening is recorded in the script and the plan, and re-running after any upstream change makes the result exploratory (validation_plan §5). `--dry-run` exercises the code on a re-split of the training rows only |
 
 Generated CSVs, figures, and the pilot report are committed in the same commit
 as the code change that alters them, never separately, so history never holds

@@ -255,11 +255,17 @@ are never used for age inference.
 
 **Identity across meets.** Swimmers keep one S-number across meets and
 sources; matching is on normalized (first, last) name tokens over every
-recorded spelling variant. Known limitation: two different swimmers sharing a
-normalized name would collide onto one ID. With ages present on official
-results, an age discontinuity within one ID is the tell; check the private map
-when a match looks suspicious, and record any manual resolution in the map's
-name field rather than editing silently.
+recorded spelling variant, **and on age consistency**: a name match whose
+published age is impossible for the matched identity (birthday-counting
+bounds against every age already on file for that ID across the date gap)
+is minted as a separate identity, and the split is recorded in the private
+map's `teams` field ("distinct person from S###: same name,
+age-inconsistent"). This became necessary on the first multi-meet expansion,
+when two different swimmers sharing a name had been merged. Remaining
+limitation: age-blank rows (high-school sources) match by name only, so a
+same-name collision between two grade-only swimmers would still merge; the
+club-linkage audit (0 conflicts at the v0.2 freeze) is the check. Record any
+manual resolution in the map rather than editing silently.
 
 which writes the processed file and prints a flag summary. Fix flagged rows at
 the source rather than editing the processed file.

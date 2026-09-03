@@ -40,6 +40,9 @@ scripts/ingest_hytek.py       config-driven meet ingestion (configs/meets/*.json
 scripts/ingest_swimcloud_pdfs.py the pilot's SwimCloud final-times ingest
 scripts/empirical_analysis.py  empirical figures + pilot report + sensitivity
 scripts/fit_models.py          the only sanctioned fitting entry point
+scripts/ingest_spreadsheet.py  Tier-2 (verified transcription) meet ingestion
+scripts/evaluate_holdout.py    the registered held-out comparison + H1; the one place the test set is opened
+src/stats.py                   cluster bootstrap, §4 win criteria, §8 mixed-effects regression
 ```
 
 ## Data flow
@@ -59,7 +62,13 @@ data/processed/200_free_scy_processed.csv   [flags, metrics, deviations]
    |                          \
    |  empirical_analysis       \  calibration.training_frame (train rows only;
    v                            v  test rows structurally withheld)
-figures/empirical/*, pilot_report   scripts/fit_models.py -> fits_*.csv
+figures/empirical/emp01-05,         scripts/fit_models.py --registered
+pilot_report (frozen v0.1)            -> results/model_calibration/fits_train_v0_2.csv
+                                             |
+                                             v  scripts/evaluate_holdout.py (opens test rows ONCE)
+                                    results/validation/model_comparison.csv, h1_regression.csv,
+                                    holdout_start_sensitivity.csv, report_v0_2.md,
+                                    figures/empirical/emp06-08
 ```
 
 Theory side, independent of any data:

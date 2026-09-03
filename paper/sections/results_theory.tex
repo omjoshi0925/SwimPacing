@@ -1,3 +1,152 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
-\section{Results Theory}
-[Pending.]
+\section{Theoretical Results}\label{sec:results-theory}
+
+This section reports what the model says before any race is consulted. All
+numbers are produced by the repository's \texttt{run\_all} script from the
+parameter registry; the reference swimmer is calibrated so that the optimal
+200-yard time is exactly 100.0~s (1:40.0), which makes penalties readable as
+seconds lost per 100~s of racing.
+
+\subsection{The optimum and the cost of missing it}
+
+Under the pure budget (M0) the optimum is four laps of 25.000~s, and the
+closed form, the split-space SQP solve and the direct ODE integration agree
+on it to $10^{-11}$~s, as Theorem~\ref{thm:even} requires. The interesting
+quantity is not the optimum but the penalty for missing it, because the
+penalty is what a coach would act on. Figure~\ref{fig:penalty} plots the
+race time when the opening lap is forced to a fixed error and the remaining
+three laps are re-optimized around it. The penalty is quadratic near the
+optimum and small: a 2\% opening error costs 0.015~s, 5\% costs 0.09~s, and
+10\% costs 0.36~s (too fast) or 0.39~s (too slow). Named strategies at the
+same energy budget tell the same story (Figure~\ref{fig:strategies}): a
+smooth ramp spanning 1.5 points from first lap to last, in either
+direction, costs 0.055~s; the ``aggressive opening'' profile, 7.4\% fast on
+lap~1, costs 0.27~s; a ``very aggressive'' 13.0\% opening costs 0.94~s; a
+conservative 6.4\% slow opening costs 0.18~s. The corrected elite 200-m finalist profile of
+\citet{robertson2009analysis} costs 0.009~s against the even optimum, and
+the mean corrected profile of our own 80-race first pilot costs 0.075~s. A
+Monte Carlo over the physiological block (240 draws with $R$, $E_0$, $C_D$,
+$A$, $\eta_p$, $\eta_g$ perturbed log-normally at 10\% coefficient of
+variation; Figure~\ref{fig:robust}) leaves this ordering intact in every
+draw, with the very-aggressive penalty spanning 0.83--1.06~s and the smooth
+ramps 0.049--0.063~s across the 5th--95th percentiles. The ranking of
+pacing errors is therefore robust to parameter ignorance of the size we
+actually have; the magnitude is robust to within about 15\%.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\linewidth]{fig05_opening_penalty}
+\caption{Race-time penalty for a forced opening-lap error, remaining laps
+re-optimized (reference swimmer, M0). The penalty is quadratic near the
+optimum; a 5\% opening error costs about 0.09~s of a 100~s race.}
+\label{fig:penalty}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\linewidth]{fig03_strategy_comparison}
+\caption{Named pacing strategies at matched energy budget. The observed
+elite profile, once the dive credit is added back, lies within 0.01~s of the
+even optimum.}
+\label{fig:strategies}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\linewidth]{fig15_penalty_robustness}
+\caption{Pacing penalties under 240 seeded Monte Carlo draws of the
+physiological block (10\% CV). The ordering of strategies survives every
+draw; magnitudes move by about 15\%.}
+\label{fig:robust}
+\end{figure}
+
+\subsection{The engine sets the speed, not the shape}
+
+Theorem~\ref{thm:shape} says the optimal shape is independent of every
+engine and hull parameter; Figure~\ref{fig:elasticity} shows how strongly
+those parameters act on everything else. A 10\% change in either the drag
+area $A$ or the drag coefficient $C_D$ moves the optimal race time by
+7.4~s (elasticity 0.37), the same change in either efficiency moves it by
+7.4~s the other way, and $R$ and $E_0$ move it by 5.3~s and 2.1~s
+(elasticities 0.26 and 0.11). Not one of these changes moves the first-lap
+share by more than $10^{-8}$. Only the fatigue couplings and the kinetic
+time constant do anything to shape or to timing beyond the budget: stepping
+$\beta_x$ from 0 to 0.05 lowers the optimal first-lap share by 0.15 points
+and costs 0.91~s, while stepping $\tau$ from 0 to 2~s costs 0.53~s and
+leaves the shape exactly even, as Proposition~\ref{prop:kinetics} says it
+must. The archetype experiment (Figure~\ref{fig:archetypes}) makes the same
+point at the level a coach would recognize: seven swimmers calibrated to the
+same 1:43.0 --- aerobic-dominant, anaerobic-dominant, high-drag, low-drag
+and reference --- all receive an identical, exactly even prescription
+(shape spread below $10^{-8}$), and only the two fatigue archetypes differ,
+the fatigue-prone swimmer ($\beta_x=0.35$) at $(.2405,.2470,.2533,.2592)$
+and the fatigue-resistant one ($\beta_x=0.08$) at $(.2476,.2492,.2508,.2524)$.
+The intuition that a stronger athlete has earned a faster opening lap finds
+no support here; what would earn one is a \emph{smaller} fatigue coupling.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\linewidth]{fig13_elasticity}
+\caption{Race-time elasticities under $\pm10\%$ parameter perturbations. The
+drag and efficiency block dominates race time; none of the engine or hull
+parameters moves the optimal shape.}
+\label{fig:elasticity}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\linewidth]{fig12_archetypes}
+\caption{Seven archetypes calibrated to the same target time. Only the
+fatigue couplings change the prescribed shape.}
+\label{fig:archetypes}
+\end{figure}
+
+\subsection{Mechanisms as shapes}
+
+Figure~\ref{fig:mechanisms} stacks the mechanisms on the reference swimmer.
+Oxygen kinetics with $\tau=20$~s costs 5.5~s and with $\tau=30$~s costs
+8.4~s, in both cases with an exactly even optimum. Position-coupled decay at
+$\beta_x=0.15$ and $0.30$ yields near-linear positive splits,
+$(.2456,.2486,.2515,.2543)$ and $(.2417,.2474,.2528,.2581)$; reserve-coupled
+decay at $\beta_E=0.30$ yields a strong negative split
+$(.2815,.2605,.2382,.2198)$. The heat-map of the first-lap share over the
+$(\beta_x,p)$ plane (Figure~\ref{fig:heatmap}) shows the whole M3 family at
+once: the share falls monotonically in $\beta_x$ and rises toward $0.25$ as
+the cost exponent $p$ grows, exactly the $w_i^{1/p}$ dependence of
+Eq.~\eqref{eq:shape}. Two consequences matter for the empirical section.
+First, the differences between the three shape classes are of order one to
+three percentage points per lap, an order of magnitude larger than the
+race-to-race scatter of shares within a class, so even a few hundred races
+can separate the classes if the start is handled. Second, the differences
+\emph{within} the positive class, M3 against M4, are of order a tenth of a
+point per lap at the registry couplings, which is the same order as the
+effect of moving the dive credit by a few tenths of a second. The theory
+therefore predicts, before any data, where the empirical comparison will be
+decisive and where it will be hostage to the start.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.74\linewidth]{fig09_theory_vs_observed}
+\caption{Model optima under each mechanism against observed strategy shapes.
+The mechanisms collapse onto three shape classes: even, negative, positive.}
+\label{fig:mechanisms}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.55\linewidth]{fig14_shape_heatmap}
+\caption{Optimal first-lap share over the position-fatigue coefficient and
+the cost exponent, the only two parameters that enter the M3 shape.}
+\label{fig:heatmap}
+\end{figure}
+
+\subsection{What the working swimmer prescribes}
+
+The working swimmer used for prescriptions is the M3 variant at the registry
+coupling $\beta_x=0.28$, recalibrated to 1:40.0. Its optimum is
+$(.2422,.2475,.2527,.2576)$: 24.22, 24.75, 25.27, 25.76~s. Against it, even
+pacing costs 0.056~s, a negative split of the same magnitude costs 0.22~s,
+the conservative opening 0.43~s and the aggressive opening 0.08~s. Which
+direction of error is cheaper thus depends on which mechanism is true, and
+that is the question the data are asked next.
+
+\FloatBarrier

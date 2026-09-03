@@ -1,3 +1,108 @@
-%% Section stub: filled by its own commit per ATOMIC_COMMIT_ROADMAP.md
 \section{Discussion}\label{sec:discussion}
-[Pending.]
+
+\subsection{What was learned about mechanism}
+
+The theoretical half of the paper reduced ``why do swimmers fade'' to a
+sign-and-shape question, and the data answered the sign part cleanly. In
+345 official races the profile is positively split, the reserve-coupled
+mechanism M2 is sign-contradicted and remains the worst model even after
+its coupling is fitted to the bound, and the even class is rejected on the
+held-out set by a margin of 0.20 percentage points with an interval that
+does not approach zero. Whatever makes late yards dearer than early ones in
+a 200-yard freestyle, it is not the value of a full reserve. The positive
+sign survives every credit in the registered band but the last; the
+rejection of the even class holds for credits up to 2.6~s, which covers
+the elite-anchored value and everything below it but not the field-pace
+values above it. Within that qualification, it is the empirical result we
+are most confident of.
+
+The shape part was not answered, and the reason is instructive. M3 and M4
+tie on held-out accuracy because they err in opposite directions on the
+one statistic that was supposed to separate them: the observed fade is
+front-loaded in kind, as M4 predicts, but only about two thirds as
+front-loaded as the fitted M4 requires and far more than the fitted M3
+allows. A mechanism between them --- a cost that rises with position
+\emph{and} a ceiling that binds early --- would fit better, but adding it
+would be a third one-parameter model chosen after the data were seen, and
+we decline to do that here. The honest statement is that a single
+one-parameter mechanism of either kind captures the mean profile to within
+about half a percentage point per lap, that the residual is the finishing
+kick, and that the fade's distribution between the early and late laps is
+the next thing a model of this class must get right.
+
+\subsection{The start credit is the problem}
+
+The pilot showed the start-credit confound qualitatively; the registered
+evaluation quantifies it. Across the literature-anchored band the fitted
+$\beta_x$ moves by a factor of thirty and the held-out ranking passes
+through three different winners. The fatigue mechanisms differ from each
+other by tenths of a percentage point per lap; a tenth of a second of dive
+credit moves the corrected first-lap share by about a tenth of a point.
+This is not a statistical limitation to be cured by more races --- the
+confidence intervals on the held-out RMSEs are already narrow relative to
+the model differences at any fixed credit --- but a modelling limitation:
+the free-swimming model is asked to explain a lap that is not free swimming,
+and how much of that lap to credit to the dive is unknown to within a
+second. The plan's start-uncertainty clause was written for exactly this
+outcome, and we report it as the clause requires. Two remedies follow, in
+order of value. First, measure the credit: 15~m split times are recorded at
+some meets and published at almost none, and a single meet with them would
+pin the credit for its field to a few tenths. Second, model it: a
+pace-dependent term $c(v)=15/v-t_{15}$, with $t_{15}$ from the start
+literature, replaces a constant that is wrong in a known direction for
+slower swimmers and would remove the artefactual part of the ``faster
+swimmers pace more evenly'' pattern before it is interpreted.
+
+\subsection{The finishing kick}
+
+Half the races in the dataset have a fourth lap faster than the third, and
+the mean profile has its slowest lap third. No mechanism in the family can
+produce this, and the reason is structural rather than parametric: every
+cost multiplier we consider is monotone in position or reserve, and every
+ceiling tightens monotonically, so the optimal lap times are monotone.
+Three explanations are compatible with the data and none is tested by it.
+A swimmer racing under uncertainty about their own reserve rationally holds
+a margin until the finish is certain and then spends it; that is an
+optimal-control problem with a stochastic state, not a deterministic one,
+and it produces an end spurt. A swimmer racing a field rather than a clock
+responds to the swimmers beside them, which the model excludes by design.
+And a swimmer's underwater work off the last turn may simply be better,
+because there is nothing to save it for. The first explanation is the most
+interesting because it is a model, and it predicts something testable: the
+size of the kick should fall as a swimmer's experience of the event grows
+and their uncertainty about their state shrinks.
+
+\subsection{Deviation and performance}
+
+The pre-registered null on H1 was the expected outcome at this sample size
+and it arrived. It should be read narrowly. The theory predicts that a 5\%
+opening error costs 0.09~s in a 100~s race; the race-to-race noise in a
+developing 16-year-old's 200 free is an order of magnitude larger, and the
+expectation model available to us --- the swimmer's best earlier race in
+this dataset --- is weaker still, as the three four-year-old personal bests
+that manufactured a spurious curvature showed. A null under these
+conditions does not say that pacing does not matter; it says that the
+effect predicted by the model is below what this design can see, which the
+plan said in advance. A design that could see it would use within-swimmer
+comparisons across many races of one athlete, with seed times or
+season-best trajectories as the expectation, and a deviation measured from
+that swimmer's own fitted shape rather than the population's.
+
+\subsection{What the theory contributes regardless}
+
+The empirical section cannot yet say which fatigue mechanism is true, but
+the structural results do not depend on it. Even pacing is the unique
+optimum of every budget-constrained model with a velocity-only cost, so a
+fade is always evidence of a mechanism and never a consequence of fitness;
+the optimal shape is invariant to the engine and the hull, so no swimmer
+has earned a faster opening lap by being stronger; and the penalty for
+pacing error is quadratic and small near the optimum, so the difference
+between a good pacing plan and the best one is hundredths of a second while
+the difference between a good one and a bad one is tenths. The elite
+profile of \citet{robertson2009analysis}, once the dive is credited, costs
+0.01~s against the model's optimum; the mean profile of our first pilot
+costs about 0.08~s; the ``very aggressive'' opening that coaches warn
+against costs nearly a second. Which small error is cheapest depends on
+the mechanism, but the ordering of large errors against small ones holds
+for every mechanism considered and every parameter draw tried, and that is
+the practical content of the paper.

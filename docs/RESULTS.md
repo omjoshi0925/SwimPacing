@@ -27,6 +27,27 @@ costs only 0.009 s against the working model's optimum (was 0.53 s), i.e.
 international finalists pace the 200 within a hundredth of a second of this
 model's optimal split. Amendment logged in `docs/validation_plan.md`.
 
+**Registered held-out results, 2026-09-03 (pilot-v0.2).** Dataset frozen at
+345 usable races / 248 swimmers / 11 meets. Training-side fits: beta_x =
+0.228 (loss 0.465 vs 0.472 pp at the registry value), gamma = 0.269 (0.461
+vs 0.472), beta_E at its 0.02 bound (0.764; M2 still worst). Held-out (89
+races / 60 swimmers, swimmer-cluster bootstrap): M3 0.454 [0.398, 0.523],
+M4 0.461 [0.415, 0.515], M0/M1 0.653 [0.568, 0.759], M2 0.771 [0.682,
+0.880] pp. Even and negative classes rejected (differences vs M3 of +0.200
+[+0.144, +0.262] and +0.317 [+0.256, +0.385]); M3 vs M4 not separated
+(+0.007 [−0.019, +0.030]); both match the observed sign, so no shape winner
+either. Discriminator: drop 1→2 = +0.75 s [0.56, 0.99], drop 3→4 = −0.03 s
+[−0.18, +0.10] — fitted M3 predicts 0.51/0.47, fitted M4 1.11/0.16; the
+observed fade is front-loaded in kind and between them in degree, and the
+final lap is faster than the third in half the races (a finishing kick no
+monotone mechanism produces). Ranking across the §7 band: M4 (1.2-1.6 s) →
+M3 (1.8-2.6 s) → M0 (2.8-3.4 s), so §7.3 applies. H1: null (b1 CIs all
+include zero); the registered fit's positive curvature traced to three
+four-year-old PBs and vanishes in a labelled post-hoc supplement (PB within
+365 days). Full report: `results/validation/report_v0_2.md`; paper draft in
+`paper/`. Inner-solver reliability fix made during calibration (before the
+test set was opened) is documented in `docs/calibration.md`.
+
 **Exploratory fits, 2026-09-01 (Task 14 machinery live).** First parameter
 fits, training rows only (60 races), registered loss, labeled exploratory:
 beta_x = 0.234 (registry 0.28, train loss 0.525 vs 0.532 pp), gamma = 0.285
