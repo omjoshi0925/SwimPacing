@@ -283,3 +283,56 @@ sense. Using it for R would be a category error.
 
 **Consequence.** Row 077 (CS/W' plausibility check against R and E0) remains
 blocked on source access, not on effort.
+
+## Adolescent / junior male swimming energetics (searched 2026-09-03)
+
+**Sousa, Vilas-Boas & Fernandes (2014).** BioMed Research International
+2014:675363, DOI 10.1155/2014/675363, PMID 25045690 — ACCESS: abstract and
+participants section read. Direct fetch of the PMC page returned a CAPTCHA
+challenge; content was recovered from the DOI-resolved publisher rendering and
+an independent reference listing, which agree on authors, venue and numbers.
+
+Population: 12 well-trained male swimmers, age 18.2 +/- 4.1 y, height 179.4
++/- 6.5 cm, mass 70.5 +/- 5.8 kg, Tanner stage 4-5, middle-distance freestyle
+specialists, national level, 200 m LC at 86.5 +/- 3.7% of the 2013 world
+record. Trains at least eight sessions per week.
+
+Key numbers (95 / 100 / 105% of the velocity at VO2max):
+- tau, fast component: **15, 18, 16 s**
+- A1, fast-component amplitude: 36, 34, 37 mL/kg/min
+- A2, slow component: 480.76 +/- 247.01, 452.18 +/- 217.04, 147.04 +/- 60.40 mL/min
+- Aerobic energy contribution: **83 +/- 5, 74 +/- 6, 59 +/- 7%**
+- Convention: metabolic.
+
+**Bears on the model.** Closest population match found in any pass: male,
+middle-distance freestyle, mass within 4% of the project's 68 kg working
+figure, age range spanning the 15-18 target. Two consequences. (1) Its tau
+range 15-18 s is the first in the literature that *contains* the working
+value of 16.5 s rather than sitting below it; every prior swimming-specific
+estimate ran faster. (2) At 105% of vVO2max the aerobic share falls to 59
++/- 7%, i.e. anaerobic 41 +/- 7%, sitting inside the project's 30-50%
+anaerobic sanity check and between source 6 (34%) and source 10 (21%).
+A 200 free is raced above vVO2max, so the 105% row is the relevant one.
+
+**Candidate, authors NOT verified, no bib entry created.** An EJAP 2015 paper,
+DOI 10.1007/s00421-014-3093-5, pages 1117-1124, reports for a 100 m swim:
+aerobic 43.4 / anaerobic lactic 33.1 / alactic 23.5%, VO2peak 56.07 +/- 5.19
+mL/kg/min, tau 12.73 +/- 3.09 s, energy cost 1.16 +/- 0.10 kJ/m. Author list
+and volume number were not recoverable in this pass; recorded as a lead, not
+as a source.
+
+**Top target for the next pass, reference-list only:** Almeida et al. (2020),
+EJAP 120:1097-1109, DOI 10.1007/s00421-020-04348-y, "VO2 kinetics and energy
+contribution in simulated maximal performance during short and middle
+distance-trials in swimming." Title indicates middle-distance trials, i.e.
+the project's exact race regime.
+
+**Exclusion reaffirmed.** The n=8 Indonesian adolescent VO2max study already
+excluded in `energetics_literature_sources.md` resurfaced in this search under
+a different title and venue, with the same red flags: n=8, age 14.5 +/- 0.5,
+and standard deviations of exactly 0.50 or 0.00 across measures. Exclusion
+stands. Noting here that it recirculates under multiple titles.
+
+**Gap NOT closed.** A clean absolute VO2max in mL/kg/min for trained males
+aged 15-18 remains unfound. The A1 amplitudes above are fast-component
+amplitudes, not VO2max, and must not be read as such.
