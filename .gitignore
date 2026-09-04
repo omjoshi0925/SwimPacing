@@ -10,6 +10,9 @@ data/processed/*
 !data/**/.gitkeep
 data/private/
 
+# graphify knowledge-graph output: derived from the tree, rebuilt on demand
+graphify-out/
+
 # LaTeX build outputs (paper/): the CI job publishes the compiled PDF artifact
 paper/*.aux
 paper/*.bbl
