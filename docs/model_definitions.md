@@ -195,7 +195,8 @@ cost. The swimmer does not choose to slow down; they become unable to go fast.
 / 24.92 / 25.41 / 25.71 (fractions .2396/.2492/.2541/.2571). The ceiling is
 **binding at the optimum** (headroom 0.0000 m/s).
 
-**Why.** This is the Keller structure: go as fast as the ceiling allows while
+**Why.** This is the Keller structure (Keller 1973, 1974; see
+`docs/literature_notes.md`): go as fast as the ceiling allows while
 the ceiling is still high, then follow it down. Speed early is not just cheaper,
 it is *available*, and later it is not.
 
