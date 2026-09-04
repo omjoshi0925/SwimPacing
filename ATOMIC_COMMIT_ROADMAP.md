@@ -215,6 +215,15 @@ Row 078's planned title also carried a citation error, corrected in that row.
 | 081 | chore(lit) | regenerate review CSV and coverage table | `literature/literature_review.csv`, `docs/literature_notes.md` | counts and coverage status refreshed once the passes land | 073-080 |
 | 082 | docs | assumptions.md updates from new literature | `docs/assumptions.md` | tier assignments revisited where evidence changed | 081 |
 
+**Row 082 executed partially 2026-09-03, ahead of its 081 dependency.** The
+provenance summary in `docs/assumptions.md` had drifted from `parameters.md`
+(`tau` at the superseded 20 s, PROVENANCE GAP on `tau` and `R` after the
+2026-08-31 passes closed them, the pre-`Course` start-credit name), and A1/A3
+predated the turn and economy-decay sources. Those are fixed. What still waits
+on 081: no coverage or count claim in `assumptions.md` was touched, since those
+are what the regenerated `literature_review.csv` will settle. No Tier 1/2/3
+assignment moved; A3 gained contrary evidence but stays Tier 1.
+
 ## Band I — Paper (083-098)
 
 LaTeX lives in `paper/`, one section per commit, drawing on

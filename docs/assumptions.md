@@ -16,9 +16,11 @@ and the underwater phase after each is faster and differently economical from
 surface swimming.
 
 **Why it matters most.** This is the single largest reason real splits are
-positively split. Split 1 contains a dive worth roughly 1.5 to 2.5 s relative to
-racing into that 50 at pace. If the start is not credited back before comparing
-with the model, the entire dive advantage is misattributed to physiology.
+positively split. Split 1 contains a dive worth roughly 1.7 to 3.0 s relative
+to racing into that 50 at pace, the band implied by measured 15 m start times
+(Tor et al. 2014; Rudnik et al. 2023). If the start is not credited back before
+comparing with the model, the entire dive advantage is misattributed to
+physiology.
 
 **Current handling.** A constant credit (`Course.start_credit_s` = 1.80 s)
 maps between raced and recorded space: subtracted from model lap 1, or added
@@ -69,6 +71,15 @@ defended.
 `C = k v^p (1 + beta_x x/L)` is the simplest specification that produces a
 positive split. There is no strong physiological reason it should be linear
 rather than, say, accelerating in the last 50.
+
+**The decay is measured; the linear form is not (2026-09-03).** Figueiredo et
+al. (2011, full text) measured arm-stroke propelling efficiency falling
+significantly from lap 1 to lap 4 of a 200 m front crawl (p = 0.002), so
+within-race economy decay is no longer an assumption. Their lap energy cost,
+however, runs 1.71 / 1.56 / 1.44 / 1.70 kJ/m — **U-shaped, not monotone**. Lap
+cost also moves with lap velocity, so this is a caution against the linear form
+rather than a clean refutation of it, and `beta_x` is better read as a summary
+of net within-race decay than as a decay rate. The assumption stays in Tier 1.
 
 **Cost.** The optimal shape is `Pi ∝ wi^(1/p)`, so the *form* of the decay
 directly determines the *form* of the prediction. A convex decay profile would
@@ -151,7 +162,13 @@ a good candidate for the paper.
 **Superseded.** The authoritative provenance record is now
 [`parameters.md`](parameters.md), which classifies every parameter as
 Category A (literature-supported), B (calibrated) or C (exploratory) and marks
-the ones with no citation yet as PROVENANCE GAP. A summary:
+the ones with no citation yet as PROVENANCE GAP.
+
+**Summary refreshed 2026-09-03.** The table below had drifted from that record:
+it still carried `tau` at the superseded 20 s, two PROVENANCE GAP flags that the
+2026-08-31 literature passes closed, and the pre-`Course` name for the start
+credit. Categories now match `parameters.md`; fitted values are read from
+`results/model_calibration/fits_train_v0_2.csv`.
 
 | parameter | value | basis |
 |---|---|---|
@@ -161,13 +178,13 @@ the ones with no citation yet as PROVENANCE GAP. A summary:
 | `eta_p` | 0.60 | A, Toussaint & Beek 1992; literature spans 0.40 to 0.71 |
 | `eta_g` | 0.20 | A but **contested**: 0.20 (Zamparo 2005) vs 0.049-0.068 (Kolmogorov 2021) |
 | `p` | 3.0 | derived from quadratic drag; measured exponent implies 3.22 |
-| `phi` | 0.75 to 1.00 | B, calibrated per model variant; the SCY turn and underwater discount |
-| `R` | 1250 W | B, PROVENANCE GAP |
-| `E0` | 50.32 kJ | B, calibrated to a 1:40 optimum |
-| `tau` | 20 s | C, PROVENANCE GAP |
-| `beta_E`, `beta_x`, `gamma` | 0.28, 0.28, 0.18 | C, these define M2, M3 and M4 |
+| `phi` | 0.77 to 1.00 | B, calibrated per model variant; the SCY turn and underwater discount. The turn literature implies 0.80-0.95, which M2 and M3 sit just below. |
+| `R` | 1250 W | B, calibrated jointly with `E0`; VO2max-plausible (Pessoa Filho et al. 2012). Residual gap: no absolute VO2max for trained males 15-18. |
+| `E0` | 50.32 kJ | B, calibrated to a 1:40 optimum; sits inside the measured AOD band for age-matched swimmers (Campos et al. 2022) |
+| `tau` | 16.5 s | A, Pessoa Filho et al. 2012 (16.5 +/- 5.1 s, severe intensity, well-trained males); Sousa et al. 2014 puts the fast-component range at 15-18 s in swimmers whose age spread covers this project's 15-18. **Was 20 s, C, PROVENANCE GAP.** |
+| `beta_E`, `beta_x`, `gamma` | 0.28, 0.28, 0.18 | C, these registry values define M2, M3 and M4. Fitted once on pilot-v0.2 train (n=256): 0.02 (at the lower bound), 0.228, 0.269 — estimates, not measurements. |
 | `v_max` | 2.10 m/s | C, assumed; slack except in M4 |
-| `START_OFFSET_S` | 1.80 s | C, PROVENANCE GAP. The weakest number in the project. |
+| `Course.start_credit_s` (legacy alias `START_OFFSET_S`) | 1.80 s | B, bracketed by measured 15 m start times (Tor et al. 2014; Rudnik et al. 2023) implying 1.7-3.0 s. No longer a provenance gap, but still the decisive number: the model ranking changes across the registered 1.2-3.4 s band. |
 
 **Units warning.** `E0` is metabolic energy, not mechanical work. Published `W'`
 values of 15 to 25 kJ are mechanical. The conversion is a **multiplication**:
