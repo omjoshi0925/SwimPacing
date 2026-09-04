@@ -214,3 +214,24 @@ race is ridden on wall push-offs and underwater kicking that move the swimmer
 faster than surface swimming at plausibly lower propulsive cost per metre.
 The quantitative synthesis (what band this implies for `phi`) lives in
 `docs/parameters.md` under the phi entry.
+
+## Keller, the two papers (verified 2026-09-03)
+
+**Keller (1973).** A theory of competitive running. Physics Today 26(9):43-47.
+DOI 10.1063/1.3128231 — ACCESS: abstract/summary read (publisher feature page).
+Model built on Newton's second law plus the calculus of variations; yields an
+optimum race strategy and recovers physiological parameters from world records.
+An author copy is hosted on a university course page; located, not fetched.
+
+**Keller (1974).** Optimal velocity in a race. Am. Math. Monthly 81(5):474-480.
+ACCESS: metadata only. Confirmed against four independent bibliographies
+(Pritchard, SIAM Review 35; arXiv 2208.10927; arXiv 1811.12321; arXiv
+1606.09497). No DOI verified; held by JSTOR. Not fetched.
+
+**Bears on the model.** M4 descends from both: the 1973 paper supplies the
+force/energy-balance structure, the 1974 paper the optimal-velocity result.
+They are distinct works and are not interchangeable in citation.
+
+**Correction logged.** This repo's roadmap named the 1973 Physics Today paper
+"Keller 1974". Second from-memory citation error caught by fetch, after the
+Toussaint/Wakayoshi case in `energetics_literature_sources.md`.
