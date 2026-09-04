@@ -406,9 +406,15 @@ dropped rather than committed.
 
 
 **Rows 102 and 103 executed (annotation 2026-09-04, from git log).** 102
-`0ca747c`, 103 `07441a3`. Rows 099-101 and 104-106 remain open; for
-099-101/104/105, whether each is done or dropped under this band's own
-cosmetic-rows-are-dropped rule is a decision still to be made.
+`0ca747c`, 103 `07441a3`. Rows 099-101 and 104-105 remain open; whether each
+is done or dropped under this band's own cosmetic-rows-are-dropped rule is a
+decision still to be made.
+
+**Row 106 executed 2026-09-04, this commit.** `docs/TOUR.md`: the one-page
+reading order on top of row 103's architecture overview, carrying the three
+integrity statements (exploratory pilot fits, the once-opened held-out set,
+estimates-not-physiology) and describing the reconciled state of this
+roadmap rather than the stale table it replaced.
 
 ---
 
@@ -438,10 +444,10 @@ fifteen meets plus the 055-058 freeze block. Band G executed per the
 2026-09-03 execution note, with 068 and 072 folded into the comparison and
 H1 artifacts. Band H closed except the W'-in-joules half of 077, blocked on
 paywalled source access. Band I executed in full, 087 folded into the
-introduction. Band J: 102 and 103 done; 099-101 and 104-105 await an
-explicit drop-vs-do decision; 106 open.
+introduction. Band J: 102, 103 and 106 done; 099-101 and 104-105 await an
+explicit drop-vs-do decision.
 
-Open rows: 099, 100, 101, 104, 105 (conditional on that decision), 106, and
-the blocked half of 077. Everything else is in the history. The counting
+Open rows: 099, 100, 101, 104, 105 (conditional on that decision) and the
+blocked half of 077. Everything else is in the history. The counting
 principle stands: honest granularity, not a target to hit.
 
