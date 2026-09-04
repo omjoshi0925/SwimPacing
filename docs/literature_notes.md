@@ -263,3 +263,23 @@ used to support any claim:** Behncke (1993) J. Math. Biol. 31(8):853-878;
 Woodside (1991) Math. Comput. Model. 15(10):1-12; Aftalion & Bonnans (2014)
 SIAM J. Appl. Math. 74(5):1615-1636; Pitcher (2009) SIAM J. Appl. Math.;
 Mathis (1989) SIAM Review 31(2):306-309.
+
+## Critical speed and W' — characterized gap (searched 2026-09-03)
+
+**Numeric critical speed and W'/ADC for adolescent swimmers: still NOT FOUND.**
+
+- Zacca et al. (2010), EJAP 110:121-131 — abstract only, unchanged. CV, ADC,
+  V_max and tau sit behind the Springer paywall. Highest-value target; access
+  to this one paper closes 076 and unblocks 077.
+- Dekerle et al. (2002), Int J Sports Med 23:93-98 — abstract now recovered.
+  Relative results only: V30 overestimates critical speed by 3.2%, SR30 needs
+  a -3.9% correction. No absolute CS in m/s.
+
+**Near-miss, excluded with reason.** A study of swimmers aged 12.1 +/- 0.7 y
+reports "anaerobic critical velocity" of 1.27 +/- 0.16 m/s for front crawl.
+Rejected as an anchor: it is fitted to 10-25 m maximal swims, making it a
+sprint distance-time slope rather than critical speed in the critical-power
+sense. Using it for R would be a category error.
+
+**Consequence.** Row 077 (CS/W' plausibility check against R and E0) remains
+blocked on source access, not on effort.

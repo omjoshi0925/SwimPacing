@@ -19,7 +19,10 @@ citations: `tau` is a measured swimming value, `E0` and `R` have age-relevant
 literature anchors, and the start credit is bracketed by measured 15 m start
 times. Remaining genuine gaps: a clean absolute VO2max for trained 15-18 males,
 and numeric critical-speed/W' values (two directly relevant papers confirmed to
-exist but paywalled; see literature notes).
+exist but paywalled; see literature notes). Re-searched 2026-09-03 with the
+same result; the gap is now characterized rather than merely open. Zacca et
+al. (2010), EJAP 110:121-131 is the single highest-value target, and
+institutional access to it closes the gap.
 
 ---
 
