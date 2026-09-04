@@ -76,6 +76,11 @@ result and the code that made it belong together.
 | 007 | chore | add .gitattributes | `.gitattributes` | LF normalization and CSV-as-data hints, prevents cross-platform diff noise in race data | none |
 | 008 | docs | add developer workflow doc | `DEV_WORKFLOW.md` | one place recording how to verify a checkpoint (test tiers, script order, what regenerates what) | 002 |
 
+
+**Executed in full, one commit per row (annotation 2026-09-04, from git log).**
+001 `58c47dd`, 002 `796a8df`, 003 `c563278`, 004 `ab68d61`, 005 `00f705b`,
+006 `d6b5df5`, 007 `ab7eb9e`, 008 `3f9d572`.
+
 ## Band B — Start term as a first-class model parameter (009-016)
 
 This band promotes the start credit from a constant buried in analysis code to
@@ -122,6 +127,12 @@ real fits run they are one audited command. No real race is fitted in this band.
 | 027 | test(calibration) | leakage guard test | `tests/test_calibration.py` | feeding a test-set row raises; the pre-registration rule enforced in code, not etiquette | 026 |
 | 028 | docs | calibration protocol doc | `docs/calibration.md` | what is fitted (beta_E, beta_x, gamma), what stays frozen (E0, R, phi trade off in one equation), exploratory vs registered runs | 026 |
 
+
+**Executed in full, one commit per row (annotation 2026-09-04, from git log).**
+017 `97ee39f`, 018 `5acbe6d`, 019 `32b0499`, 020 `5220fb5`, 021 `9f16676`,
+022 `af98dbb`, 023 `23e9b1f`, 024 `8b16fb0`, 025 `d1bf729`, 026 `2c91f71`,
+027 `4d4e461`, 028 `549dae6`.
+
 ## Band D — Exploratory fits on pilot training rows (029-034)
 
 Labeled exploratory everywhere: pilot-v0.1 is one meet, and the registered
@@ -137,6 +148,11 @@ surface the start-credit confound early. Test rows untouched.
 | 033 | docs | status update in README and RESULTS | `README.md`, `docs/RESULTS.md` | user-facing state of the project advances with the work | 031 |
 | 034 | docs | validation plan log entry for the exploratory run | `docs/validation_plan.md` | pre-registration hygiene: declared as exploratory, not the registered analysis | 029 |
 
+
+**Executed in full, one commit per row (annotation 2026-09-04, from git log).**
+029 `2647efd`, 030 `1b8fe76`, 031 `5eb1a0a`, 032 `c9c75ab`, 033 `a4cfb14`,
+034 `8878760`.
+
 ## Band E — Multi-meet ingest tooling (035-040)
 
 The Orinda ingester generalized so each future meet is configuration, not code.
@@ -149,6 +165,17 @@ The Orinda ingester generalized so each future meet is configuration, not code.
 | 038 | docs(data) | multi-meet collection protocol | `data/data_dictionary.md` | the browser-extraction and verification workflow written down as a procedure | 035 |
 | 039 | feat(ingest) | meet config template | `configs/meets/TEMPLATE.yml` | reproducible per-meet setup: meet_id, date, course, source path, checksums | 035 |
 | 040 | test(ingest) | two-meet merge fixture test | `tests/test_ingest.py` | proves cross-meet identity matching and PB derivation across meets on synthetic data | 036 |
+
+
+**Executed in full (annotation 2026-09-04, from git log).** 035 `04b0781`
+(and `ingest_hytek_orinda.py` was retired as planned; Orinda is now two
+configs), 036 `2a662cc`, 037 `8958ce4`, 038 `db3fe2e`, 040 `93a508a`.
+
+**Row 039 landed in a different shape.** `c7d2d98` delivered
+`configs/meets/TEMPLATE.json`, not the planned `TEMPLATE.yml` — the per-meet
+config system is JSON throughout (`load_config` in `scripts/ingest_hytek.py`,
+ten configs in `configs/meets/`). Same purpose, different format; the planned
+row text above is left as written.
 
 ## Band F — Dataset expansion to 200-300 races (041-058) [DATA]
 
@@ -166,6 +193,23 @@ already in the dataset, so pre-race PBs and repeated-swimmer structure appear.
 | 056 | docs(data) | dataset summary statistics | `data/DATASET_VERSIONS.md`, `results/validation/` | races, swimmers, repeats, PB availability, flag rates for the paper's data section | 055 |
 | 057 | feat(pipeline) | PB-availability report | `src/preprocessing.py` or `scripts/` | counts of races with usable pre-race PBs, which decides whether H1 is testable | 055 |
 | 058 | docs | validation plan annotation: dataset frozen | `docs/validation_plan.md` | records the freeze date and version the registered run will cite | 055 |
+
+**Rows 041-054 landed in a different shape (annotation 2026-09-04).** Planned
+as two commits per meet across ~6 meets; executed as TWO commits covering
+fifteen meets: `af07cd9` (two meets via new parsers and the club-linked age
+rule) and `bccb4db` (splitless-source support, BAC 2021 PB-history rows, the
+collection manifest). pilot-v0.2 counts 16 meet_ids, 11 with usable races,
+and three workbook meets excluded on record (`data/DATASET_VERSIONS.md`).
+The per-meet two-commit pattern above describes a plan execution outgrew,
+and is left as written.
+
+**Row 057 has no standalone artifact.** The PB-availability counts live in
+the exclusion funnel of `results/validation/report_v0_2.md` ("usable with
+pre-race PB: 110") and the per-meet "with PB" column of
+`data/DATASET_VERSIONS.md`. Reading those as row 057 is an INFERRED fold — a
+judgment about where the planned content ended up, not a commit that names
+the row — and is recorded as exactly that.
+
 ## Band G — Registered fits, held-out comparison, statistics (059-072) [ORDER]
 
 The pre-registered analysis, run exactly once on the frozen expanded dataset.
@@ -187,6 +231,16 @@ Order locked by `docs/validation_plan.md`.
 | 070 | results | H1 outcome | `results/validation/` | the registered hypothesis test, or a documented untestable status with counts | 069 |
 | 071 | feat(stats) | mixed-effects model | `src/stats.py` | random swimmer intercepts over repeated swims, statsmodels | 055 |
 | 072 | results | mixed-effects report | `results/validation/` | within- vs between-swimmer pacing variance | 071 |
+
+
+**Rows 068 and 072 have no standalone artifacts (annotation 2026-09-04).**
+The bootstrap CIs of 068 are columns of
+`results/validation/model_comparison.csv` (`RMSE_ci_lo/hi`, `diff_ci_lo/hi`)
+and the §comparison table of `report_v0_2.md`; the mixed-effects report of
+072 is the `RE var` / `resid var` columns of the H1 table in the same report,
+fitted via `src/stats.py`. Both readings are INFERRED folds — judgments about
+where the planned content ended up, not commits naming the rows — recorded as
+exactly that. The 2026-09-03 execution note covers the band's ordering.
 
 ## Band H — Literature completion (073-082)
 
@@ -250,6 +304,19 @@ sources). Band H therefore has ONE row left, 077, blocked on paywalled access
 to Zacca et al. (2010). That is the third time this table has been found
 behind the commits; treat `references.bib` and the git log as the record.
 
+
+**Refinement, 2026-09-04, after a full ledger sweep.** Three claims above
+need sharpening. Row 077 is HALF done: the dimensionless CS/v200 plausibility
+check landed 2026-09-02 in `5d05ee4` (model 0.893 vs measured 0.898,
+`docs/parameters.md`); what stays open, blocked on Zacca et al. (2010), is
+the W'-in-joules half — and the notes record that no swimming W' in joules
+exists anywhere reached. Rows 081 and 082 each executed TWICE: 081 as a proto
+coverage refresh in `a39eef4` (2026-09-02, 47 sources, before row 080
+existed), completed by `66e4247` (2026-09-04); 082 as the Tier-1 prose
+updates of `b5e4aff` (2026-09-02, measured turn shares, the oscillation
+counterpoint), completed by the provenance-table reconcile of `d771a6a`
+(2026-09-04).
+
 ## Band I — Paper (083-098)
 
 LaTeX lives in `paper/`, one section per commit, drawing on
@@ -274,6 +341,12 @@ sections wait for band G.
 | 096 | docs(paper) | limitations and assumptions audit | `paper/sections/` | from docs/assumptions.md, honestly | 082,094 |
 | 097 | docs(paper) | figures and captions integration | `paper/`, selected `figures/` | | 094 |
 | 098 | docs(paper) | conclusion, future work, final bibliography pass | `paper/sections/` | | 095-097 |
+
+
+**Rows 083-086 and 088-090 executed, one commit per row (annotation
+2026-09-04, from git log).** 083 `8a4e0f7`, 084 `20ca309`, 085 `022c72c`,
+086 `9c1c6e6`, 088 `b80e9c7`, 089 `ab1167b`, 090 `43b7bb2`. Rows 087 and
+091-098 are covered by the execution note below.
 
 ## Execution note, 2026-09-03 (single large commit by owner's instruction)
 
@@ -331,15 +404,44 @@ dropped rather than committed.
 | 105 | chore | prune dead code found during D-G | `src/`, `scripts/` | same conditional standard | as found |
 | 106 | docs | repo tour for faculty readers | `docs/TOUR.md` | a one-page entry point for the professor-outreach goal: what to read in what order | 103 |
 
+
+**Rows 102 and 103 executed (annotation 2026-09-04, from git log).** 102
+`0ca747c`, 103 `07441a3`. Rows 099-101 and 104-106 remain open; for
+099-101/104/105, whether each is done or dropped under this band's own
+cosmetic-rows-are-dropped rule is a decision still to be made.
+
 ---
+
+## Delivered outside the plan
+
+Work in the tree that no numbered row planned, listed here rather than
+retrofitted into invented rows:
+
+- `src/results_parsers.py`, `scripts/ingest_spreadsheet.py`,
+  `scripts/ingest_swimcloud_pdfs.py` — band F needed parsers for official
+  formats beyond the classic Hy-Tek section (`af07cd9`, `bccb4db`).
+- `1d49198` — README test-tier correction after the CI marker change.
+- `9763e7e` — gitignore for derived knowledge-graph output.
+- Extras already noted in their own sections: age-aware identity matching and
+  the inner-solver restart fix (execution note), the CI repair (`93cd232`),
+  the bibliography dedupe (`929c99f`, band H).
 
 ## Count
 
-106 planned rows: 40 executable now with no new data (bands A-E), 10 literature
-commits executable now (band H), 8 paper commits executable now (083-090 minus
-087's literature dependency), the rest gated on data expansion [DATA] or locked
-behind the pre-registered order [ORDER]. Band F scales with how many official
-meet results we can pull; six meets is the nominal plan. If execution shows a
-row is too thin to stand alone it merges into its neighbor with a note here;
-the count is whatever honest granularity supports, not a target to hit.
+Rewritten 2026-09-04. The paragraph that stood here was 2026-09-01 planning
+text ("40 executable now with no new data...") that the annotations above had
+overtaken row by row.
+
+106 planned rows. Bands A-E executed in full (A, C, D, E one commit per row;
+B re-scoped into the sign-fix arc). Band F executed as two commits covering
+fifteen meets plus the 055-058 freeze block. Band G executed per the
+2026-09-03 execution note, with 068 and 072 folded into the comparison and
+H1 artifacts. Band H closed except the W'-in-joules half of 077, blocked on
+paywalled source access. Band I executed in full, 087 folded into the
+introduction. Band J: 102 and 103 done; 099-101 and 104-105 await an
+explicit drop-vs-do decision; 106 open.
+
+Open rows: 099, 100, 101, 104, 105 (conditional on that decision), 106, and
+the blocked half of 077. Everything else is in the history. The counting
+principle stands: honest granularity, not a target to hit.
 
