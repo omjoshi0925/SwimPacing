@@ -103,20 +103,27 @@ Full numbers, tables and caveats in [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ```bash
 pip install -r requirements.txt
-python scripts/run_all.py                # every result and figure
-python scripts/run_all.py --quick        # coarser grids and fewer restarts
-python -m pytest tests -q                # full verification suite (~2 min)
-python -m pytest tests -q -m "not slow"  # quick subset (~6 s), what CI runs
+python scripts/run_all.py                                      # every result and figure
+python scripts/run_all.py --quick                              # coarser grids and fewer restarts
+python -m pytest tests -q -m "not slow and not requires_data"  # what CI runs
+python -m pytest tests -q -m "not slow"                        # + the real-data checks
+python -m pytest tests -q                                      # full, before delivery
 ```
 
-Measured on this project's reference environment: the quick tier is 146
-tests in about 6 s (what CI runs); the `slow` tier adds five ODE-heavy
-tests (151 total) that take about 21 minutes, nearly all of it in the two
-parameter-recovery fits, which now use the reliable five-restart inner
-solve (docs/calibration.md). For `run_all.py`, runtime depends
-on hardware and settings; `--quick` trades grid resolution and solver restarts
-for speed. Results land in
-`results/` as CSV, figures in `figures/` as PNG and PDF.
+Measured 2026-09-04 on the owner's machine: the CI tier is 144 tests in about
+2 s, the middle tier 146 in about 2 s, and the full tier all 151 in about
+10 minutes, nearly all of it in the two parameter-recovery fits, which use the
+reliable five-restart inner solve (docs/calibration.md).
+
+The first two differ by the `requires_data` marker, which covers tests that
+assert properties of the real dataset under `data/`. That directory is
+gitignored, so CI cannot see it and deselects the marker: **the badge above
+covers 144 of the 151 tests.** Run the middle tier locally before any delivery.
+See DEV_WORKFLOW.md for what that leaves unverified.
+
+For `run_all.py`, runtime depends on hardware and settings; `--quick` trades
+grid resolution and solver restarts for speed. Results land in `results/` as
+CSV, figures in `figures/` as PNG and PDF.
 
 ```bash
 python -m src.preprocessing data/raw/200_free_scy_raw.csv   # rebuild the processed file
