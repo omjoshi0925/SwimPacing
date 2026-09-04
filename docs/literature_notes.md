@@ -336,3 +336,27 @@ stands. Noting here that it recirculates under multiple titles.
 **Gap NOT closed.** A clean absolute VO2max in mL/kg/min for trained males
 aged 15-18 remains unfound. The A1 amplitudes above are fast-component
 amplitudes, not VO2max, and must not be read as such.
+
+## Correction, 2026-09-03: three sources presented as new were already here
+
+The Keller and Optimal-control sections above were written without first
+checking `literature/references.bib`. All three keys already existed, with
+better notes than the ones added. The duplicate entries have been removed and
+the originals kept. Two specific claims above are wrong:
+
+1. The Keller section states that no DOI was verified for keller1974optimal.
+   The bibliography already carried 10.1080/00029890.1974.11993589.
+2. The optimal-control section presents maronski1996minimum as the closest
+   prior art "found in any pass". It was found in an earlier pass and already
+   annotated in the bibliography as the direct antecedent, including detail
+   this session did not recover: the optimal profile is acceleration, then a
+   constant-velocity cruise, then a final kick, with the initial acceleration
+   replaced by the gliding phase in swimming.
+
+What in those sections is new and stands: Maronski & Rogowski (2011) and its
+statement that quadratic-drag reasoning extends to swimming; the
+reference-list-only access records; and the roadmap mis-citation of the 1973
+Physics Today paper as "Keller 1974".
+
+Duplicate bibliography keys are a build error, not a style issue - they broke
+the paper workflow on CI.

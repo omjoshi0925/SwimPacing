@@ -202,6 +202,13 @@ Born 2021, Born 2022, Veiga 2022; derived band phi in 0.80-0.95). The band
 table below was never updated. Band H therefore has 7 remaining rows, not 10.
 Row 078's planned title also carried a citation error, corrected in that row.
 
+**Further annotation 2026-09-03.** Rows 078 and 079 were also already done.
+keller1973theory, keller1974optimal and maronski1996minimum were in
+`literature/references.bib` before this session; re-executing them appended
+duplicate keys and broke the paper build. Band H has 5 remaining rows, not 7.
+The bibliography, not this table, is the source of truth for what has been
+cited. Check it before executing any literature row.
+
 | # | Type | Title | Files/system | Purpose | Depends |
 |---|---|---|---|---|---|
 | 073 | docs(lit) | turn-time contribution sources | `literature/references.bib`, `literature/literature_review.csv`, `docs/literature_notes.md` | the biggest remaining gap; what phi stands in for | none |
