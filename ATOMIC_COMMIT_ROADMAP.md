@@ -195,6 +195,13 @@ found and confirmed, access level recorded, nothing reconstructed from memory.
 A planned row that finds no verifiable source becomes a documented gap, not a
 fabricated entry.
 
+**Executed 2026-09-01 (annotation added 2026-09-03).** Rows 073, 074 and 075
+landed in the 2026-09-01 literature pass, recorded in `docs/parameters.md`
+under "What the turn literature implies phi should be" (Cuenca-Fernandez 2022,
+Born 2021, Born 2022, Veiga 2022; derived band phi in 0.80-0.95). The band
+table below was never updated. Band H therefore has 7 remaining rows, not 10.
+Row 078's planned title also carried a citation error, corrected in that row.
+
 | # | Type | Title | Files/system | Purpose | Depends |
 |---|---|---|---|---|---|
 | 073 | docs(lit) | turn-time contribution sources | `literature/references.bib`, `literature/literature_review.csv`, `docs/literature_notes.md` | the biggest remaining gap; what phi stands in for | none |
