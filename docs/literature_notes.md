@@ -235,3 +235,31 @@ They are distinct works and are not interchangeable in citation.
 **Correction logged.** This repo's roadmap named the 1973 Physics Today paper
 "Keller 1974". Second from-memory citation error caught by fetch, after the
 Toussaint/Wakayoshi case in `energetics_literature_sources.md`.
+
+## Optimal control in endurance sport (verified 2026-09-03)
+
+**Maronski (1996).** J. Biomechanics 29(2):245-249, DOI
+10.1016/0021-9290(95)00041-0, PMID 8849819 — ACCESS: abstract only (PubMed +
+ScienceDirect). Two coupled ODEs: Newton's second law and a power-balance
+equation. Minimum-time velocity obtained by extremizing linear integrals via
+Green's theorem (Miele's method). Argues that the sprint assumption (maximal
+propulsive force throughout) and the distance assumption (constant velocity)
+both fail at middle distance.
+
+**Bears on the model.** The closest prior art to this project's framework
+found in any pass: same two-equation structure, same middle-distance regime a
+200 free occupies, and the only located optimal-control treatment naming
+swimming in its title.
+
+**Maronski & Rogowski (2011).** Acta Bioeng. Biomech. 13(2):83-86 — ACCESS:
+abstract read. Hill-Keller model solved by Chebyshev direct pseudospectral
+method. States that Behncke's formulation carries resistance proportional to
+velocity squared, "therefore the reasoning may be extended to swimming" — an
+explicit literature warrant for transferring quadratic-drag optimal control to
+the aquatic case, which is the assumption behind C(v) = k*v^3.
+
+**Reference-list-only, not fetched. Recorded at that access level and not
+used to support any claim:** Behncke (1993) J. Math. Biol. 31(8):853-878;
+Woodside (1991) Math. Comput. Model. 15(10):1-12; Aftalion & Bonnans (2014)
+SIAM J. Appl. Math. 74(5):1615-1636; Pitcher (2009) SIAM J. Appl. Math.;
+Mathis (1989) SIAM Review 31(2):306-309.
