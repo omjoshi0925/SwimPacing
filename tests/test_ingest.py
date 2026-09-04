@@ -26,16 +26,18 @@ SECTION = """Boys 200 Yard Freestyle
 """
 
 @pytest.fixture()
-def sandbox(tmp_path):
+def sandbox(tmp_path, synthetic_raw_csv):
     """A repo-shaped sandbox: source file, empty raw CSV, seeded id map."""
     src = tmp_path / "sources" / "meet.txt"
     src.parent.mkdir()
     src.write_text(SECTION)
 
     raw = tmp_path / "raw.csv"
-    real_header = open("data/raw/200_free_scy_raw.csv").readline().strip().split(",")
+    # Column names only, taken from the synthetic fixture rather than the
+    # gitignored real raw file, which CI's clean checkout does not have.
+    header = open(synthetic_raw_csv).readline().strip().split(",")
     with open(raw, "w", newline="") as f:
-        csv.DictWriter(f, fieldnames=real_header).writeheader()
+        csv.DictWriter(f, fieldnames=header).writeheader()
 
     idmap = tmp_path / "map.csv"
     with open(idmap, "w", newline="") as f:

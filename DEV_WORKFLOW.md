@@ -6,14 +6,39 @@ code that makes them. Every commit is expected to leave this whole page true.
 ## Verification tiers
 
 ```bash
-python -m pytest tests -q -m "not slow"   # quick tier, ~6 s, what CI runs
-python -m pytest tests -q                 # full tier, ~2 min, before any delivery
+python -m pytest tests -q -m "not slow and not requires_data"   # what CI runs
+python -m pytest tests -q -m "not slow"                         # + real-data checks
+python -m pytest tests -q                                       # full, before delivery
 ```
 
 The `slow` marker (registered in `pytest.ini`) covers the tests that re-solve
 ODE optima live. Run the full tier before anything that changes model code,
 cached predictions, or the pipeline; the quick tier is enough for docs and
 analysis-script edits.
+
+### What CI does NOT verify
+
+`requires_data` marks tests that assert a property of the real dataset under
+`data/`, which is gitignored. A clean checkout cannot see those files, so CI
+deselects the marker and its green tick covers **144 of the 151 tests**: 5
+`slow`, 2 `requires_data`. The two are
+`test_loss_reproduces_the_published_pilot_comparison` and
+`test_fit_beta_x_on_train_rows_matches_the_committed_report`, which pin the
+calibration module to frozen published artifacts. Nothing but a local run with
+`data/` present exercises them, so run at least the middle tier above before
+any delivery.
+
+This gap is deliberate. A synthetic fixture could only make those two assertions
+pass by containing the numbers they check, which would turn a real anchor into a
+fabricated green tick. Everything behavioural runs on
+`tests/fixtures/synthetic_raw.csv` instead, put through the real pipeline by the
+session fixtures in `tests/conftest.py`.
+
+**Never point a test at `data/` without the `requires_data` marker.** Between
+2026-09-01 and 2026-09-04 the CI suite was red on every push because two test
+modules read gitignored files; it passed locally the whole time, because the
+files sat in the working tree. A local pass is not evidence a test will run in
+CI. Clone to a temp directory and run there if in doubt.
 
 ## What regenerates what
 

@@ -1,10 +1,11 @@
 """
 Tests for src/calibration.py: the registered loss, then the fitters.
 
-The loss tests tie the new code to numbers already published in
-results/validation/pilot_model_comparison.csv, so the calibration module is
-anchored to the same comparison the pilot report printed before any fitting
-exists.
+Behavioural tests run on the synthetic fixture (see tests/conftest.py) so they
+work on a clean checkout. The two tests that tie the module to numbers already
+published in results/validation/ assert properties of the REAL dataset and
+cannot be synthesised without fabricating what they check, so they carry
+`requires_data` and CI deselects them.
 """
 
 import numpy as np
@@ -14,12 +15,14 @@ import pytest
 from src import calibration, preprocessing
 from src.parameters import SCY_200
 
+#: Real dataset. Gitignored, so only `requires_data` tests may touch it.
 PROCESSED = "data/processed/200_free_scy_processed.csv"
 COMPARISON = "results/validation/pilot_model_comparison.csv"
 
 
 @pytest.fixture(scope="module")
-def usable():
+def real_usable():
+    """Usable rows of the real processed dataset; `requires_data` tests only."""
     df = pd.read_csv(PROCESSED, low_memory=False)
     return df[df["usable"] == True]  # noqa: E712
 
@@ -32,7 +35,8 @@ def usable():
 PILOT_V01_MEET = "2025_ORINDA_SC_SENIOR_OPEN"
 
 
-def test_loss_reproduces_the_published_pilot_comparison(usable):
+@pytest.mark.requires_data
+def test_loss_reproduces_the_published_pilot_comparison(real_usable):
     """
     calibration.mean_rmse_pp must reproduce the pilot report's RMSE table.
     The comparison CSV is a FROZEN pilot-v0.1 artifact (80 Orinda races), so
@@ -40,7 +44,8 @@ def test_loss_reproduces_the_published_pilot_comparison(usable):
     growing as the expansion toward v0.2 proceeds.
     """
     published = pd.read_csv(COMPARISON).set_index("model")["mean_RMSE_pp"]
-    shares = calibration.observed_shares(usable[usable["meet_id"] == PILOT_V01_MEET])
+    shares = calibration.observed_shares(
+        real_usable[real_usable["meet_id"] == PILOT_V01_MEET])
     preds = preprocessing.model_predictions(SCY_200)
     for name, star in preds.items():
         short = name.split("_")[0]
@@ -48,30 +53,35 @@ def test_loss_reproduces_the_published_pilot_comparison(usable):
         assert got == pytest.approx(published[short], abs=5e-4), short
 
 
-def test_loss_agrees_with_the_pipeline_deviation_columns(usable):
-    """Same number two ways: the loss vs the stored per-race deviations."""
-    shares = calibration.observed_shares(usable)
+def test_loss_agrees_with_the_pipeline_deviation_columns(synthetic_usable):
+    """
+    Same number two ways: the loss vs the stored per-race deviations. The
+    fixture's deviation columns are produced by src.preprocessing, so this
+    compares two independent modules rather than a hand-written number with
+    itself.
+    """
+    shares = calibration.observed_shares(synthetic_usable)
     preds = preprocessing.model_predictions(SCY_200)
     for name, star in preds.items():
         short = name.split("_")[0]
-        stored = usable[f"model_deviation_{short}"].mean() * 100
+        stored = synthetic_usable[f"model_deviation_{short}"].mean() * 100
         assert calibration.mean_rmse_pp(star, shares) == pytest.approx(stored,
                                                                        abs=1e-9)
 
 
-def test_loss_is_zero_only_at_the_observed_shape(usable):
-    shares = calibration.observed_shares(usable)
+def test_loss_is_zero_only_at_the_observed_shape(synthetic_usable):
+    shares = calibration.observed_shares(synthetic_usable)
     m = calibration.mean_shape(shares)
     single = shares[:1]
     assert calibration.mean_rmse_pp(single[0], single) == pytest.approx(0.0)
     assert calibration.mean_rmse_pp(m, shares) > 0  # dispersion never vanishes
 
 
-def test_shares_at_credit_matches_pipeline_at_default(usable):
+def test_shares_at_credit_matches_pipeline_at_default(synthetic_usable):
     """Recomputing shares at the default credit must equal the stored columns."""
-    S = float(usable["start_offset_used"].iloc[0])
-    recomputed = calibration.shares_at_credit(usable, S)
-    stored = calibration.observed_shares(usable)
+    S = float(synthetic_usable["start_offset_used"].iloc[0])
+    recomputed = calibration.shares_at_credit(synthetic_usable, S)
+    stored = calibration.observed_shares(synthetic_usable)
     assert np.allclose(recomputed, stored, atol=1e-12)
 
 
@@ -135,30 +145,31 @@ def test_fit_gamma_recovers_the_generating_value():
     assert fit.loss_pp < 0.05
 
 
-def test_training_frame_withholds_test_rows():
-    train, meta = calibration.training_frame(PROCESSED)
+def test_training_frame_withholds_test_rows(synthetic_processed_csv):
+    train, meta = calibration.training_frame(synthetic_processed_csv)
     assert meta["n_train_races"] == len(train)
     assert meta["n_test_races_unopened"] > 0
     # the guard passes on the frame it produced
-    calibration.assert_no_test_rows(train, PROCESSED)
+    calibration.assert_no_test_rows(train, synthetic_processed_csv)
 
 
-def test_leakage_guard_raises_on_test_rows():
+def test_leakage_guard_raises_on_test_rows(synthetic_processed_csv):
     """Feeding held-out rows to the guard is a hard error, not a warning."""
     from src import data_split
-    df = pd.read_csv(PROCESSED, low_memory=False)
+    df = pd.read_csv(synthetic_processed_csv, low_memory=False)
     ok = df[df["usable"] == True]  # noqa: E712
     _, test = data_split.split_by_swimmer(ok)
     with pytest.raises(calibration.CalibrationLeakageError, match="held-out"):
-        calibration.assert_no_test_rows(test, PROCESSED)
+        calibration.assert_no_test_rows(test, synthetic_processed_csv)
     # and a single smuggled test row also trips it
-    train, _ = calibration.training_frame(PROCESSED)
+    train, _ = calibration.training_frame(synthetic_processed_csv)
     smuggled = pd.concat([train, test.iloc[:1]])
     with pytest.raises(calibration.CalibrationLeakageError):
-        calibration.assert_no_test_rows(smuggled, PROCESSED)
+        calibration.assert_no_test_rows(smuggled, synthetic_processed_csv)
 
 
-def test_fit_beta_x_on_train_rows_matches_the_committed_report(usable):
+@pytest.mark.requires_data
+def test_fit_beta_x_on_train_rows_matches_the_committed_report(real_usable):
     """
     Determinism against the committed artifact: the exploratory fit report is
     a FROZEN pilot-v0.1 artifact, so refitting on the reconstructed v0.1
@@ -169,7 +180,7 @@ def test_fit_beta_x_on_train_rows_matches_the_committed_report(usable):
 
     rep = pd.read_csv("results/validation/fits_train_pilot.csv")
     row = rep[rep["param"] == "beta_x"].iloc[0]
-    v01 = usable[usable["meet_id"] == PILOT_V01_MEET]
+    v01 = real_usable[real_usable["meet_id"] == PILOT_V01_MEET]
     train, _ = data_split.split_by_swimmer(v01)
     fit = calibration.fit_beta_x(calibration.observed_shares(train))
     assert fit.value == pytest.approx(row["fitted_value"], abs=1e-3)

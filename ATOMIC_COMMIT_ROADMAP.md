@@ -276,6 +276,26 @@ ingester (a false merge of two same-name swimmers found during expansion)
 and the inner-solver restart fix in `src/calibration.py` (found during the
 registered calibration, before the test set was opened; docs/calibration.md).
 
+## CI repair, 2026-09-04 (outside the plan)
+
+Row 003's premise — "every future commit gets verified buildable
+automatically" — was false from 2026-09-01 to 2026-09-04. Row 018
+(`5acbe6d`) pointed `tests/test_calibration.py` at
+`data/processed/200_free_scy_processed.csv`, and `tests/test_ingest.py`
+read `data/raw/200_free_scy_raw.csv` for its header; `.gitignore` has
+excluded both since the base commit. The suite passed locally, where those
+files sit in the working tree, and failed on every CI push for 51 commits.
+
+Repaired by moving the behavioural tests onto `tests/fixtures/synthetic_raw.csv`
+(invented swimmers, teams, meets and times in the real raw schema), derived
+through the real pipeline by session fixtures in `tests/conftest.py`. The two
+tests that assert properties of the real dataset — the published pilot
+comparison and the frozen exploratory fit report — cannot be synthesised without
+fabricating what they check, so they carry a new `requires_data` marker that CI
+deselects. CI now covers 144 of 151 tests; the gap is recorded in
+`DEV_WORKFLOW.md`. No real race data enters the repo: the dataset is on 15-18
+year old swimmers and carries team, meet, date and age.
+
 ## Band J — Code quality and documentation (099-106)
 
 Executed only where a real gain exists; any row that turns out cosmetic is
