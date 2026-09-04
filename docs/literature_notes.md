@@ -24,7 +24,7 @@ Coverage by topic after the two passes:
 | Propelling and mechanical efficiency | **done**, 4 sources |
 | Energy cost of swimming vs velocity | **done**, 2 sources |
 | Aerobic/anaerobic contribution, 200 free | **done**: 65.9% (Figueiredo 2011) to 78.6% (Sousa 2011) aerobic — a real 13-point spread, carry as a range |
-| VO2 kinetics in swimming | **done**: tau 9.6-17.8 s across all full-text sources; 16.5 s adopted |
+| VO2 kinetics in swimming | **done**: tau 9.6-17.8 s across all full-text sources; 16.5 s adopted (Pessoa Filho 2012). Sousa 2014 (2026-09-03) adds the closest population match, 18.2 +/- 4.1 y, at 15-18 s |
 | Anaerobic capacity, adolescents | **done**: AOD 3.2 ± 1.3 L (Campos 2022), E0 anchor |
 | Observed 200 free pacing | **done**: Robertson 2009 (n=3057), McGibbon 2020, Oliveira 2023, Menting 2022 (abstract) |
 | Dive start | **done**: measured 15 m start times 6.1-8.2 s by level, implying 1.7-3.0 s dive value at 200 pace |
@@ -59,8 +59,13 @@ far verification got:
 - **metadata only**: existence and bibliographic details confirmed, publisher
   page blocked. **No numbers extracted.**
 
-Across the 47 sources: 24 full text, 15 abstract-only or partial, 8 metadata
-only. Three energetics entries were verified by a companion session on
+Across the 48 sources: 24 full text, 17 abstract-only or partial, 7 metadata
+only, counted from the `access_level` column of
+`literature/literature_review.csv` (row 081, refreshed 2026-09-04; the CSV and
+`references.bib` now hold the same 48 keys). The previous line read 47 sources
+as 24/15/8, which did not add up against that column even at 47 rows: the
+correct split then was 24/16/7. Recount from the CSV rather than adjusting
+these numbers by hand. Three energetics entries were verified by a companion session on
 2026-08-29 under the same policy and are recorded in the project's
 `energetics_literature_sources.md` with per-number access marks. The
 2026-09-01 pass (25 entries) was executed by verification agents under the
@@ -306,10 +311,14 @@ Key numbers (95 / 100 / 105% of the velocity at VO2max):
 
 **Bears on the model.** Closest population match found in any pass: male,
 middle-distance freestyle, mass within 4% of the project's 68 kg working
-figure, age range spanning the 15-18 target. Two consequences. (1) Its tau
-range 15-18 s is the first in the literature that *contains* the working
-value of 16.5 s rather than sitting below it; every prior swimming-specific
-estimate ran faster. (2) At 105% of vVO2max the aerobic share falls to 59
+figure, age range spanning the 15-18 target. Two consequences. (1) What it
+adds is the POPULATION, not the value. `tau` = 16.5 s comes from Pessoa Filho
+et al. (2012), which measured exactly 16.5 +/- 5.1 s at severe intensity and
+17.8 +/- 5.9 s heavy, so the working value was never above the swimming
+literature. What that entry has always carried is the caveat that its
+population is adult; Sousa 2014 answers it, at 18.2 +/- 4.1 y and Tanner 4-5,
+with a fast-component range of 15-18 s around the same value.
+(2) At 105% of vVO2max the aerobic share falls to 59
 +/- 7%, i.e. anaerobic 41 +/- 7%, sitting inside the project's 30-50%
 anaerobic sanity check and between source 6 (34%) and source 10 (21%).
 A 200 free is raced above vVO2max, so the 105% row is the relevant one.

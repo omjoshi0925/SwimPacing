@@ -231,6 +231,25 @@ on 081: no coverage or count claim in `assumptions.md` was touched, since those
 are what the regenerated `literature_review.csv` will settle. No Tier 1/2/3
 assignment moved; A3 gained contrary evidence but stays Tier 1.
 
+**Row 081 executed 2026-09-04, and row 082 is complete after all.** 081 turned
+out to be one row, not a regeneration: `sousa2014vo2kinetics` was the only bib
+key missing from `literature_review.csv`, and the CSV and `references.bib` now
+hold the same 48 keys. The coverage tally was recounted from the CSV's own
+`access_level` column and was wrong independently of the missing row — it read
+47 sources as 24/15/8 where that column gave 24/16/7; it is now 48 as 24/17/7.
+
+Row 082's reserved remainder does not exist. It was held back for the coverage
+and count claims 081 would settle, but `assumptions.md` makes no count or
+coverage claim anywhere, so `d771a6a` was the whole row rather than a partial
+one. Not padded into a second commit.
+
+**Rows 076 and 080 were also already executed** and never annotated: 076 in
+`8fe79b4` (CS/W' recorded as a characterized gap, the documented-gap outcome
+this band's preamble allows) and 080 in `f7b9127` (adolescent energetics
+sources). Band H therefore has ONE row left, 077, blocked on paywalled access
+to Zacca et al. (2010). That is the third time this table has been found
+behind the commits; treat `references.bib` and the git log as the record.
+
 ## Band I — Paper (083-098)
 
 LaTeX lives in `paper/`, one section per commit, drawing on
