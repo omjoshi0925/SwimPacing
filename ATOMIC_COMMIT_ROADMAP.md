@@ -410,6 +410,31 @@ dropped rather than committed.
 is done or dropped under this band's own cosmetic-rows-are-dropped rule is a
 decision still to be made.
 
+**Band J resolved 2026-09-05; drop-vs-do decided by the owner.** Rows 104 and
+105 done, in the two commits preceding this annotation. 104: the
+processed-dataset path was written out in four places (`fit_models.py`,
+`evaluate_holdout.py`, `empirical_analysis.py`, `test_calibration.py`) plus
+the `--out` default in preprocessing; it now lives once, as
+`src.preprocessing.PROCESSED_CSV`. 105: of eight public functions with no
+reference anywhere in code, tests, docs, or paper, seven were deleted —
+`aerobic_anaerobic_map`, `mechanical_power`, `run_all_strategies`,
+`signed_error_pp`, `smooth_velocity`, `velocity_ceiling`,
+`velocity_for_cost` — each either a duplicate of a live expression (the M4
+ceiling in `simulator.py`; the inline signed errors in `evaluate_holdout.py`)
+or a composition of live primitives that nothing ever called. One was kept on
+purpose: `even_pace_solution`, the named entry point for the central result,
+now marked as deliberate API at its definition so the next sweep does not
+re-flag it.
+
+Rows 099-101 dropped under this band's own cosmetic-rows-are-dropped rule,
+on evidence. 099/100: every module carries a module docstring and only ~10
+genuinely public symbols lack one — the mathematical contracts those rows
+wanted already exist. 101: the formats band F admitted (splitless sources,
+the spreadsheet tier) are pinned by the fifteen tests across
+`test_hytek_parser.py` and `test_results_parsers.py`, and the garbled-lap
+workbook rows were excluded at ingest rather than parsed, so the row's
+premise did not materialize.
+
 **Row 106 executed 2026-09-04, this commit.** `docs/TOUR.md`: the one-page
 reading order on top of row 103's architecture overview, carrying the three
 integrity statements (exploratory pilot fits, the once-opened held-out set,
@@ -444,10 +469,10 @@ fifteen meets plus the 055-058 freeze block. Band G executed per the
 2026-09-03 execution note, with 068 and 072 folded into the comparison and
 H1 artifacts. Band H closed except the W'-in-joules half of 077, blocked on
 paywalled source access. Band I executed in full, 087 folded into the
-introduction. Band J: 102, 103 and 106 done; 099-101 and 104-105 await an
-explicit drop-vs-do decision.
+introduction. Band J resolved 2026-09-05: 102-106 done, 099-101 dropped on
+evidence under the band's cosmetic rule.
 
-Open rows: 099, 100, 101, 104, 105 (conditional on that decision) and the
-blocked half of 077. Everything else is in the history. The counting
+Open: only the W'-in-joules half of 077, blocked on paywalled source
+access. Everything else is in the history or dropped on record. The counting
 principle stands: honest granularity, not a target to hit.
 

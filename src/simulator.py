@@ -72,31 +72,6 @@ def piecewise_velocity(v_splits: Sequence[float], course: Course = SCY_200) -> C
     return v_of_x
 
 
-def smooth_velocity(v_splits: Sequence[float], course: Course = SCY_200,
-                    sharpness: float = 40.0) -> Callable:
-    """
-    A continuously differentiable version of the same profile, obtained by
-    blending neighbouring splits with a logistic transition at each wall.
-    Useful when a solver dislikes the discontinuities of the piecewise form.
-    """
-    v = np.asarray(v_splits, dtype=float)
-    d = course.split_distance_m
-    n = len(v)
-
-    def v_of_x(x: float) -> float:
-        w = np.zeros(n)
-        for i in range(n):
-            lo = 1.0 / (1.0 + np.exp(-sharpness * (x - i * d) / d))
-            hi = 1.0 / (1.0 + np.exp(-sharpness * (x - (i + 1) * d) / d))
-            w[i] = lo - hi
-        s = w.sum()
-        if s <= 1e-12:
-            return float(v[-1] if x >= n * d else v[0])
-        return float(np.dot(w, v) / s)
-
-    return v_of_x
-
-
 # ---------------------------------------------------------------------------
 # Core integration
 # ---------------------------------------------------------------------------
@@ -265,7 +240,3 @@ def run_strategy(name: str, sw: Swimmer = REFERENCE, course: Course = SCY_200) -
     out = simulate(v, sw, course)
     out["strategy"] = name
     return out
-
-
-def run_all_strategies(sw: Swimmer = REFERENCE, course: Course = SCY_200) -> dict:
-    return {name: run_strategy(name, sw, course) for name in STRATEGY_SHAPES}

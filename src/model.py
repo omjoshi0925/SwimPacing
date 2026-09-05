@@ -53,19 +53,6 @@ def drag_force(v, sw: Swimmer = REFERENCE):
     return sw.drag_factor * v**2
 
 
-def mechanical_power(v, sw: Swimmer = REFERENCE):
-    """
-    Rate of work done against drag, watts.
-
-        P_d = F_D v = 1/2 rho C_D A v^3
-
-    This is the power that actually goes into moving the body forward. It is
-    not the power the swimmer produces; see metabolic_rate.
-    """
-    v = np.asarray(v, dtype=float)
-    return sw.drag_factor * v**3
-
-
 def economy_penalty(sw: Swimmer = REFERENCE, depleted=0.0, progress=0.0):
     """
     Multiplier applied to the metabolic cost of a given velocity.
@@ -97,23 +84,6 @@ def metabolic_rate(v, sw: Swimmer = REFERENCE, depleted=0.0, progress=0.0):
     """
     v = np.asarray(v, dtype=float)
     return sw.k * v**sw.p * economy_penalty(sw, depleted, progress)
-
-
-def velocity_ceiling(sw: Swimmer = REFERENCE, depleted=0.0):
-    """
-    Attainable velocity as the reserve empties, m/s.
-
-        v_ceiling(D) = v_max (1 - gamma D)
-
-    With gamma = 0 the ceiling is the constant v_max used in Phases 3 and 4.
-    """
-    depleted = np.clip(depleted, 0.0, 1.0)
-    return sw.v_max * (1.0 - sw.gamma * depleted)
-
-
-def velocity_for_cost(c, sw: Swimmer = REFERENCE):
-    """Invert C(v) = k v^p at constant economy."""
-    return (np.asarray(c, dtype=float) / sw.k) ** (1.0 / sw.p)
 
 
 # ---------------------------------------------------------------------------
@@ -378,7 +348,13 @@ def optimal_solution_closed_form(sw: Swimmer = REFERENCE,
 
 
 def even_pace_solution(sw: Swimmer = REFERENCE, course: Course = SCY_200) -> dict:
-    """Full description of the closed-form even-pacing solution."""
+    """
+    Full description of the closed-form even-pacing solution.
+
+    No internal callers, kept on purpose (roadmap row 105): the named entry
+    point a reader tries first for this project's central result. Composes
+    even_pace_velocity and energy_trace, both pinned by the test suite.
+    """
     v = even_pace_velocity(sw, course)
     vv = np.full(course.n_splits, v)
     tr = energy_trace(vv, course, sw)

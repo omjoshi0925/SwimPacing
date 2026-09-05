@@ -34,12 +34,6 @@ def race_mae_pp(P: np.ndarray, shape: np.ndarray) -> np.ndarray:
     return np.mean(np.abs(P - np.asarray(shape)[None, :]), axis=1) * 100
 
 
-def signed_error_pp(P: np.ndarray, shape: np.ndarray) -> np.ndarray:
-    """Mean per-split signed error (observed - model), pp, shape (4,)."""
-    P = np.asarray(P, dtype=float)
-    return (P - np.asarray(shape)[None, :]).mean(axis=0) * 100
-
-
 # ---------------------------------------------------------------------------
 # cluster bootstrap
 # ---------------------------------------------------------------------------

@@ -46,10 +46,10 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 from src import calibration, data_split, preprocessing, stats  # noqa: E402
 from src.parameters import SCY_200, MODELS  # noqa: E402
+from src.preprocessing import PROCESSED_CSV as PROCESSED  # noqa: E402
 from src.visualization import (SERIES, MARKERS, INK, INK_2, INK_3,  # noqa: E402
                                use_style, _finish)
 
-PROCESSED = "data/processed/200_free_scy_processed.csv"
 FITS = "results/model_calibration/fits_train_v0_2.csv"
 OUT_RES = "results/validation"
 OUT_FIG = "figures/empirical"

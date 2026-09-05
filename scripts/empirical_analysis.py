@@ -34,13 +34,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 from src import preprocessing, data_split  # noqa: E402
+from src.preprocessing import PROCESSED_CSV as PROCESSED  # noqa: E402
 from src.parameters import SCY_200, START_OFFSET_S  # noqa: E402
 from src.visualization import (SERIES, MARKERS, INK, INK_2, INK_3,  # noqa: E402
                                use_style, _finish)
 
 OUT_FIG = "figures/empirical"
 OUT_RES = "results/validation"
-PROCESSED = "data/processed/200_free_scy_processed.csv"
 
 #: Fixed hue per model, never reassigned by rank.
 MODEL_COLOR = {"M0": SERIES[0], "M1": SERIES[6], "M2": SERIES[1],

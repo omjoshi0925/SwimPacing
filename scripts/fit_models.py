@@ -31,8 +31,7 @@ import pandas as pd  # noqa: E402
 
 from src import calibration  # noqa: E402
 from src.parameters import MODELS  # noqa: E402
-
-PROCESSED = "data/processed/200_free_scy_processed.csv"
+from src.preprocessing import PROCESSED_CSV as PROCESSED  # noqa: E402
 DEFAULT_OUT = "results/validation/fits_train_pilot.csv"
 
 FITTERS = {

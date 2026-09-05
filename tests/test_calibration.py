@@ -15,8 +15,7 @@ import pytest
 from src import calibration, preprocessing
 from src.parameters import SCY_200
 
-#: Real dataset. Gitignored, so only `requires_data` tests may touch it.
-PROCESSED = "data/processed/200_free_scy_processed.csv"
+from src.preprocessing import PROCESSED_CSV as PROCESSED  # real data: requires_data only
 COMPARISON = "results/validation/pilot_model_comparison.csv"
 
 

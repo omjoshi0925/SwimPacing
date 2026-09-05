@@ -34,6 +34,10 @@ RAW_COLUMNS = [
 
 CUMULATIVE = ["split_50", "split_100", "split_150", "split_200"]
 
+#: The processed dataset, single source of truth for every consumer (scripts,
+#: tests); duplicated string literals of this path drifted 4 ways before 104.
+PROCESSED_CSV = "data/processed/200_free_scy_processed.csv"
+
 #: Tolerance for split_200 against final_time, seconds. Official timing resolves
 #: to 0.01 s, so 0.05 allows a little rounding without accepting a real mismatch.
 TIME_MATCH_TOL = 0.05
@@ -455,7 +459,7 @@ def process(path: str, out_path: str | None = None,
 def main(argv: Iterable[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("raw", help="path to the raw race CSV")
-    ap.add_argument("--out", default="data/processed/200_free_scy_processed.csv")
+    ap.add_argument("--out", default=PROCESSED_CSV)
     ap.add_argument("--start-offset", type=float, default=START_OFFSET_S,
                     help="dive start credit applied to split 1, seconds")
     args = ap.parse_args(list(argv) if argv is not None else None)

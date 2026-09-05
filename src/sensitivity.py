@@ -184,31 +184,6 @@ def elasticity_table(sw: Swimmer = REFERENCE, course: Course = SCY_200,
 # ---------------------------------------------------------------------------
 
 
-def aerobic_anaerobic_map(sw: Swimmer = REFERENCE, course: Course = SCY_200,
-                          r_mult=(0.80, 1.20), e_mult=(0.60, 1.60),
-                          n: int = 21) -> dict:
-    """
-    Grid over the aerobic ceiling R and the anaerobic reserve E0, the two
-    parameters that define a swimmer's engine.
-
-    Answers secondary questions 4 and part of 6: does an anaerobically
-    dominant swimmer want a different opening from an aerobically dominant one?
-    Returns both the race-time surface and the first-50 fraction surface, so
-    the two can be read against each other.
-    """
-    R_vals = np.linspace(sw.R * r_mult[0], sw.R * r_mult[1], n)
-    E_vals = np.linspace(sw.E0 * e_mult[0], sw.E0 * e_mult[1], n)
-    T = np.zeros((n, n))
-    P1 = np.zeros((n, n))
-    for i, E0 in enumerate(E_vals):
-        for j, R in enumerate(R_vals):
-            opt = optimization.optimize(sw.with_(R=float(R), E0=float(E0)), course)
-            T[i, j] = opt["race_time"]
-            P1[i, j] = float(np.asarray(opt["split_fractions"])[0])
-    return {"R": R_vals, "E0": E_vals, "race_time": T, "P1": P1,
-            "anaerobic_fraction": E_vals[:, None] / (E_vals[:, None] + R_vals[None, :] * T)}
-
-
 def exponent_map(sw: Swimmer = REFERENCE, course: Course = SCY_200,
                  p_range=(2.0, 4.5), b_range=(0.0, 0.6), n: int = 21) -> dict:
     """
