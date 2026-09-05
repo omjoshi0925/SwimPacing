@@ -411,7 +411,9 @@ is done or dropped under this band's own cosmetic-rows-are-dropped rule is a
 decision still to be made.
 
 **Band J resolved 2026-09-05; drop-vs-do decided by the owner.** Rows 104 and
-105 done, in the two commits preceding this annotation. 104: the
+105 done — in `5f66231`, ONE combined commit, not the two this sentence
+originally claimed (corrected 2026-09-05; see the execution note below). 104:
+the
 processed-dataset path was written out in four places (`fit_models.py`,
 `evaluate_holdout.py`, `empirical_analysis.py`, `test_calibration.py`) plus
 the `--out` default in preprocessing; it now lives once, as
@@ -442,6 +444,32 @@ estimates-not-physiology) and describing the reconciled state of this
 roadmap rather than the stale table it replaced.
 
 ---
+
+## Execution note, 2026-09-05 (single combined commit via GitHub Desktop)
+
+Rows 104 and 105 were executed together and delivered as ONE commit,
+`5f66231`, made in GitHub Desktop. Its message ("refactor: single source of
+truth for the processed dataset path") names only row 104 and
+under-describes the commit. Verified against `git show 5f66231`, the diff
+also contains: exactly seven `def` removals for row 105
+(`aerobic_anaerobic_map`, `mechanical_power`, `run_all_strategies`,
+`signed_error_pp`, `smooth_velocity`, `velocity_ceiling`,
+`velocity_for_cost`, across `src/model.py`, `src/sensitivity.py`,
+`src/simulator.py`, `src/stats.py`); the deliberate keep of
+`even_pace_solution` with the docstring that says so; and this file's own
+band J resolution annotation, whose "two commits preceding this annotation"
+phrasing described the intended split rather than what happened — corrected
+in place, with this note as the record. The commit is pushed and stands as
+made; annotation, not history rewriting, is how this file handles it.
+
+Rows 099-101 are dropped under this band's cosmetic-rows-are-dropped rule.
+099/100: every module already carries a module docstring and only ~10
+genuinely public symbols lack one, so the mathematical contracts those rows
+wanted already exist. 101: the formats band F admitted (splitless sources,
+the spreadsheet tier) are pinned by the fifteen tests across
+`test_hytek_parser.py` and `test_results_parsers.py`, and the garbled-lap
+workbook rows were excluded at ingest rather than parsed, so there is no
+code path to pin.
 
 ## Delivered outside the plan
 
