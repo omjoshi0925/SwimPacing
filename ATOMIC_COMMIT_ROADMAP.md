@@ -60,6 +60,7 @@ result and the code that made it belong together.
 | H | Literature completion | 073-082 | none |
 | I | Paper | 083-098 | empirical sections after G |
 | J | Code quality and documentation | 099-106 | as discovered |
+| K | Exploratory per-race start credit S(v) | 107-113 | exploratory; test set already open (added 2026-09-05) |
 
 ---
 
@@ -471,6 +472,64 @@ the spreadsheet tier) are pinned by the fifteen tests across
 workbook rows were excluded at ingest rather than parsed, so there is no
 code path to pin.
 
+## Band K — Exploratory per-race start credit S(v) = 15/v − t15 (107-113)
+
+Added 2026-09-05, after the registered analysis, on the owner's instruction.
+Motivated by the pilot report's Phase 7 verdict and validation_plan §7
+amendment (b): a constant credit is provably wrong across paces, and the M3
+refit shows `beta_x` absorbing the assumed credit almost one-for-one
+(0.3335 → 0.0103 across the 1.2-3.4 s band). The exploratory question is
+narrow: is `beta_x`'s range across the plausible t15 band narrower than that,
+and does the ranking stabilize? The registered conclusion does not change.
+
+**Hard constraints, stated once.**
+- Exploratory throughout. The test set was opened 2026-09-03; every output
+  is labeled exploratory and the registered conclusion is unchanged by
+  construction.
+- No file that exists today under `results/model_calibration/` or
+  `results/validation/` changes. New outputs are new files with
+  "exploratory" in the name; `report_v0_2.md` is untouched.
+- t15 is a literature quantity (Tor 2014, Rudnik 2023, van Dijk 2020; all
+  full text, bib-keyed). It is never fitted to split data.
+- Fits run on training rows only, through `calibration.training_frame` with
+  `CalibrationLeakageError` intact. Held-out scoring is permitted, the set
+  being open, and labeled exploratory.
+- Discovery before any edit; roadmap before code; bib before any literature
+  claim.
+
+**Design.** v per race is whole-race, 182.88/T — the definition amendment (b)
+used (`empirical_analysis.start_effect`: 15/mean(v) − t15 with
+v = 182.88/T), carried per race as S_i = 15/v_i − t15. T includes the
+dive-assisted lap 1, a circularity stated wherever S(v) is defined. Three
+regimes per cell: (i) constant t15 swept 6.1-7.5 s in 0.2 s steps (elite
+floor from Tor/Rudnik, sub-elite from van Dijk's 6.42-8.22 s); (ii)
+proportional t15 = k·(15/v) with k = 6.4/(15/(182.88/93)) = 0.839, so elite
+~1:33 SCY gives 6.4 s; (iii) constant S = 1.80 s as the REFERENCE ROW and
+regression gate. Per cell: refit beta_x, gamma, beta_E on training rows;
+score M0-M4 held-out; record fitted values, RMSE, ranking, sign(P4−P1).
+Discovery facts the design rests on (2026-09-05): per-race v spans
+1.143-1.885 m/s on the 345 usable rows, so regime (i) at t15 = 6.12 gives S
+from 1.84 s to 7.0 s and regime (ii) gives 1.3-2.1 s; the grid never
+produces a negative credit (minimum 15/1.885 − 7.5 = 0.46 s).
+
+**ODE budget (owner's decision).** Full grid, sequenced. The reference row
+(iii) runs first and alone, and is the gate: the per-race path with
+S_i ≡ 1.80 must equal `shares_at_credit(df, 1.80)` and the stored
+`P{i}_corrected` to ≤ 1e-9, and the held-out RMSEs must round to
+`model_comparison.csv`'s four decimals. If it fails, stop. The nine
+remaining cells then run in the background; the script appends each cell's
+row to the CSV on completion and resumes from the CSV if interrupted.
+
+| # | Type | Title | Files/system | Purpose | Depends |
+|---|---|---|---|---|---|
+| 107 | chore(roadmap) | add band K | `ATOMIC_COMMIT_ROADMAP.md` | this section, on record before any code | none |
+| 108 | docs(lit) | t15 provenance, bib-verified | `docs/parameters.md` | new `t15` entry, Category A: `tor2014characteristics` 6.12 ± 0.16 s (n=52 elite, 29 M; the value is the male subset); `rudnik2023kinematic` 6.410 ± 0.45 s (n=52 = 30 F, 16.9 ± 2.2 y, + 22 M, 18.3 ± 1.8 y; the value is the male subset — settles the n=22 vs n=52 discrepancy between parameters.md and the bib note); `vandijk2020predicting` 6.42-8.22 s (n=13 national). States that t15 is never fitted | none |
+| 109 | feat(model) | per-race credit through one transform | `src/model.py`, `src/calibration.py`, `tests/test_model.py`, `tests/test_calibration.py` | first action: confirm whether `evaluate_holdout`'s primary comparison reads stored `P{i}_corrected` or recomputes; if stored, the consolidated path must reproduce those columns and the existing 1e-12 pin is the test. Then `start_credit_per_race(v, t15) = 15/v − t15`, and `recorded_to_raced` becomes the single transform that `shares_at_credit` calls, with an array-like credit. Discovery found the credit added at four sites (`preprocessing.py:321`, `calibration.py:66`, `evaluate_holdout.py:139`, `model.py:514`) with the named transform orphaned: no fourth implementation, and if consolidation fails `recorded_to_raced` is deleted rather than left orphaned. Synthetic tests: monotone decreasing in v; reproduces the amendment (b) arithmetic on the fixture's own mean v; S_i ≡ 1.80 equals the constant path to 1e-9 | 107 |
+| 110 | docs | validation_plan exploratory declaration | `docs/validation_plan.md` | dated before the run, in the 2026-09-01 declaration's format: what is swept, that the test set is already open, that everything is labeled exploratory, that the registered conclusion cannot change | 108, 109 |
+| 111 | feat(scripts) | exploratory per-race start-credit sweep | `scripts/explore_start_credit_per_race.py` | the three regimes; reference row first and alone as the gate; per-cell refits on `training_frame` rows; append-on-completion, resume-from-CSV; writes only the new CSV and never imports `evaluate_holdout`'s writers | 109, 110 |
+| 112 | results | sweep CSV, figure emp09, figures index row | `results/validation/exploratory_start_credit_per_race.csv`, `figures/empirical/emp09_start_credit_per_race.{png,pdf}`, `figures/README.md` | beta_x vs t15 under (i) and (ii), constant-S trace from `holdout_start_sensitivity_m3_refit.csv` overlaid; the reference row reproducing the registered held-out numbers is the regression check that the new path equals the old | 111 |
+| 113 | docs | exploratory report, RESULTS summary, assumptions A1 note | `results/validation/exploratory_start_credit_report.md` (new), `docs/RESULTS.md`, `docs/assumptions.md` | the finding as exploratory: is beta_x's range narrower than 0.3335 → 0.0103, does the ranking stabilize. States explicitly where each regime stops being physical: (i) at the slow tail, where an elite t15 is assigned to ~2:40 swimmers; (ii) at the same tail from the other side, where t15 ≈ 11 s. A1 gains the note that S(v) compares the dive to with-turns race pace while laps 2-4 also open with a push-off, so this is the constant-S approximation carried forward, and the eight-segment model (Task 19) is what removes it | 112 |
+
 ## Delivered outside the plan
 
 Work in the tree that no numbered row planned, listed here rather than
@@ -491,7 +550,8 @@ Rewritten 2026-09-04. The paragraph that stood here was 2026-09-01 planning
 text ("40 executable now with no new data...") that the annotations above had
 overtaken row by row.
 
-106 planned rows. Bands A-E executed in full (A, C, D, E one commit per row;
+113 planned rows: the 106 of the 2026-09-01 plan plus band K (107-113),
+added 2026-09-05 after the registered analysis. Bands A-E executed in full (A, C, D, E one commit per row;
 B re-scoped into the sign-fix arc). Band F executed as two commits covering
 fifteen meets plus the 055-058 freeze block. Band G executed per the
 2026-09-03 execution note, with 068 and 072 folded into the comparison and
@@ -500,7 +560,8 @@ paywalled source access. Band I executed in full, 087 folded into the
 introduction. Band J resolved 2026-09-05: 102-106 done, 099-101 dropped on
 evidence under the band's cosmetic rule.
 
-Open: only the W'-in-joules half of 077, blocked on paywalled source
-access. Everything else is in the history or dropped on record. The counting
+Open: band K, 107-113, exploratory and sequenced one row per commit; and
+the W'-in-joules half of 077, blocked on paywalled source access.
+Everything else is in the history or dropped on record. The counting
 principle stands: honest granularity, not a target to hit.
 
