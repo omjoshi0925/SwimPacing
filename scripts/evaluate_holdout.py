@@ -44,7 +44,7 @@ import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-from src import calibration, data_split, preprocessing, stats  # noqa: E402
+from src import calibration, data_split, model, preprocessing, stats  # noqa: E402
 from src.parameters import SCY_200, MODELS  # noqa: E402
 from src.preprocessing import PROCESSED_CSV as PROCESSED  # noqa: E402
 from src.visualization import (SERIES, MARKERS, INK, INK_2, INK_3,  # noqa: E402
@@ -136,7 +136,7 @@ def compare(test: pd.DataFrame, shapes: dict, n_boot: int, label: str) -> dict:
     crit = stats.apply_win_criteria(mean_rmse, diff_ci, P_mean, shapes)
     # secondary metrics
     lap = test[[f"split{i}_time" for i in range(1, 5)]].to_numpy(dtype=float)
-    lap1c = lap[:, 0] + SCY_200.start_credit_s
+    lap1c = model.recorded_to_raced(lap)[:, 0]  # the single credit site (row 109)
     drop12 = lap[:, 1] - lap1c
     drop34 = lap[:, 3] - lap[:, 2]
     dboot = stats.cluster_bootstrap(np.column_stack([drop12, drop34]), clusters,

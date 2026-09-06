@@ -33,7 +33,7 @@ import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-from src import preprocessing, data_split  # noqa: E402
+from src import data_split, model, preprocessing  # noqa: E402
 from src.preprocessing import PROCESSED_CSV as PROCESSED  # noqa: E402
 from src.parameters import SCY_200, START_OFFSET_S  # noqa: E402
 from src.visualization import (SERIES, MARKERS, INK, INK_2, INK_3,  # noqa: E402
@@ -278,11 +278,10 @@ def start_effect(ok: pd.DataFrame, shapes: dict):
     T = ok["final_time_s"].to_numpy()
     laps = np.vstack([ok[f"split{i}_time"].to_numpy() for i in range(1, 5)]).T
     for off in offsets:
-        lapsc = laps.copy()
-        # free-swimming equivalent: the dive credit is ADDED back to lap 1
-        # (model.recorded_to_raced); the pre-2026-09-01 version subtracted it,
-        # double-counting the credit against raced-space model shapes.
-        lapsc[:, 0] += off
+        # the dive credit is ADDED back to lap 1 through model.recorded_to_raced,
+        # the single application site (band K, row 109); bitwise identical to
+        # the inline addition this replaced, so the frozen pilot outputs stand.
+        lapsc = model.recorded_to_raced(laps, credit=float(off))
         P = lapsc / lapsc.sum(axis=1, keepdims=True)
         row = {"offset_s": off}
         for name in MODEL_ORDER:

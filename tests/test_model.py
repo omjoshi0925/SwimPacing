@@ -374,3 +374,40 @@ def test_cost_coefficient_reanchors_when_the_exponent_moves():
 def test_format_time_reads_like_a_split_sheet():
     assert model.format_time(100.017) == "1:40.02"
     assert model.format_time(24.5) == "24.50"
+
+
+# ---------------------------------------------------------------------------
+# Band K (exploratory): per-race start credit S(v) = 15/v - t15, row 109
+# ---------------------------------------------------------------------------
+
+
+def test_start_credit_per_race_is_monotone_decreasing_in_v():
+    """S(v) = 15/v - t15: a faster swimmer gets LESS dive credit, because the
+    dive's fixed 15 m advantage is measured against faster swimming."""
+    v = np.linspace(1.10, 1.95, 50)
+    S = model.start_credit_per_race(v, 6.12)
+    assert (np.diff(S) < 0).all()
+    # scalar and per-race t15 both broadcast to the same answer
+    assert np.allclose(model.start_credit_per_race(v, np.full_like(v, 6.12)), S)
+    # and the grid the sweep uses never goes negative at this field's fastest race
+    assert model.start_credit_per_race(1.885, 7.5) > 0
+
+
+def test_recorded_to_raced_is_the_single_transform_scalar_and_per_race():
+    """Default = the constant Course credit (registered path, 1-D and 2-D);
+    a per-race credit is added to lap 1 ONLY; exact round trip with
+    raced_to_recorded at the constant credit."""
+    from src.parameters import SCY_200
+    laps = np.array([[23.0, 26.0, 26.5, 26.4], [25.0, 27.5, 28.0, 27.9]])
+    d = model.recorded_to_raced(laps)
+    assert np.allclose(d[:, 0], laps[:, 0] + SCY_200.start_credit_s)
+    assert np.allclose(d[:, 1:], laps[:, 1:])
+    per = np.array([1.5, 3.2])
+    p = model.recorded_to_raced(laps, credit=per)
+    assert np.allclose(p[:, 0], laps[:, 0] + per) and np.allclose(p[:, 1:], laps[:, 1:])
+    one = model.recorded_to_raced(laps[0])
+    assert np.allclose(one, d[0])
+    assert np.allclose(model.raced_to_recorded(one, SCY_200), laps[0])
+    assert np.allclose(model.raced_to_recorded(d, SCY_200), laps)   # matrix round trip
+    with pytest.raises(TypeError):
+        model.recorded_to_raced(laps[0], credit=per)  # per-race credit on one race

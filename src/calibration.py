@@ -53,17 +53,24 @@ def observed_shares(df: pd.DataFrame) -> np.ndarray:
     return P
 
 
-def shares_at_credit(df: pd.DataFrame, start_credit_s: float) -> np.ndarray:
+def shares_at_credit(df: pd.DataFrame, start_credit_s) -> np.ndarray:
     """
-    Free-swimming-equivalent shares recomputed at a NON-default start credit,
-    directly from the recorded split times. Used by the start-credit
-    sensitivity analyses; `observed_shares` is the registered default.
+    Free-swimming-equivalent shares recomputed from the recorded split times
+    at a given start credit: a scalar (the registered §7 sweeps) or one
+    credit per race (band K's S(v) = 15/v - t15). The credit reaches lap 1
+    through `model.recorded_to_raced`, the single application site; the
+    pipeline wrote the stored columns `observed_shares` reads through the
+    same function, so the two agree to floating-point precision at the
+    registered constant (pinned by the test suite).
     """
     laps = df[[f"split{i}_time" for i in range(1, 5)]].to_numpy(dtype=float)
     if not np.isfinite(laps).all():
         raise ValueError("missing split times; filter to usable rows first")
-    laps = laps.copy()
-    laps[:, 0] += start_credit_s  # recorded -> free-swimming equivalent
+    credit = np.asarray(start_credit_s, dtype=float)
+    if credit.ndim == 1 and len(credit) != len(laps):
+        raise ValueError(f"per-race credit has {len(credit)} entries for "
+                         f"{len(laps)} races")
+    laps = _model.recorded_to_raced(laps, credit=credit)
     return laps / laps.sum(axis=1, keepdims=True)
 
 

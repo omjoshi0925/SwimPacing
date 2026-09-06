@@ -202,3 +202,50 @@ def test_fit_beta_E_recovers_the_generating_value():
                                  refine_iters=4)
     assert fit.value == pytest.approx(0.28, abs=0.04)
     assert fit.loss_pp < 0.05
+
+
+# ---------------------------------------------------------------------------
+# Band K (exploratory): per-race credit through the single transform, row 109
+# ---------------------------------------------------------------------------
+
+
+def test_per_race_credit_at_the_constant_equals_scalar_and_stored(synthetic_usable):
+    """Band K's regression gate in miniature: S_i == 1.80 for every race must
+    reproduce both the scalar path and the stored pipeline columns."""
+    S = float(synthetic_usable["start_offset_used"].iloc[0])
+    per = np.full(len(synthetic_usable), S)
+    a = calibration.shares_at_credit(synthetic_usable, per)
+    b = calibration.shares_at_credit(synthetic_usable, S)
+    c = calibration.observed_shares(synthetic_usable)
+    assert np.abs(a - b).max() <= 1e-9
+    assert np.abs(a - c).max() <= 1e-9
+
+
+def test_per_race_credit_reproduces_amendment_b_arithmetic(synthetic_usable):
+    """validation_plan §7 amendment (b): S = 15/v - t15 at the field's mean
+    whole-race velocity, v = 182.88/T, exactly as empirical_analysis.start_effect
+    computes it. Pinned on the fixture so a changed formula is caught."""
+    from src import model
+    from src.parameters import SCY_200
+    v = SCY_200.total_distance_m / synthetic_usable["final_time_s"].to_numpy(dtype=float)
+    for t15 in (6.12, 6.41):
+        assert model.start_credit_per_race(v.mean(), t15) == pytest.approx(
+            15.0 / v.mean() - t15, abs=1e-12)
+    assert model.start_credit_per_race(v.mean(), 6.12) == pytest.approx(2.7176, abs=2e-4)
+
+
+def test_shares_at_credit_rejects_a_wrong_length_credit(synthetic_usable):
+    with pytest.raises(ValueError, match="per-race credit"):
+        calibration.shares_at_credit(synthetic_usable, np.array([1.0, 2.0]))
+
+
+def test_per_race_credit_moves_only_lap_one_share(synthetic_usable):
+    """More credit -> a larger lap-1 share; the other laps keep their relative
+    proportions, because only lap 1 is touched."""
+    n = len(synthetic_usable)
+    lo = calibration.shares_at_credit(synthetic_usable, np.full(n, 1.0))
+    hi = calibration.shares_at_credit(synthetic_usable, np.full(n, 3.0))
+    assert (hi[:, 0] > lo[:, 0]).all()
+    r_lo = lo[:, 1:] / lo[:, 1:].sum(axis=1, keepdims=True)
+    r_hi = hi[:, 1:] / hi[:, 1:].sum(axis=1, keepdims=True)
+    assert np.allclose(r_lo, r_hi)

@@ -318,7 +318,12 @@ def add_pacing_metrics(df: pd.DataFrame,
     # applying the model-side transform to the data as well and thereby
     # double-counting the credit by 2*offset on lap 1. Fixed 2026-09-01; see
     # the amendment log in docs/validation_plan.md.
-    corrected = [s[0] + start_offset, s[1], s[2], s[3]]
+    # The credit is added to lap 1 by model.recorded_to_raced, the single
+    # application site (band K, row 109); this was one of four places that
+    # did the arithmetic inline.
+    laps = np.column_stack([x.to_numpy(dtype=float) for x in s])
+    raced = _model.recorded_to_raced(laps, credit=start_offset)
+    corrected = [pd.Series(raced[:, i], index=df.index) for i in range(4)]
     T_corr = sum(corrected)
     for i in range(1, 5):
         df[f"P{i}_corrected"] = corrected[i - 1] / T_corr
@@ -346,7 +351,7 @@ def add_pacing_metrics(df: pd.DataFrame,
     # The raw lap-1-to-2 drop embeds the dive (lap 1 is dive-fast), so the
     # fair discriminator credits it back: this is the drop the swimmer's
     # PACING produced, and the one to compare against M3/M4 predictions.
-    df["drop_1_2_corrected"] = df["drop_1_2"] - start_offset
+    df["drop_1_2_corrected"] = s[1] - corrected[0]   # lap 1 from the transform
     with np.errstate(divide="ignore", invalid="ignore"):
         df["drop_ratio_corrected"] = df["drop_1_2_corrected"] / df["drop_3_4"]
 

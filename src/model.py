@@ -502,16 +502,42 @@ def raced_to_recorded(t_splits, course: Course = SCY_200):
     return apply_start_offset(t_splits, course.start_credit_s)
 
 
-def recorded_to_raced(s_splits, course: Course = SCY_200):
+def start_credit_per_race(v, t15):
+    """
+    Per-race dive credit S(v) = 15/v - t15, seconds (roadmap band K,
+    EXPLORATORY).
+
+    `v` is the whole-race velocity 182.88/T of each race, the definition
+    validation_plan §7 amendment (b) used; `t15` is the measured time to the
+    15 m mark from the literature (docs/parameters.md, Category A) and is
+    never fitted to split data. Circularity, stated once: T includes the
+    dive-assisted lap 1, so v is itself slightly inflated by the credit
+    being estimated. Vectorised: `v` and `t15` broadcast, so `t15` may be a
+    scalar (regime (i)) or one value per race (regime (ii)).
+    """
+    return 15.0 / np.asarray(v, dtype=float) - np.asarray(t15, dtype=float)
+
+
+def recorded_to_raced(s_splits, course: Course = SCY_200, credit=None):
     """
     Recorded splits -> free-swimming-equivalent space.
 
     Inverse of `raced_to_recorded`: removing the dive from a recorded race
-    means lap 1 would have taken LONGER swum at pace, so lap 1 gains
-    `course.start_credit_s`. Exact round-trip with `raced_to_recorded`.
+    means lap 1 would have taken LONGER swum at pace, so lap 1 gains the
+    credit. `credit` defaults to `course.start_credit_s`, the constant,
+    registered path; pass a scalar or one credit per race to use another.
+    `s_splits` is one race (4,) or a matrix of races (n, 4); a per-race
+    credit needs the matrix form. This is the ONE place the credit is added
+    to lap 1 (band K, row 109): the pipeline's stored columns, the
+    calibration loss and every sweep reach lap 1 through this function.
+    Exact round-trip with `raced_to_recorded` at the constant credit.
     """
     out = np.array(s_splits, dtype=float).copy()
-    out[0] += course.start_credit_s
+    c = course.start_credit_s if credit is None else np.asarray(credit, dtype=float)
+    if out.ndim == 1:
+        out[0] += float(c)          # a per-race array here is an error, loudly
+    else:
+        out[:, 0] += c
     return out
 
 
@@ -523,7 +549,7 @@ def apply_start_offset(t_splits, offset: float):
     from the course and name their direction.
     """
     out = np.array(t_splits, dtype=float).copy()
-    out[0] -= offset
+    out[..., 0] -= offset          # one race (4,) or a matrix (n, 4)
     return out
 
 
