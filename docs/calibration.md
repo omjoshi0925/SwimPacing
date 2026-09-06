@@ -62,6 +62,23 @@ code minimizes the registered per-race form directly anyway.
   influence on shape is third-decimal; it remains a race-time calibration, not
   a shape parameter.
 
+**Re-solve reproducibility of the ODE models (found 2026-09-06, band K
+gate).** The held-out RMSEs in `results/validation/model_comparison.csv` for
+M2 and M4 depend on an ODE re-solve of the fitted shape at evaluation time
+(`evaluate_holdout.fitted_shapes`), not on the four-decimal shape recorded in
+the fit report. That re-solve is deterministic within a session but did not
+reproduce the registered run bit-for-bit: with the registered code path and
+the registered fitted values, today's M2 shape scores 0.771022 pp against the
+recorded 0.7709 (delta +1.2e-4 pp) and M4 0.460854 against 0.4609 (delta
+-4.6e-5 pp, same four decimals). The recorded shapes are worse anchors, not
+better: rounded to four decimals they score M2 at 0.772270, so the rounding
+alone moves the number by 1.3e-3 pp. Consequences: the closed-form models
+(M0, M1, M3) reproduce exactly and are held to exact equality; any regression
+check on the ODE models carries a stated band of 2e-4 pp (band K's
+`ODE_TOL_PP`); and the registered comparison's M2/M3/M4 differences, which
+are of order 1e-2 pp with bootstrap CIs of order 1e-1 pp, are not affected at
+the precision that matters. No registered artifact was changed.
+
 ## Rows: training only, structurally
 
 Data enters fitting through exactly one door, `calibration.training_frame`:

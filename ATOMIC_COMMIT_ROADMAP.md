@@ -520,6 +520,19 @@ S_i ≡ 1.80 must equal `shares_at_credit(df, 1.80)` and the stored
 remaining cells then run in the background; the script appends each cell's
 row to the CSV on completion and resumes from the CSV if interrupted.
 
+**Gate outcome, 2026-09-06.** The credit path passed at machine precision
+(per-race vs scalar 0.0; per-race vs stored `P{i}_corrected` 1.1e-16, train
+and held-out). The held-out RMSE leg failed on M2 alone: 0.771022 against the
+registered 0.7709. Diagnosis, with `evaluate_holdout.fitted_shapes` itself:
+the ODE re-solve of M2's shape is deterministic within a session but does not
+reproduce the 2026-09-03 run bit-for-bit (delta +1.2e-4 pp; M4 reproduces to
+four decimals; the closed-form models exactly), and the fit report's
+four-decimal recorded shapes are worse anchors (M2 0.772270). Owner's
+decision: split tolerance — closed-form models exact at four decimals, ODE
+models within 2e-4 pp with both numbers printed — recorded in
+`docs/calibration.md`. The gate then passed and the reference cell ran; its
+`beta_x` refit reproduced the registered 0.2277 with the registered ranking.
+
 | # | Type | Title | Files/system | Purpose | Depends |
 |---|---|---|---|---|---|
 | 107 | chore(roadmap) | add band K | `ATOMIC_COMMIT_ROADMAP.md` | this section, on record before any code | none |
