@@ -39,6 +39,7 @@ for the quantity, in a population close enough to be arguable.
 | Propelling efficiency | `eta_p` | 0.60 |
 | Gross mechanical efficiency | `eta_g` | 0.20 (contested, see below) |
 | Cost exponent | `p` | 3.0 (derived from quadratic drag) |
+| Time to 15 m from the start signal | `t15` | 6.12-6.41 s elite male; 6.42-8.22 s sub-elite, mixed-sex best times (band K, exploratory use) |
 
 **Category B, calibrated.** Chosen so the model reproduces known race behaviour.
 These are model parameters that happen to carry physiological names. They are
@@ -402,6 +403,43 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
   which velocity profile is optimal, which is why it is applied only at
   comparison time and never inside the optimizer.
 
+### t15 — time to 15 m from the start signal (added 2026-09-06, band K)
+
+- **Symbol:** t15
+- **Values:** elite male 6.12 ± 0.16 s (Tor, Pease & Ball 2014,
+  `tor2014characteristics`, n=52 elite of whom 29 M; the value is the male
+  subset) and 6.410 ± 0.45 s (Rudnik, Rejman & Vilas-Boas 2023,
+  `rudnik2023kinematic`, n=52 international = 30 F, 16.9 ± 2.2 y, plus 22 M,
+  18.3 ± 1.8 y; the value is the male subset). Sub-elite 6.42-8.22 s
+  (van Dijk, Beek & van Soest 2020, `vandijk2020predicting`: 15 recruited,
+  3 elite + 12 sub-elite national-level, age ≥ 14; 14 analysed, 8 M / 6 F;
+  the range is per-swimmer BEST times across both sexes, so it is a
+  sub-elite bound, not a male anchor — the bibliography's earlier "n=13"
+  was wrong and is corrected). The start-credit entry above cites Rudnik as
+  "n=22 international"
+  and the bibliography note says n=52: both are right — 22 is the male
+  subset the value comes from, 52 the study. Settled 2026-09-06.
+- **Units:** s
+- **Description:** the measured time from the start signal to the 15 m
+  mark — block, flight, underwater and the first free-swimming strokes
+  together. It is the literature half of the per-race dive credit
+  S(v) = 15/v − t15: what the dive is worth is how long 15 m would take at
+  race pace, minus how long the start actually takes.
+- **Status:** **Literature-supported (Category A).** All three sources full
+  text (`literature/literature_review.csv`, `access_level`). **Never fitted
+  to split data:** in band K it enters only as swept constants (6.1-7.5 s)
+  or as a fixed proportion of 15/v. Fitting it to splits would let the start
+  absorb pacing, the very confound the credit exists to remove.
+- **Identifiable from race data:** not from this dataset: `split_15m` is
+  empty on all 345 usable rows, and estimating t15 from lap differences
+  would absorb genuine pacing into the correction (start-credit entry,
+  above).
+- **Notes:** the populations are elite and national-level adults and
+  near-adults; this field's 15-18 males swim slower (whole-race v
+  1.143-1.885 m/s), so an elite t15 applied at the slow tail assigns an
+  elite start to a ~2:40 swimmer. Where each band K regime stops being
+  physical is stated in the exploratory report (roadmap row 113).
+
 ---
 
 ## Engine-block plausibility: the critical-speed check (added 2026-09-01)
@@ -486,6 +524,7 @@ fixed by calibration to race time and held there, and the paper should say so.
 | `tau`, `R`, start credit | implied literature backing | marked PROVENANCE GAP | no verified citation yet |
 | start credit (2026-09-01) | module constant `START_OFFSET_S` | `Course.start_credit_s`, Category B | promoted to a model parameter with provenance; legacy alias kept |
 | start-correction direction (2026-09-01) | credit SUBTRACTED from observed lap 1 | credit ADDED to observed lap 1 | the model-side transform had been applied to the data as well, double-counting the credit; every pilot output regenerated |
+| `t15` (2026-09-06) | did not exist | Category A, 6.12-6.41 s elite male / 6.42-8.22 s sub-elite mixed-sex | the literature half of band K's exploratory per-race credit S(v) = 15/v − t15; never fitted |
 
 The old C_D and A were individually indefensible even though their product was
 about right. That is worth stating plainly: a lumped parameter landing in the
