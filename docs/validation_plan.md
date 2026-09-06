@@ -43,6 +43,34 @@ raised to five and the fits re-run, all before the test set was opened —
 this is a fix to the fitting procedure of §6, not a change to it. **Test
 set opened once at 2026-09-03T02:00:12Z** by `scripts/evaluate_holdout.py`
 (89 races / 60 swimmers); results in `results/validation/report_v0_2.md`.
+**Declared exploratory analysis, 2026-09-06 (roadmap band K), dated before
+the run.** The constant start credit is replaced, exploratorily, by a per-race
+S(v) = 15/v − t15 with v = 182.88/T — the §7 amendment (b) definition; T
+includes the dive-assisted lap 1, a circularity stated wherever S(v) is
+defined — and t15 a literature quantity (docs/parameters.md, Category A)
+that is never fitted to split data. Three regimes: (i) constant t15 swept
+6.1-7.5 s in 0.2 s steps; (ii) t15 = 0.839·15/v, so an elite ~1:33 gives
+6.4 s; (iii) S ≡ 1.80 s as the reference row and regression gate, which must
+reproduce the registered held-out numbers before any other cell runs
+[AMENDED 2026-09-06, after the gate ran and before any other cell: the
+credit path reproduced the stored shares to 1e-16 and the closed-form
+models M0/M1/M3 the registered RMSEs exactly at four decimals, but the ODE
+models' evaluation-time re-solve does not reproduce the 2026-09-03 run
+bit-for-bit (M2 0.771022 vs 0.7709 pp; M4 0.460854 vs 0.4609), so by the
+owner's decision the gate holds M2/M4 to 2e-4 pp with both numbers printed;
+recorded in docs/calibration.md]. Per
+cell, beta_x, gamma and beta_E are refitted on the TRAINING rows through
+`calibration.training_frame` (CalibrationLeakageError intact) and M0-M4 are
+scored on the held-out rows. The test set is ALREADY open (2026-09-03), so
+this is not a registered analysis and cannot become one: every output is
+labeled exploratory and lives in new files
+(`results/validation/exploratory_start_credit_per_race.csv`, figure emp09,
+`results/validation/exploratory_start_credit_report.md`); no registered
+artifact changes, and the §4, §7 and §8 conclusions of record stand. The
+question is only whether beta_x's range across the plausible t15 band is
+narrower than the constant-credit sweep's 0.3335 → 0.0103, and whether the
+ranking stabilizes.
+
 Registered outcomes, applied mechanically: no single model wins on shape
 (M3 and M4 both match the observed sign) or on accuracy (M3–M4 difference
 0.007 pp, CI [−0.019, +0.030]); the even and negative-split classes are
