@@ -40,6 +40,7 @@ not reused, so stale references fail loudly.)
 | empirical/emp06_holdout_comparison | held-out mean RMSE per model with swimmer-cluster bootstrap CIs; held-out mean profile vs fitted shapes |
 | empirical/emp07_start_band_holdout | held-out ranking across the registered 1.2-3.4 s start-credit band, fitted parameters fixed |
 | empirical/emp08_deviation_vs_performance | H1: improvement on pre-race PB vs deviation from the best-supported model's optimum, with the registered quadratic fit |
+| empirical/emp09_start_credit_per_race | EXPLORATORY (band K): fitted beta_x across the t15 band under a per-race credit S(v) = 15/v − t15, regimes (i) and (ii), with the registered constant-S sweep overlaid on a t15 axis at the field-mean velocity; `python -m scripts.explore_start_credit_per_race --figure` |
 
 `evaluate_holdout.py` is the one script that opens the test set; it is not
 part of `run_all.py` and is not re-run casually (validation_plan §5).

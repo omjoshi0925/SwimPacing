@@ -46,6 +46,23 @@ their effect distributes roughly evenly across laps 2-4.
 per-race pace-dependent credit S(v) = 15/v − t15 as the minimum upgrade; then
 the Task 19 eight-segment model, whose target is driving `phi` toward 1.
 
+**The minimum upgrade, tried exploratorily (2026-09-06, roadmap band K).**
+S(v) = 15/v − t15 with v = 182.88/T and t15 from the literature
+(`docs/parameters.md`) was run per race, with the test set already open, so
+as an exploratory analysis only (`docs/validation_plan.md`, declaration of
+2026-09-06; `results/validation/exploratory_start_credit_report.md`). What
+it does NOT fix is stated here so it is not mistaken for the eight-segment
+model: S(v) compares the dive to swimming 15 m at with-turns race pace, not
+to a turn push-off over the same 15 m. Laps 2-4 also open with a push-off
+and an underwater phase, which the free-swimming model does not carry
+either, so the per-race credit inherits the constant-S model's approximation
+that the walls' contribution distributes across laps 2-4 and cancels in the
+comparison. Only the eight-segment model removes it. Two further limits are
+structural: v is the whole-race velocity, which contains the dive-assisted
+lap 1 (a stated circularity), and an elite t15 applied to this field's slow
+tail assigns an elite start to a ~2:40 swimmer, where the regime stops being
+physical (the exploratory report states the boundary for each regime).
+
 ### A2. Velocity is constant within each 50
 
 **Cost.** Real velocity oscillates within every stroke cycle and spikes off every
