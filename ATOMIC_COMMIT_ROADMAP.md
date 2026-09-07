@@ -533,6 +533,33 @@ models within 2e-4 pp with both numbers printed — recorded in
 `docs/calibration.md`. The gate then passed and the reference cell ran; its
 `beta_x` refit reproduced the registered 0.2277 with the registered ranking.
 
+**Band K executed 2026-09-06.** 108 `7f9a7e1` (t15 entry; the van Dijk record
+corrected in bib, review CSV and entry after re-reading the paper: 15
+recruited, 14 analysed, 8 M / 6 F, mixed-sex best-time range), 109 `be0e710`
+(one transform; a fifth inline site in `empirical_analysis.py` found by the
+adversarial review and routed), 110 `063dd1b`, 111 `658219d`. Row 112 landed
+in two commits: `7b9dede` by the owner, with the CSV at three cells, the emp09
+index row, and row 113's A1 note, so 113 began before 112 finished — and
+`c7219df`, the ten-cell CSV and the emp09 figure — which also
+re-serializes the three rows from `7b9dede` at the sixteenth significant
+digit, because the script's resume path re-reads the CSV through pandas'
+default float parser before appending; immaterial at any precision the
+results are read at, and a `float_precision='round_trip'` read would make
+resume bit-stable (a later script fix, outside this band). Row 113 is the
+commit carrying this annotation (report, RESULTS summary). The grid ran as
+sequenced: reference cell first and alone, then nine cells detached,
+relaunched once after the gate's own monotonicity check was corrected for two
+held-out races with identical final times.
+
+Answer of record (exploratory): `beta_x` spans 0.046-0.269 across
+t15 = 6.1-7.5 s (0.223 against the constant-credit sweep's 0.323), about
+0.03 per 0.2 s of t15; the held-out winner is M3 in the interior and M4 at
+both edges and under proportional t15, so the ranking does not stabilize and
+§7.3 stands in t15 terms. `gamma` nears its bound at the elite floor;
+`beta_E` at its bound everywhere. Both regimes are unphysical at the slow
+tail, as row 113 required stating. What would change it: measured 15 m
+splits, absent from all 345 usable rows.
+
 | # | Type | Title | Files/system | Purpose | Depends |
 |---|---|---|---|---|---|
 | 107 | chore(roadmap) | add band K | `ATOMIC_COMMIT_ROADMAP.md` | this section, on record before any code | none |
@@ -571,10 +598,12 @@ fifteen meets plus the 055-058 freeze block. Band G executed per the
 H1 artifacts. Band H closed except the W'-in-joules half of 077, blocked on
 paywalled source access. Band I executed in full, 087 folded into the
 introduction. Band J resolved 2026-09-05: 102-106 done, 099-101 dropped on
-evidence under the band's cosmetic rule.
+evidence under the band's cosmetic rule. Band K executed 2026-09-06
+(107-113; 112 in two commits, one by the owner), exploratory throughout,
+registered conclusion unchanged.
 
-Open: band K, 107-113, exploratory and sequenced one row per commit; and
-the W'-in-joules half of 077, blocked on paywalled source access.
+Open: only the W'-in-joules half of 077, blocked on paywalled source
+access.
 Everything else is in the history or dropped on record. The counting
 principle stands: honest granularity, not a target to hit.
 

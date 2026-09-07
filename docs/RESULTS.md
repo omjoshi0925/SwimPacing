@@ -48,6 +48,25 @@ four-year-old PBs and vanishes in a labelled post-hoc supplement (PB within
 `paper/`. Inner-solver reliability fix made during calibration (before the
 test set was opened) is documented in `docs/calibration.md`.
 
+**Exploratory per-race start credit, 2026-09-06 (roadmap band K; test set
+already open, so exploratory only).** S(v) = 15/v − t15 per race with
+v = 182.88/T,
+t15 from the literature and never fitted (`docs/parameters.md`). Reference
+row S ≡ 1.80 reproduced the registered `beta_x` 0.2277 and ranking. Across
+t15 = 6.1-7.5 s, `beta_x` runs 0.046 → 0.269 (span 0.223 against the
+constant-credit sweep's 0.323; about 0.03 per 0.2 s of t15), so the degree of
+freedom moves from S to t15 rather than disappearing. The held-out winner is
+M3 at 6.3-7.3 s and M4 at both edges and under a proportional t15; M3-M4
+differences where it flips are 0.010-0.034 pp, so §7.3's conclusion stands
+in t15 terms. `gamma` nears its 0.45 bound at the elite floor; `beta_E` sits
+at its 0.02 bound in every cell; sign(P4−P1) = +1 everywhere. At matched
+mean credit the per-race rule yields a higher `beta_x` than the constant one
+(emp09), and a proportional t15 reproduces the constant-credit picture. Both
+regimes are unphysical at this field's slow tail (an elite start assigned to
+~2:40 swimmers; t15 ≈ 11 s). Full report:
+`results/validation/exploratory_start_credit_report.md`; the reproducibility
+finding the gate surfaced (ODE re-solve, 2e-4 pp) is in `docs/calibration.md`.
+
 **Exploratory fits, 2026-09-01 (Task 14 machinery live).** First parameter
 fits, training rows only (60 races), registered loss, labeled exploratory:
 beta_x = 0.234 (registry 0.28, train loss 0.525 vs 0.532 pp), gamma = 0.285
