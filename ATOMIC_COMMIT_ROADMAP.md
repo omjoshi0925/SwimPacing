@@ -545,8 +545,13 @@ re-serializes the three rows from `7b9dede` at the sixteenth significant
 digit, because the script's resume path re-reads the CSV through pandas'
 default float parser before appending; immaterial at any precision the
 results are read at, and a `float_precision='round_trip'` read would make
-resume bit-stable (a later script fix, outside this band). Row 113 is the
-commit carrying this annotation (report, RESULTS summary). The grid ran as
+resume bit-stable (a later script fix, outside this band). Row 113 landed
+as `64eb776` (report, RESULTS summary, this annotation); a verification
+pass over that report — every number recomputed from the CSV, the M4 column
+re-solved at every cell's fitted `gamma` — added one caveat in the commit
+after it: the M4 re-solve drift reaches 3.6e-3 pp where `gamma` ≥ 0.4,
+≤ 3e-4 pp in the three flip cells, so the winners stand and the 6.3 s call
+(M3 by 0.0031 pp) is the least robust in the grid. The grid ran as
 sequenced: reference cell first and alone, then nine cells detached,
 relaunched once after the gate's own monotonicity check was corrected for two
 held-out races with identical final times.

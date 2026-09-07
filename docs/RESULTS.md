@@ -57,7 +57,9 @@ t15 = 6.1-7.5 s, `beta_x` runs 0.046 → 0.269 (span 0.223 against the
 constant-credit sweep's 0.323; about 0.03 per 0.2 s of t15), so the degree of
 freedom moves from S to t15 rather than disappearing. The held-out winner is
 M3 at 6.3-7.3 s and M4 at both edges and under a proportional t15; M3-M4
-differences where it flips are 0.010-0.034 pp, so §7.3's conclusion stands
+differences where it flips are 0.010-0.034 pp against ≤ 3e-4 pp of M4
+re-solve drift in those cells (up to 3.6e-3 pp elsewhere in the grid; the
+6.3 s call, at 0.0031 pp, is the least robust), so §7.3's conclusion stands
 in t15 terms. `gamma` nears its 0.45 bound at the elite floor; `beta_E` sits
 at its 0.02 bound in every cell; sign(P4−P1) = +1 everywhere. At matched
 mean credit the per-race rule yields a higher `beta_x` than the constant one

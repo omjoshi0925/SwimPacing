@@ -42,7 +42,16 @@ decimals for the closed-form models. The ODE models' evaluation-time re-solve
 does not reproduce the 2026-09-03 run bit-for-bit (M2 0.771022 vs 0.7709 pp;
 M4 0.460854 vs 0.4609) — a property of the registered artifact, reproduced by
 `evaluate_holdout`'s own code — so by the owner's decision they are held to
-2e-4 pp (`docs/calibration.md`). The reference refit then reproduced the
+2e-4 pp (`docs/calibration.md`). That band was measured at the registered
+`gamma` = 0.27; at the larger fitted values of this grid the M4 inner solve
+is less reproducible. Re-solving M4 at every cell's fitted `gamma` with a
+fresh cache moved the held-out M4 RMSE by ≤ 3e-4 pp in nine cells and by
+3.6e-3 pp at t15 = 6.7 s (`gamma` 0.40), so the M4 column carries up to
+~4e-3 pp of re-solve drift where `gamma` ≥ 0.4. In the three cells where
+the winner flips the drift is ≤ 3e-4 pp against margins of 0.010-0.034 pp,
+so those calls stand; the least robust call is 6.3 s, where M3 leads by
+0.0031 pp with 0.0003 pp of drift in that cell but the largest drift seen
+anywhere in the grid exceeds the margin. The reference refit then reproduced the
 registered `beta_x` (0.2277 vs 0.2277), `beta_E` (0.020, at its bound) and
 ranking. `gamma` refit to 0.2699 against the registered 0.2687, with a
 training loss of 0.4603 pp against the registered 0.4608 at that value, so
@@ -81,7 +90,9 @@ still moves `beta_x` by several hundredths. The per-race credit relocates the
 degree of freedom from S to t15; it does not remove it.
 
 **The ranking does not stabilize.** M3 wins six of the eight regime (i) cells
-(6.3-7.3 s), M4 wins at both edges (6.1 s and 7.5 s) and in regime (ii). The
+(6.3-7.3 s; the 6.3 s call by 0.0031 pp, the least robust in the grid, see
+the gate paragraph), M4 wins at both edges (6.1 s and 7.5 s) and in regime
+(ii). The
 M3-M4 held-out difference where it flips is 0.010 pp (6.1 s), 0.021 pp
 (7.5 s) and 0.034 pp (regime ii); no bootstrap was run in these cells and the
 registered CIs do not transfer to them, so the conclusion rests on the flip
