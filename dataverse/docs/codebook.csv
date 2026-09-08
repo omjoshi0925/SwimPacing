@@ -1,0 +1,19 @@
+variable,type,units,description
+swimmer_id,string,,Pseudonymous swimmer identifier assigned by the author. Stable across meets within this dataset. Not linkable to any external identifier.
+meet_id,string,,Short machine key for the meet.
+meet_name,string,,Full name of the meet as published in the source results.
+meet_date,date,YYYY-MM-DD,First day of the meet. Swim day within a multi-day meet is not always known; see notes.
+age,integer,years,Swimmer age as published. Missing where the source did not publish ages.
+sex_category,string,,Competition sex category as published. All records are M.
+event,string,,Event contested. All records are 200 FR.
+course,string,,Pool course. All records are SCY (short course yards).
+round,string,,Round of competition: timed_final, prelim, or final.
+seed_time,string,mm:ss.hh,Entry time as published. Missing where the source did not publish seed times.
+final_time,string,mm:ss.hh,Official finishing time for the swim.
+split_50,numeric,seconds,Cumulative elapsed time at 50 yards.
+split_100,string,mm:ss.hh,Cumulative elapsed time at 100 yards.
+split_150,string,mm:ss.hh,Cumulative elapsed time at 150 yards.
+split_200,string,mm:ss.hh,Cumulative elapsed time at 200 yards. Equals final_time.
+data_source,string,,Provenance of the record: source page or document and the date it was retrieved.
+meet_level,string,,Competition tier of the meet (e.g. invitational, championship).
+notes,string,,Free-text record-level caveats: venue, meet dates, finishing place, and known gaps.
