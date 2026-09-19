@@ -305,6 +305,13 @@ collection protocol gets revisited before analysis continues.
 | Deviation vs performance regression | `results/validation/` |
 | Empirical descriptive figures | `figures/empirical/` |
 
+[ANNOTATED 2026-09-19, paths as executed: the registered fits landed in
+`results/model_calibration/fits_train_v0_2.csv`; the held-out table in
+`results/validation/model_comparison.csv` and the held-out figures emp06-08 in
+`figures/empirical/` were written by `scripts/evaluate_holdout.py` (commit
+88de8d9). The band K per-race start-credit outputs and figure emp09 (commits
+7b9dede, c7219df) are exploratory and are not deliverables of this plan.]
+
 ## 12. Things that would invalidate the whole exercise
 
 Stated now so they cannot be rationalized away later.
