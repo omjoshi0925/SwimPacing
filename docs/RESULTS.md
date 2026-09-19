@@ -302,6 +302,15 @@ worth 7.2 s.
 
 ## Open questions going into Phase 9
 
+[ANNOTATED 2026-09-19. Question 1: the registered analysis keeps the
+constant credit with its 1.2-3.4 s sensitivity band; band K replaced it with a
+per-race, pace-aware S(v) = 15/v - t15 as a declared exploratory analysis
+(commits 063dd1b, be0e710, 64eb776). Question 2: beta_x, gamma and beta_E were
+fitted in the registered run on the pilot-v0.2 training rows (commit 88de8d9,
+`results/model_calibration/fits_train_v0_2.csv`). Questions 3 and 4: what was
+run is reported in the registered held-out section above; anything absent
+there is still open.]
+
 1. **What is the dive start actually worth?** `START_OFFSET_S = 1.80` is the
    weakest number in the model and it sits directly on the main comparison. It
    needs to be measured, ideally from 15 m splits.
