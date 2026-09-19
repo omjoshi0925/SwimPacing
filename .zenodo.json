@@ -1,0 +1,9 @@
+{
+  "title": "SwimPacing: physics-based fatigue models of 200 freestyle pacing, tested against meet results under a pre-registered plan",
+  "upload_type": "software",
+  "creators": [{"name": "Joshi, Om"}],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": ["swimming", "pacing", "optimal control", "fatigue model", "pre-registration", "sports science"],
+  "description": "Model code, pre-registered validation plan, calibration and held-out evaluation scripts, figures and paper source. Real race data is not included; it is prepared for separate deposit at Harvard Dataverse."
+}
