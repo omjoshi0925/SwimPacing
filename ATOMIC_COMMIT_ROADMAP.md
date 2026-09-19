@@ -612,3 +612,13 @@ access.
 Everything else is in the history or dropped on record. The counting
 principle stands: honest granularity, not a target to hit.
 
+
+## Execution note, 2026-09-19 (band K rows landed; one commit outside the plan)
+
+Band K rows 107-112 landed as 4e638c4, 7f9a7e1, be0e710, 063dd1b, 658219d and
+c7219df, with 7b9dede, 64eb776 and 9f8fc1f as the results and documentation
+those rows produced; the exploratory declaration (063dd1b) precedes the run
+(658219d) in history, as the plan requires. Outside the plan: 35ad2f0 adds a
+Harvard Dataverse deposit package for the race dataset. Recorded as row 114,
+type data, purpose: an independently timestamped, citable copy of the dataset
+for the data availability statement. It changes no registered number.
