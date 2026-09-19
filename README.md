@@ -299,3 +299,8 @@ machine learning. All of it comes after the start credit is measured.
 ## License
 
 MIT. See `LICENSE`.
+
+## How to cite
+
+Citation metadata is in `CITATION.cff`; the "Cite this repository" button on
+GitHub renders it as APA or BibTeX.
