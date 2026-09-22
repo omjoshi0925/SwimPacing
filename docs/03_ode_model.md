@@ -186,7 +186,7 @@ The start credit exists to keep those separate, and its value is currently a
 literature-informed guess rather than a measurement. Making it a measurement is
 the highest-value item in Phase 9.
 
-### 3d. A third route, not yet exercised
+### 3d. A third route, exercised as M4
 
 `gamma` implements a fatigue-coupled velocity ceiling:
 
@@ -196,10 +196,12 @@ v_max(D) = v_max (1 - gamma D)
 
 This produces a positive split through a *constraint* rather than through cost:
 the swimmer banks speed early because late in the race they physically cannot go
-fast. It is implemented in the simulator and left at zero by default. It is worth
-exercising, because it makes a different secondary prediction from `beta_x`
-(a hard velocity floor at the finish rather than a smooth cost gradient) and the
-two may be separable in the data.
+fast. It is implemented in the simulator, zero on the `Swimmer` default, and
+defines M4 (`gamma` = 0.18 in the registry); Task 14 fitted it on 2026-09-03 at
+0.269 on the pilot-v0.2 training rows
+(`results/model_calibration/fits_train_v0_2.csv`). It makes a different
+secondary prediction from `beta_x` (a hard velocity floor at the finish rather
+than a smooth cost gradient), and the two may be separable in the data.
 
 ---
 

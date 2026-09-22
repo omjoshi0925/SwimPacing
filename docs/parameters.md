@@ -337,9 +337,11 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
   measured swimmer.
 - **Method of selection:** magnitudes chosen to produce a clearly visible
   departure from even pacing, comparable in size to real split distributions.
-- **Status:** **Exploratory (Category C).** They become fitted parameters in
-  Task 14, at which point their fitted values are estimates, still not
-  measurements.
+- **Status:** **Exploratory (Category C)** as registry values. Task 14 ran on
+  2026-09-03 on the pilot-v0.2 training rows
+  (`results/model_calibration/fits_train_v0_2.csv`): fitted `beta_E` = 0.02
+  (at its lower bound), `beta_x` = 0.228, `gamma` = 0.269 — estimates, still
+  not measurements.
 - **Identifiable from race data:** **yes, and this is the point of the project.**
   These are the only parameters in the model that change the optimal pacing
   shape, so the shape is exactly the observable that informs them.
@@ -347,8 +349,10 @@ a 1:40 optimum". The same applies to `R`, `tau`, and every `beta`.
   al. (2011, full text) measured arm-stroke propelling efficiency of 0.40-0.43
   falling significantly from lap 1 to lap 4 of a 200 m front crawl race
   (p = 0.002), and lap energy cost of 1.71/1.56/1.44/1.70 kJ/m. Within-race
-  economy decay is real and measured. The MAGNITUDE of `beta_x` remains
-  exploratory until fitted, and the lap-cost profile they measure is U-shaped
+  economy decay is real and measured. The MAGNITUDE of `beta_x` was
+  exploratory until Task 14 fitted it (0.228 on 2026-09-03;
+  `results/model_calibration/fits_train_v0_2.csv`), and the lap-cost profile
+  they measure is U-shaped
   rather than linear, which cautions against the linear form as more than a
   first approximation.
 
