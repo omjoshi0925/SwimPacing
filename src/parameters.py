@@ -355,9 +355,10 @@ ARCHETYPES = {
 # Note what is held fixed and what moves. R and E0 are the SAME as REFERENCE,
 # so every variant describes one athlete rather than four different ones, and
 # the measured hydrodynamic block is untouched. The only thing that moves is
-# phi, the course economy factor, which falls from 1.00 to 0.754. Read that as:
-# to reproduce a 1:40 while paying for slow oxygen kinetics and decaying
-# economy, this model has to claim SCY racing is about 25% cheaper per metre
+# phi, the course economy factor, which falls from 1.00 to 0.776 (the M3
+# registry value above, 0.7755; docs/parameters.md). Read that as: to
+# reproduce a 1:40 while paying for slow oxygen kinetics and decaying
+# economy, this model has to claim SCY racing is about 22% cheaper per metre
 # than free swimming at the same mean velocity. Seven turns, eight underwater
 # phases and a dive start over 182.88 m make a discount of that size plausible,
 # but it is a claim the model asserts rather than derives, and Task 19 (the

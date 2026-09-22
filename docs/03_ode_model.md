@@ -217,14 +217,18 @@ every one reproduces a 1:40.0 optimum:
 | Model | `phi` | Reading |
 |---|---|---|
 | M0 | 1.000 | no course discount claimed |
-| M1 | 0.858 | 14% discount needed to pay for slow oxygen kinetics |
-| M2 | 0.747 | 25% |
-| M3 | 0.754 | 25% |
-| M4 | 0.811 | 19% |
+| M1 | 0.883 | 12% discount needed to pay for slow oxygen kinetics |
+| M2 | 0.772 | 23% |
+| M3 | 0.776 | 22% |
+| M4 | 0.838 | 16% |
+
+(Values as `docs/parameters.md` records them, the registry in
+`src/parameters.py` to three decimals; recalibrated at `tau` = 16.5 s on
+2026-08-31.)
 
 **`phi` is readable as a diagnostic.** A variant needing `phi` far from 1 is
 demanding a large unexplained economy. A 200 SCY contains a dive, seven turns and
-eight underwater phases over 182.88 m, so a discount of 15-25% is plausible, but
+eight underwater phases over 182.88 m, so a discount of 12-23% is plausible, but
 it is asserted rather than derived. Task 19's eight-segment start-and-turn model
 is what would test it: an explicit turn model should drive `phi` toward 1, and if
 it does not, the discount was never about turns.
