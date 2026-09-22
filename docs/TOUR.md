@@ -26,19 +26,26 @@ hypothesis came back null. The nulls are results here, not failures.
    follows.
 5. **`docs/validation_plan.md`** (skim §3-§8) — the pre-registration: primary
    metric, swimmer-grouped split, win criteria, H1, and the amendment log.
-6. **`results/validation/report_v0_2.md`** (10 min) — the registered held-out
+6. **`docs/preregistration_provenance.md`** (3 min) — the commit history that
+   orders the plan, its amendments, the freeze and the registered run,
+   generated from `git log` so the ordering can be checked without trusting
+   prose.
+7. **`results/validation/report_v0_2.md`** (10 min) — the registered held-out
    evaluation exactly as run, including the start-credit sensitivity band and
    the H1 null.
-7. **`docs/parameters.md`** (reference, not linear reading) — provenance for
+8. **`docs/data_availability.md`** (5 min) — where the citable copy of the
+   race table lives, what is withheld and why, and the digest chain from
+   official result sheet to the frozen dataset.
+9. **`docs/parameters.md`** (reference, not linear reading) — provenance for
    every constant: Category A (literature-supported), B (calibrated),
    C (exploratory), with the language rules that keep calibrated numbers from
    masquerading as physiology.
-8. **`docs/architecture.md`**, then code (optional) — the module map and data
-   flow in one page; from there `src/model.py` and `src/calibration.py` are
-   the two files that matter, and `DEV_WORKFLOW.md` says how any checkpoint is
-   verified.
-9. **`paper/`** — the manuscript drafted from all of the above; CI compiles
-   it on every paper or bibliography push.
+10. **`docs/architecture.md`**, then code (optional) — the module map and data
+    flow in one page; from there `src/model.py` and `src/calibration.py` are
+    the two files that matter, and `DEV_WORKFLOW.md` says how any checkpoint is
+    verified.
+11. **`paper/`** — the manuscript drafted from all of the above; CI compiles
+    it on every paper or bibliography push.
 
 If you read only one thing, read `results/validation/report_v0_2.md` and then
 `docs/assumptions.md` to see how seriously its caveats are taken.
@@ -59,7 +66,9 @@ If you read only one thing, read `results/validation/report_v0_2.md` and then
 Data note: subjects are minors, so published rows carry anonymous S-numbers
 only; verbatim sources never enter the repository, and their public sha256
 digests let anyone re-fetch the official page and verify the dataset was built
-from the genuine file.
+from the genuine file. The pseudonymous race table is deposited at Harvard
+Dataverse, `https://doi.org/10.7910/DVN/9N3Y2S` (CC0 1.0);
+`docs/data_availability.md` has the terms and the verification path.
 
 ## Where the project stands
 
