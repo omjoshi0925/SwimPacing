@@ -62,7 +62,10 @@ far verification got:
 Across the 48 sources: 24 full text, 17 abstract-only or partial, 7 metadata
 only, counted from the `access_level` column of
 `literature/literature_review.csv` (row 081, refreshed 2026-09-04; the CSV and
-`references.bib` now hold the same 48 keys). The previous line read 47 sources
+`references.bib` hold the same 48 literature keys — since 2026-09-22
+`references.bib` also carries `joshi2026dataset`, the project's own Dataverse
+deposit, cited from the paper's availability statement and not a reviewed
+source). The previous line read 47 sources
 as 24/15/8, which did not add up against that column even at 47 rows: the
 correct split then was 24/16/7. Recount from the CSV rather than adjusting
 these numbers by hand. Three energetics entries were verified by a companion session on

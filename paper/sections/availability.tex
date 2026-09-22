@@ -1,0 +1,32 @@
+\section*{Data and code availability}
+
+\paragraph{Data.} The race table this paper analyses is deposited at Harvard
+Dataverse under CC0 1.0 Universal (public domain dedication)
+\citep{joshi2026dataset}: 1,382 swims by 841 pseudonymous swimmers at 16
+meets between 2021 and 2026, with cumulative splits, final and seed times,
+published ages, meet identifiers and a per-row source and retrieval date,
+together with a codebook and the script that produced the table from the
+working raw file. The population is male swimmers aged 15--18. Individual
+race rows as they appear in the source results --- name, club, age and time
+together --- are derived from publicly posted meet results but are not
+redistributed, in the deposit or in the repository, because that combination
+re-identifies minors. The repository carries pseudonymous swimmer
+identifiers, the SHA-256 digests of every source file and of the frozen raw
+and processed files in its dataset register
+(\texttt{data/DATASET\_VERSIONS.md}), and a test that regenerates the
+processed file from the raw file and asserts the register's digest, so anyone
+who re-collects the sources can verify the reconstruction. The deposited
+table is the frozen raw file without the club column and three empty
+columns; put through the pipeline, it reproduces every column of the
+registered processed file except the club column, including the 345 usable
+races and the shares the registered analysis reads.
+
+\paragraph{Code.} The model, pipeline, calibration and held-out evaluation
+code, the pre-registered plan with its amendment log, the figures and this
+manuscript's source are at \url{https://github.com/omjoshi0925/SwimPacing}
+under the MIT license, with citation metadata in \texttt{CITATION.cff}. The
+commit history is the pre-registration record;
+\texttt{docs/preregistration\_provenance.md} lists the commits that order the
+plan, the freeze and the registered run. No archived code release exists at
+the time of writing; a Zenodo deposit is prepared for the first tagged
+release.
