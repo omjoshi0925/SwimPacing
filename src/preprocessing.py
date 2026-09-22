@@ -351,7 +351,11 @@ def add_pacing_metrics(df: pd.DataFrame,
     # The raw lap-1-to-2 drop embeds the dive (lap 1 is dive-fast), so the
     # fair discriminator credits it back: this is the drop the swimmer's
     # PACING produced, and the one to compare against M3/M4 predictions.
-    df["drop_1_2_corrected"] = s[1] - corrected[0]   # lap 1 from the transform
+    # Written as (lap2 - lap1) - offset, not lap2 - (lap1 + offset): the two
+    # differ in their last bits, and the frozen pilot-v0.2 digest in
+    # data/DATASET_VERSIONS.md was taken with this order (be0e710 changed it
+    # and the digest stopped reproducing; restored 2026-09-21).
+    df["drop_1_2_corrected"] = df["drop_1_2"] - start_offset
     with np.errstate(divide="ignore", invalid="ignore"):
         df["drop_ratio_corrected"] = df["drop_1_2_corrected"] / df["drop_3_4"]
 
