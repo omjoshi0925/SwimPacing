@@ -19,16 +19,19 @@ analysis-script edits.
 ### What CI does NOT verify
 
 `requires_data` marks tests that assert a property of the real dataset under
-`data/`, which is gitignored. A clean checkout cannot see those files, so CI
-deselects the marker and its green tick covers **144 of the 151 tests**: 5
-`slow`, 2 `requires_data`. The two are
-`test_loss_reproduces_the_published_pilot_comparison` and
-`test_fit_beta_x_on_train_rows_matches_the_committed_report`, which pin the
-calibration module to frozen published artifacts. Nothing but a local run with
-`data/` present exercises them, so run at least the middle tier above before
-any delivery.
+`data/`, which is gitignored: published benchmark values, frozen artifact
+counts, the frozen digest. A clean checkout cannot see those files, so CI
+deselects the marker and its green tick never covers them (it also deselects
+`slow`). The current set is whatever this lists:
 
-This gap is deliberate. A synthetic fixture could only make those two assertions
+```bash
+python -m pytest tests --collect-only -q -m requires_data
+```
+
+Nothing but a local run with `data/` present exercises them, so run at least
+the middle tier above before any delivery.
+
+This gap is deliberate. A synthetic fixture could only make those assertions
 pass by containing the numbers they check, which would turn a real anchor into a
 fabricated green tick. Everything behavioural runs on
 `tests/fixtures/synthetic_raw.csv` instead, put through the real pipeline by the
