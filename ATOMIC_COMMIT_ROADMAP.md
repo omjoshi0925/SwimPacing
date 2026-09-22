@@ -622,3 +622,64 @@ those rows produced; the exploratory declaration (063dd1b) precedes the run
 Harvard Dataverse deposit package for the race dataset. Recorded as row 114,
 type data, purpose: an independently timestamped, citable copy of the dataset
 for the data availability statement. It changes no registered number.
+
+## Execution note, 2026-09-22 (the post-deposit follow-up list; one repair outside the plan)
+
+A fourteen-item list, issued 2026-09-19 as a discovery-then-execute pass
+and numbered here as issued, closed the deposit's paperwork and re-examined
+the band J rows dropped on 2026-09-05. Executed, one commit each, quick
+tier green before every commit:
+
+| item | commit | what landed |
+|---|---|---|
+| 1 docs(data) | `4a525b5` | `docs/data_availability.md`: the Dataverse record (doi:10.7910/DVN/9N3Y2S, v1.0, released 2026-09-10, CC0 1.0 Universal quoted from the deposit's own README), what is not redistributed and why, the row 037 digest chain, the digest test |
+| 2 docs(paper) | `a5d66bb` | data and code availability section; the methods sentence "the anonymized race table itself is not published", false since 35ad2f0, corrected; bib entry `joshi2026dataset`; bib-parity sentence in `docs/literature_notes.md` amended |
+| 3 docs(readme) | `305cc9d` | status block carries band K; "what comes next" no longer proposes the pace-dependent credit as untried |
+| 4 chore | `b0aef32` | `CITATION.cff` (`date-released` 2026-09-22, a `references` entry of type dataset), `.zenodo.json` description, README "How to cite" — one commit by the owner's decision; version stays 0.1.0, no release scheme exists |
+| 9 docs(code), row 100 | `2511d8b` | the three public defs without a docstring in the scoped files (`HytekEntry`, `HytekEntry.completed`, `preprocessing.main`); `data_split.py` and `results_parsers.py` had none missing |
+| 10 test | `f3bee85` | `tests/test_docs_consistency.py`: the three classification tables of `docs/parameters.md` against `src/parameters.py` through an explicit mapping, every row placed or skipped with a reason; `DEV_WORKFLOW.md` and the README drop their hardcoded test counts for the marker's meaning and `pytest --collect-only -q -m requires_data` |
+| 13 docs(tour) | `ad54678` | `docs/preregistration_provenance.md` and `docs/data_availability.md` in the reading order; the deposit DOI in the data note |
+| 14 docs(dev) | `9448a46` | `DEV_WORKFLOW.md` states that the frozen pilot report reproduces through `empirical_analysis.py` only from the pilot-v0.1 processed file (recorded by date and counts, no digest), because `load_usable()` reads every usable row of the current file; docs only, no filter flag |
+| 11 chore(roadmap) | this commit | this note |
+
+Dropped on evidence, not committed: **5** (A1 already names
+`Course.start_credit_s` and the one-transform direction, and carries the
+band K paragraph after its Fix; no subtract wording survives); **6** (not
+live in `docs/assumptions.md`, whose provenance table carries the fitted
+values; the stale "become fitted parameters in Task 14" wording survives in
+`docs/parameters.md` and the "not yet exercised" heading in
+`docs/03_ode_model.md` §3d, dropped without re-scope by the owner's
+decision); **7** (`START_OFFSET_S` has sixteen live uses across
+`src/preprocessing.py`, `scripts/run_all.py` and
+`scripts/empirical_analysis.py`, plus registered text in
+`docs/validation_plan.md` §7, so the alias stays); **8** (row 099:
+`src/model.py` has no public def without a docstring and
+`src/calibration.py` has one, `FitResult.improved`, a one-line diff dropped
+under the one-line rule); **12** (row 101: the splitless-row and
+club-linked-age cases are pinned by `tests/test_hytek_parser.py`,
+`tests/test_pipeline.py` and `tests/test_results_parsers.py`). Rows 099 and
+101 therefore stay dropped; row 100 is executed by item 9.
+
+**Outside the plan, and a correction to band K's record.** The discovery
+pass found that the pipeline at HEAD no longer regenerated the frozen
+pilot-v0.2 processed file at the register's digest. `be0e710` (row 109)
+claimed bitwise neutrality for routing the credit through
+`recorded_to_raced`; that held for the `P{i}_corrected` shares, which the
+1e-12 pin covers, but the same hunk re-associated `drop_1_2_corrected` from
+`(lap2 - lap1) - offset` to `lap2 - (lap1 + offset)`, moving 831 rows by at
+most 3.6e-15 s, with `drop_ratio_corrected` inheriting it. From `be0e710`
+through `5d133ef` the regenerated file's sha256 was a978a122…, not the
+register's c2a1929a…; the code at `be0e710^` reproduces the register. The
+registered fits and the held-out comparison were unaffected, since neither
+reads either column. Repaired 2026-09-21 as `618b728` (fix(pipeline):
+the original arithmetic restored for that one column; the shares path
+untouched; the processed file regenerated in place at the register digest)
+and `e1517ef` (test(pipeline): a `requires_data` test that regenerates the
+processed file from `data/raw` and asserts the digest parsed from
+`data/DATASET_VERSIONS.md`; it fails against the `5d133ef` tree and passes
+at HEAD). Also outside the plan, by the owner: `5d133ef`, manual trigger
+and cancel-in-progress for the two workflows.
+
+Row 114 (the deposit) is now cited from the paper, the citation metadata
+and the README, and described in `docs/data_availability.md`. Open remains
+as stated in Count: the W'-in-joules half of 077.
