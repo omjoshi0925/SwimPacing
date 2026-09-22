@@ -466,6 +466,19 @@ def process(path: str, out_path: str | None = None,
 
 
 def main(argv: Iterable[str] | None = None) -> None:
+    """
+    Command-line entry point: `python -m src.preprocessing RAW [--out PATH]
+    [--start-offset S]`.
+
+    Runs `process` on the raw CSV, writes the processed file (default
+    `PROCESSED_CSV`, the path every consumer reads) and prints the quality-flag
+    summary and the mean recorded and start-corrected shares over the usable
+    rows. `--start-offset` defaults to the registered constant credit
+    (`Course.start_credit_s`, 1.80 s); the value used is stored in every row's
+    `start_offset_used` column, which is where the calibration's fit report
+    and the tests read it back from. `argv` lets a caller pass the arguments
+    instead of reading `sys.argv`.
+    """
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("raw", help="path to the raw race CSV")
     ap.add_argument("--out", default=PROCESSED_CSV)

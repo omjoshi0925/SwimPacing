@@ -71,6 +71,22 @@ EVENT_HEADER = re.compile(r"^(?P<sex>Boys|Girls|Men|Women|Mixed)\s+(?P<event>.+)
 
 @dataclass
 class HytekEntry:
+    """
+    One result line of an event section, as printed.
+
+    Times stay in the source's own text form ("1:37.01", "47.02"); nothing is
+    converted here, so a row can be checked against the official file by eye.
+    `place` is a rank or "--" (no place awarded); `seed` is "" when the
+    section prints no seed column and "NT" when the file does; `final` is a
+    time or one of the status codes DFS, DQ, NS, SCR; `tags` holds the
+    standard letters printed after the time (e.g. "SRII"), plus any note the
+    parser appends about missing splits. `splits` are the CUMULATIVE times at
+    50/100/150/200 from the line below the result, four of them for a
+    completed swim in a split-bearing section, empty for a swim with none.
+    Real names are carried here and never leave the ingest step: the raw file
+    holds an S-number in their place.
+    """
+
     place: str
     name: str
     age: int
@@ -82,6 +98,7 @@ class HytekEntry:
 
     @property
     def completed(self) -> bool:
+        """True for a swim with a time; DFS, DQ, NS and SCR entries are not races."""
         return self.final not in ("DFS", "DQ", "NS", "SCR")
 
 
