@@ -6,7 +6,9 @@ exercise the pipeline, and every row says so in its data_source column. No
 assertion here should ever be read as a fact about real swimming.
 """
 
+import hashlib
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -16,6 +18,10 @@ from src import data_split, preprocessing
 from src.parameters import MODELS, PREDICTED_SHAPES_SCY200, SCY_200
 
 FIXTURE = os.path.join(os.path.dirname(__file__), "fixtures", "synthetic_races.csv")
+
+# real data: requires_data only (see conftest.py)
+REGISTER = "data/DATASET_VERSIONS.md"
+RAW_CSV = "data/raw/200_free_scy_raw.csv"
 
 
 # ---------------------------------------------------------------------------
@@ -412,3 +418,58 @@ def test_fixture_is_labelled_synthetic_in_every_row():
     """
     df = pd.read_csv(FIXTURE, dtype=str, keep_default_na=False)
     assert df["data_source"].str.upper().str.contains("SYNTHETIC").all()
+
+
+# ---------------------------------------------------------------------------
+# The frozen dataset reproduces from its raw file
+# ---------------------------------------------------------------------------
+
+
+def _register_digest(register_text: str, path: str) -> str:
+    """
+    The sha256 the dataset register records for `path`, read from its
+    "Frozen files" row. Exactly one entry must exist: a second freeze is a
+    new version entry, and this test then has to say which version the
+    pipeline at HEAD is expected to reproduce.
+    """
+    hits = re.findall(rf"`{re.escape(path)}` sha256 `([0-9a-f]{{64}})`",
+                      register_text)
+    assert len(hits) == 1, (
+        f"{REGISTER}: expected one frozen digest for {path}, found {len(hits)}")
+    return hits[0]
+
+
+def _sha256(path: str) -> str:
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+@pytest.mark.requires_data
+# the pipeline warns on the split-less rows of the real file (all-NaN
+# slices in the per-lap metrics), which is its normal behaviour there
+@pytest.mark.filterwarnings("ignore::RuntimeWarning")
+def test_frozen_dataset_regenerates_from_raw_at_the_register_digest(tmp_path):
+    """
+    The register says pilot-v0.2 is frozen by digest. That is only a
+    reproducibility claim while the pipeline at HEAD, run on the frozen raw
+    file, writes a byte-identical processed file. From be0e710 to 5d133ef it
+    did not (a re-associated subtraction in drop_1_2_corrected moved 831 rows
+    by at most 3.6e-15 s) and nothing caught it. Both digests are read from
+    the register rather than written here, so a future freeze updates one
+    place.
+    """
+    with open(REGISTER, encoding="utf-8") as f:
+        register = f.read()
+    raw_expected = _register_digest(register, RAW_CSV)
+    processed_expected = _register_digest(register, preprocessing.PROCESSED_CSV)
+
+    assert _sha256(RAW_CSV) == raw_expected, (
+        "data/raw is not the frozen pilot-v0.2 raw file, so a regenerated "
+        "processed file cannot be expected to match the register")
+
+    out = tmp_path / "regenerated.csv"
+    preprocessing.process(RAW_CSV, str(out))
+    assert _sha256(str(out)) == processed_expected, (
+        "the pipeline at HEAD does not reproduce the frozen processed file: "
+        "either a stored column changed, or the freeze needs a new version "
+        "entry in the register")
