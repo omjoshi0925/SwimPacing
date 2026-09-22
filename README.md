@@ -39,6 +39,20 @@ and the paper draft in `paper/`. Headline, applied mechanically under
   labelled supplement shows the registered fit's curvature came from three
   four-year-old PBs.
 
+**Exploratory follow-up, 2026-09-06 (roadmap band K; the test set was
+already open, so exploratory only, and the registered conclusion is
+unchanged by construction).** The constant credit was replaced per race by
+S(v) = 15/v − t15, with t15 taken from the literature and never fitted. The
+reference cell (S ≡ 1.80 s) reproduced the registered beta_x and ranking.
+Across t15 = 6.1-7.5 s the fitted beta_x runs 0.046 → 0.269 (span 0.223,
+against 0.323 for the constant-credit band), so the degree of freedom moves
+from S to t15 rather than disappearing; the held-out winner is M3 at
+6.3-7.3 s and M4 at both edges and under a proportional t15, so the ranking
+does not stabilize and §7.3 stands in t15 terms. Both regimes are unphysical
+at this field's slow tail. Report:
+[`results/validation/exploratory_start_credit_report.md`](results/validation/exploratory_start_credit_report.md);
+summary in `docs/RESULTS.md`.
+
 The first 80-race pilot (`results/validation/pilot_report.md`, corrected
 2026-09-01 after a sign error in the start transform) is preserved unchanged
 as the exploratory baseline. Synthetic pipeline fixtures remain quarantined
@@ -275,10 +289,11 @@ that matter most:
 ## What comes next
 
 1. **Measure the dive-start credit.** 15 m splits at even one meet would pin
-   the credit for its field; failing that, a pace-dependent term
-   `c(v) = 15/v - t15` replaces a constant that is wrong in a known direction
-   for slower swimmers. This is the decisive open quantity: the registered
-   comparison is hostage to it.
+   the credit for its field. The fallback, a pace-dependent term
+   `S(v) = 15/v - t15`, has now been tried (band K, exploratory): it moves
+   the free quantity from S to t15 without stabilizing the ranking, so only
+   a measurement settles it. This is the decisive open quantity: the
+   registered comparison is hostage to it.
 2. **A model that can produce the finishing kick.** Every mechanism in M0-M4
    is monotone; the data are not. A stochastic-state (uncertainty about own
    reserve) formulation is the natural candidate and makes a testable
