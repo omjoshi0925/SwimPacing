@@ -237,11 +237,18 @@ scripts/
   refresh_predictions.py recomputes the cached M2/M4 optima
 tests/                tests that pin the claims the write-up makes
 docs/                 derivations, parameters, models, validation plan, assumptions
-data/                 schema, collection protocol, templates (no races yet)
+data/                 schema and collection protocol (data_dictionary.md), the
+                      dataset register with source and frozen-file digests
+                      (DATASET_VERSIONS.md), the collection manifest; raw/ and
+                      processed/ are gitignored (pilot-v0.2: 1,382 raw rows,
+                      345 usable races; the pseudonymous table is deposited,
+                      see docs/data_availability.md)
 results/
   theoretical/        model output
   sensitivity/        parameter sweeps
-  validation/         empty until real data exists
+  model_calibration/  the registered fits, training side (fits_train_v0_2.csv)
+  validation/         the registered held-out comparison and H1, the frozen
+                      pilot report, the start-credit sweeps
   placeholder_data/   SYNTHETIC, clearly quarantined
 figures/              generated output
 ```
