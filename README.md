@@ -319,3 +319,10 @@ MIT. See `LICENSE`.
 
 Citation metadata is in `CITATION.cff`; the "Cite this repository" button on
 GitHub renders it as APA or BibTeX.
+
+The race dataset is deposited separately and has its own citation:
+Joshi, O. (2026). 200 Freestyle SCY Race Splits (Male, Pacific Swimming and
+CIF, 2021-2026). Harvard Dataverse.
+[https://doi.org/10.7910/DVN/9N3Y2S](https://doi.org/10.7910/DVN/9N3Y2S).
+What it contains, its terms, and how it relates to the frozen dataset:
+[`docs/data_availability.md`](docs/data_availability.md).

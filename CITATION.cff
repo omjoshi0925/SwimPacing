@@ -8,9 +8,25 @@ authors:
 repository-code: "https://github.com/omjoshi0925/SwimPacing"
 license: MIT
 version: 0.1.0
-date-released: "2026-09-01"
+date-released: "2026-09-22"
 abstract: >-
   A differential-equation and constrained-optimization model of optimal pacing
   in the 200 yard freestyle, with five competing fatigue models (M0-M4)
   validated against real, anonymized competitive race data under a
   pre-registered analysis plan.
+references:
+  - type: dataset
+    title: "200 Freestyle SCY Race Splits (Male, Pacific Swimming and CIF, 2021-2026)"
+    authors:
+      - family-names: Joshi
+        given-names: Om
+    publisher:
+      name: "Harvard Dataverse"
+    doi: 10.7910/DVN/9N3Y2S
+    url: "https://doi.org/10.7910/DVN/9N3Y2S"
+    version: "1.0"
+    date-released: "2026-09-10"
+    license: CC0-1.0
+    notes: >-
+      The pseudonymous race table this software was validated against; see
+      docs/data_availability.md for its relation to the frozen dataset.
