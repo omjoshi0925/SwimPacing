@@ -52,7 +52,10 @@ splits. `split_50` is stored in plain seconds; the remaining splits and
 ## Privacy
 Swimmer names, team affiliations, and USA Swimming identifiers are not
 included. Each swimmer carries a pseudonymous `swimmer_id` that is stable
-within this dataset and not linkable to any external identifier.
+within this dataset. The pseudonym is not anonymity: a row's meet, place and
+time match one line of the public results sheet it was transcribed from, so
+anyone holding that sheet can recover the name. That is why names and club
+affiliations are withheld here rather than published alongside the times.
 
 ## License
 CC0 1.0 Universal (public domain dedication).
